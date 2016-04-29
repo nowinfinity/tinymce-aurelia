@@ -1,5 +1,5 @@
 {
-	"name": "tinymce",
+	"name": "tinymce-aurelia",
 	"description": "Web based JavaScript HTML WYSIWYG editor control.",
 	"license": "LGPL-2.1",
 	"keywords": [
@@ -10,7 +10,7 @@
 		"javascript",
 		"html"
 	],
-	"homepage": "http://www.tinymce.com",
+	"homepage": "",
 	"ignore": [
 		"readme.md",
 		"composer.json",
