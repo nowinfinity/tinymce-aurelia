@@ -4503,7 +4503,7 @@
             waitForWebKitLinkLoaded();
           }
           appendToHead(link);
-          link.href = 'jspm_packages/github/imressed/tinymce-aurelia@master/skins/lightgray/skin.min.css';
+          link.href = 'jspm_packages/github/nowinfinity/tinymce-aurelia@master/skins/lightgray/skin.min.css';
         }
         this.load = load;
       };
@@ -22428,7 +22428,7 @@
               if (themeUrl) {
                 themeUrl = self.documentBaseURI.toAbsolute(themeUrl);
               } else {
-                themeUrl = 'jspm_packages/github/imressed/tinymce-aurelia@master/themes/' + settings.theme + '/theme' + suffix + '.js';
+                themeUrl = 'jspm_packages/github/nowinfinity/tinymce-aurelia@master/themes/' + settings.theme + '/theme' + suffix + '.js';
               }
               ThemeManager.load(settings.theme, themeUrl);
             }
@@ -22659,7 +22659,7 @@
           }
           if (!skipWrite && !settings.content_editable) {
             doc.open();
-            doc.write('jspm_packages/github/imressed/tinymce-aurelia@master/skins/lightgray/content.min.css');
+            doc.write('jspm_packages/github/nowinfinity/tinymce-aurelia@master/skins/lightgray/content.min.css');
             doc.close();
           }
           if (settings.content_editable) {
