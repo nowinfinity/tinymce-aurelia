@@ -1,1 +1,173 @@
-tinymce.PluginManager.add("insertdatetime",function(a){function b(b,c){function d(a,b){if(a=""+a,a.length<b)for(var c=0;c<b-a.length;c++)a="0"+a;return a}return c=c||new Date,b=b.replace("%D","%m/%d/%Y"),b=b.replace("%r","%I:%M:%S %p"),b=b.replace("%Y",""+c.getFullYear()),b=b.replace("%y",""+c.getYear()),b=b.replace("%m",d(c.getMonth()+1,2)),b=b.replace("%d",d(c.getDate(),2)),b=b.replace("%H",""+d(c.getHours(),2)),b=b.replace("%M",""+d(c.getMinutes(),2)),b=b.replace("%S",""+d(c.getSeconds(),2)),b=b.replace("%I",""+((c.getHours()+11)%12+1)),b=b.replace("%p",""+(c.getHours()<12?"AM":"PM")),b=b.replace("%B",""+a.translate(i[c.getMonth()])),b=b.replace("%b",""+a.translate(h[c.getMonth()])),b=b.replace("%A",""+a.translate(g[c.getDay()])),b=b.replace("%a",""+a.translate(f[c.getDay()])),b=b.replace("%%","%")}function c(c){var d=b(c);if(a.settings.insertdatetime_element){var e;e=b(/%[HMSIp]/.test(c)?"%Y-%m-%dT%H:%M":"%Y-%m-%d"),d='<time datetime="'+e+'">'+d+"</time>";var f=a.dom.getParent(a.selection.getStart(),"time");if(f)return void a.dom.setOuterHTML(f,d)}a.insertContent(d)}var d,e,f="Sun Mon Tue Wed Thu Fri Sat Sun".split(" "),g="Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split(" "),h="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),i="January February March April May June July August September October November December".split(" "),j=[];a.addCommand("mceInsertDate",function(){c(a.getParam("insertdatetime_dateformat",a.translate("%Y-%m-%d")))}),a.addCommand("mceInsertTime",function(){c(a.getParam("insertdatetime_timeformat",a.translate("%H:%M:%S")))}),a.addButton("insertdatetime",{type:"splitbutton",title:"Insert date/time",onclick:function(){c(d||e)},menu:j}),tinymce.each(a.settings.insertdatetime_formats||["%H:%M:%S","%Y-%m-%d","%I:%M:%S %p","%D"],function(a){e||(e=a),j.push({text:b(a),onclick:function(){d=a,c(a)}})}),a.addMenuItem("insertdatetime",{icon:"date",text:"Insert date/time",menu:j,context:"insert"})});
+(function () {
+var insertdatetime = (function () {
+  'use strict';
+
+  var Cell = function (initial) {
+    var value = initial;
+    var get = function () {
+      return value;
+    };
+    var set = function (v) {
+      value = v;
+    };
+    var clone = function () {
+      return Cell(get());
+    };
+    return {
+      get: get,
+      set: set,
+      clone: clone
+    };
+  };
+
+  var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+  var getDateFormat = function (editor) {
+    return editor.getParam('insertdatetime_dateformat', editor.translate('%Y-%m-%d'));
+  };
+  var getTimeFormat = function (editor) {
+    return editor.getParam('insertdatetime_timeformat', editor.translate('%H:%M:%S'));
+  };
+  var getFormats = function (editor) {
+    return editor.getParam('insertdatetime_formats', [
+      '%H:%M:%S',
+      '%Y-%m-%d',
+      '%I:%M:%S %p',
+      '%D'
+    ]);
+  };
+  var getDefaultDateTime = function (editor) {
+    var formats = getFormats(editor);
+    return formats.length > 0 ? formats[0] : getTimeFormat(editor);
+  };
+  var shouldInsertTimeElement = function (editor) {
+    return editor.getParam('insertdatetime_element', false);
+  };
+  var $_en6crmfhjlnuebae = {
+    getDateFormat: getDateFormat,
+    getTimeFormat: getTimeFormat,
+    getFormats: getFormats,
+    getDefaultDateTime: getDefaultDateTime,
+    shouldInsertTimeElement: shouldInsertTimeElement
+  };
+
+  var daysShort = 'Sun Mon Tue Wed Thu Fri Sat Sun'.split(' ');
+  var daysLong = 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split(' ');
+  var monthsShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+  var monthsLong = 'January February March April May June July August September October November December'.split(' ');
+  var addZeros = function (value, len) {
+    value = '' + value;
+    if (value.length < len) {
+      for (var i = 0; i < len - value.length; i++) {
+        value = '0' + value;
+      }
+    }
+    return value;
+  };
+  var getDateTime = function (editor, fmt, date) {
+    date = date || new Date();
+    fmt = fmt.replace('%D', '%m/%d/%Y');
+    fmt = fmt.replace('%r', '%I:%M:%S %p');
+    fmt = fmt.replace('%Y', '' + date.getFullYear());
+    fmt = fmt.replace('%y', '' + date.getYear());
+    fmt = fmt.replace('%m', addZeros(date.getMonth() + 1, 2));
+    fmt = fmt.replace('%d', addZeros(date.getDate(), 2));
+    fmt = fmt.replace('%H', '' + addZeros(date.getHours(), 2));
+    fmt = fmt.replace('%M', '' + addZeros(date.getMinutes(), 2));
+    fmt = fmt.replace('%S', '' + addZeros(date.getSeconds(), 2));
+    fmt = fmt.replace('%I', '' + ((date.getHours() + 11) % 12 + 1));
+    fmt = fmt.replace('%p', '' + (date.getHours() < 12 ? 'AM' : 'PM'));
+    fmt = fmt.replace('%B', '' + editor.translate(monthsLong[date.getMonth()]));
+    fmt = fmt.replace('%b', '' + editor.translate(monthsShort[date.getMonth()]));
+    fmt = fmt.replace('%A', '' + editor.translate(daysLong[date.getDay()]));
+    fmt = fmt.replace('%a', '' + editor.translate(daysShort[date.getDay()]));
+    fmt = fmt.replace('%%', '%');
+    return fmt;
+  };
+  var updateElement = function (editor, timeElm, computerTime, userTime) {
+    var newTimeElm = editor.dom.create('time', { datetime: computerTime }, userTime);
+    timeElm.parentNode.insertBefore(newTimeElm, timeElm);
+    editor.dom.remove(timeElm);
+    editor.selection.select(newTimeElm, true);
+    editor.selection.collapse(false);
+  };
+  var insertDateTime = function (editor, format) {
+    if ($_en6crmfhjlnuebae.shouldInsertTimeElement(editor)) {
+      var userTime = getDateTime(editor, format);
+      var computerTime = void 0;
+      if (/%[HMSIp]/.test(format)) {
+        computerTime = getDateTime(editor, '%Y-%m-%dT%H:%M');
+      } else {
+        computerTime = getDateTime(editor, '%Y-%m-%d');
+      }
+      var timeElm = editor.dom.getParent(editor.selection.getStart(), 'time');
+      if (timeElm) {
+        updateElement(editor, timeElm, computerTime, userTime);
+      } else {
+        editor.insertContent('<time datetime="' + computerTime + '">' + userTime + '</time>');
+      }
+    } else {
+      editor.insertContent(getDateTime(editor, format));
+    }
+  };
+  var $_9dyo80fijlnuebai = {
+    insertDateTime: insertDateTime,
+    getDateTime: getDateTime
+  };
+
+  var register = function (editor) {
+    editor.addCommand('mceInsertDate', function () {
+      $_9dyo80fijlnuebai.insertDateTime(editor, $_en6crmfhjlnuebae.getDateFormat(editor));
+    });
+    editor.addCommand('mceInsertTime', function () {
+      $_9dyo80fijlnuebai.insertDateTime(editor, $_en6crmfhjlnuebae.getTimeFormat(editor));
+    });
+  };
+  var $_1id94xfgjlnuebab = { register: register };
+
+  var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+  var createMenuItems = function (editor, lastFormatState) {
+    var formats = $_en6crmfhjlnuebae.getFormats(editor);
+    return global$1.map(formats, function (fmt) {
+      return {
+        text: $_9dyo80fijlnuebai.getDateTime(editor, fmt),
+        onclick: function () {
+          lastFormatState.set(fmt);
+          $_9dyo80fijlnuebai.insertDateTime(editor, fmt);
+        }
+      };
+    });
+  };
+  var register$1 = function (editor, lastFormatState) {
+    var menuItems = createMenuItems(editor, lastFormatState);
+    editor.addButton('insertdatetime', {
+      type: 'splitbutton',
+      title: 'Insert date/time',
+      menu: menuItems,
+      onclick: function () {
+        var lastFormat = lastFormatState.get();
+        $_9dyo80fijlnuebai.insertDateTime(editor, lastFormat ? lastFormat : $_en6crmfhjlnuebae.getDefaultDateTime(editor));
+      }
+    });
+    editor.addMenuItem('insertdatetime', {
+      icon: 'date',
+      text: 'Date/time',
+      menu: menuItems,
+      context: 'insert'
+    });
+  };
+  var $_bhb4d2fjjlnueban = { register: register$1 };
+
+  global.add('insertdatetime', function (editor) {
+    var lastFormatState = Cell(null);
+    $_1id94xfgjlnuebab.register(editor);
+    $_bhb4d2fjjlnueban.register(editor, lastFormatState);
+  });
+  function Plugin () {
+  }
+
+  return Plugin;
+
+}());
+})();

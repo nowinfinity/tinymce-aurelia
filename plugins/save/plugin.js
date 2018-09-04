@@ -1,1 +1,120 @@
-tinymce.PluginManager.add("save",function(a){function b(){var b;return b=tinymce.DOM.getParent(a.id,"form"),!a.getParam("save_enablewhendirty",!0)||a.isDirty()?(tinymce.triggerSave(),a.getParam("save_onsavecallback")?void(a.execCallback("save_onsavecallback",a)&&(a.startContent=tinymce.trim(a.getContent({format:"raw"})),a.nodeChanged())):void(b?(a.isNotDirty=!0,(!b.onsubmit||b.onsubmit())&&("function"==typeof b.submit?b.submit():a.windowManager.alert("Error: Form submit field collision.")),a.nodeChanged()):a.windowManager.alert("Error: No form element found."))):void 0}function c(){var b=tinymce.trim(a.startContent);return a.getParam("save_oncancelcallback")?void a.execCallback("save_oncancelcallback",a):(a.setContent(b),a.undoManager.clear(),void a.nodeChanged())}function d(){var b=this;a.on("nodeChange",function(){b.disabled(a.getParam("save_enablewhendirty",!0)&&!a.isDirty())})}a.addCommand("mceSave",b),a.addCommand("mceCancel",c),a.addButton("save",{icon:"save",text:"Save",cmd:"mceSave",disabled:!0,onPostRender:d}),a.addButton("cancel",{text:"Cancel",icon:!1,cmd:"mceCancel",disabled:!0,onPostRender:d}),a.addShortcut("Meta+S","","mceSave")});
+(function () {
+var save = (function () {
+  'use strict';
+
+  var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+  var global$1 = tinymce.util.Tools.resolve('tinymce.dom.DOMUtils');
+
+  var global$2 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+  var enableWhenDirty = function (editor) {
+    return editor.getParam('save_enablewhendirty', true);
+  };
+  var hasOnSaveCallback = function (editor) {
+    return !!editor.getParam('save_onsavecallback');
+  };
+  var hasOnCancelCallback = function (editor) {
+    return !!editor.getParam('save_oncancelcallback');
+  };
+  var $_dsuoipjtjlnuebzz = {
+    enableWhenDirty: enableWhenDirty,
+    hasOnSaveCallback: hasOnSaveCallback,
+    hasOnCancelCallback: hasOnCancelCallback
+  };
+
+  var displayErrorMessage = function (editor, message) {
+    editor.notificationManager.open({
+      text: editor.translate(message),
+      type: 'error'
+    });
+  };
+  var save = function (editor) {
+    var formObj;
+    formObj = global$1.DOM.getParent(editor.id, 'form');
+    if ($_dsuoipjtjlnuebzz.enableWhenDirty(editor) && !editor.isDirty()) {
+      return;
+    }
+    editor.save();
+    if ($_dsuoipjtjlnuebzz.hasOnSaveCallback(editor)) {
+      editor.execCallback('save_onsavecallback', editor);
+      editor.nodeChanged();
+      return;
+    }
+    if (formObj) {
+      editor.setDirty(false);
+      if (!formObj.onsubmit || formObj.onsubmit()) {
+        if (typeof formObj.submit === 'function') {
+          formObj.submit();
+        } else {
+          displayErrorMessage(editor, 'Error: Form submit field collision.');
+        }
+      }
+      editor.nodeChanged();
+    } else {
+      displayErrorMessage(editor, 'Error: No form element found.');
+    }
+  };
+  var cancel = function (editor) {
+    var h = global$2.trim(editor.startContent);
+    if ($_dsuoipjtjlnuebzz.hasOnCancelCallback(editor)) {
+      editor.execCallback('save_oncancelcallback', editor);
+      return;
+    }
+    editor.setContent(h);
+    editor.undoManager.clear();
+    editor.nodeChanged();
+  };
+  var $_52hrjfjqjlnuebzu = {
+    save: save,
+    cancel: cancel
+  };
+
+  var register = function (editor) {
+    editor.addCommand('mceSave', function () {
+      $_52hrjfjqjlnuebzu.save(editor);
+    });
+    editor.addCommand('mceCancel', function () {
+      $_52hrjfjqjlnuebzu.cancel(editor);
+    });
+  };
+  var $_g5ravmjpjlnuebzs = { register: register };
+
+  var stateToggle = function (editor) {
+    return function (e) {
+      var ctrl = e.control;
+      editor.on('nodeChange dirty', function () {
+        ctrl.disabled($_dsuoipjtjlnuebzz.enableWhenDirty(editor) && !editor.isDirty());
+      });
+    };
+  };
+  var register$1 = function (editor) {
+    editor.addButton('save', {
+      icon: 'save',
+      text: 'Save',
+      cmd: 'mceSave',
+      disabled: true,
+      onPostRender: stateToggle(editor)
+    });
+    editor.addButton('cancel', {
+      text: 'Cancel',
+      icon: false,
+      cmd: 'mceCancel',
+      disabled: true,
+      onPostRender: stateToggle(editor)
+    });
+    editor.addShortcut('Meta+S', '', 'mceSave');
+  };
+  var $_2ahs85jujlnuec01 = { register: register$1 };
+
+  global.add('save', function (editor) {
+    $_2ahs85jujlnuec01.register(editor);
+    $_g5ravmjpjlnuebzs.register(editor);
+  });
+  function Plugin () {
+  }
+
+  return Plugin;
+
+}());
+})();

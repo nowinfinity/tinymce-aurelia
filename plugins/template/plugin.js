@@ -1,1 +1,345 @@
-tinymce.PluginManager.add("template",function(a){function b(b){return function(){var c=a.settings.templates;"string"==typeof c?tinymce.util.XHR.send({url:c,success:function(a){b(tinymce.util.JSON.parse(a))}}):b(c)}}function c(b){function c(b){function c(b){if(-1==b.indexOf("<html>")){var c="";tinymce.each(a.contentCSS,function(b){c+='<link type="text/css" rel="stylesheet" href="'+a.documentBaseURI.toAbsolute(b)+'">'}),b="<!DOCTYPE html><html><head>"+c+"</head><body>"+b+"</body></html>"}b=f(b,"template_preview_replace_values");var e=d.find("iframe")[0].getEl().contentWindow.document;e.open(),e.write(b),e.close()}var g=b.control.value();g.url?tinymce.util.XHR.send({url:g.url,success:function(a){e=a,c(e)}}):(e=g.content,c(e)),d.find("#description")[0].text(b.control.value().description)}var d,e,h=[];return b&&0!==b.length?(tinymce.each(b,function(a){h.push({selected:!h.length,text:a.title,value:{url:a.url,content:a.content,description:a.description}})}),d=a.windowManager.open({title:"Insert template",layout:"flex",direction:"column",align:"stretch",padding:15,spacing:10,items:[{type:"form",flex:0,padding:0,items:[{type:"container",label:"Templates",items:{type:"listbox",label:"Templates",name:"template",values:h,onselect:c}}]},{type:"label",name:"description",label:"Description",text:"\xa0"},{type:"iframe",flex:1,border:1}],onsubmit:function(){g(!1,e)},width:a.getParam("template_popup_width",600),height:a.getParam("template_popup_height",500)}),void d.find("listbox")[0].fire("select")):void a.windowManager.alert("No templates defined")}function d(b,c){function d(a,b){if(a=""+a,a.length<b)for(var c=0;c<b-a.length;c++)a="0"+a;return a}var e="Sun Mon Tue Wed Thu Fri Sat Sun".split(" "),f="Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split(" "),g="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),h="January February March April May June July August September October November December".split(" ");return c=c||new Date,b=b.replace("%D","%m/%d/%Y"),b=b.replace("%r","%I:%M:%S %p"),b=b.replace("%Y",""+c.getFullYear()),b=b.replace("%y",""+c.getYear()),b=b.replace("%m",d(c.getMonth()+1,2)),b=b.replace("%d",d(c.getDate(),2)),b=b.replace("%H",""+d(c.getHours(),2)),b=b.replace("%M",""+d(c.getMinutes(),2)),b=b.replace("%S",""+d(c.getSeconds(),2)),b=b.replace("%I",""+((c.getHours()+11)%12+1)),b=b.replace("%p",""+(c.getHours()<12?"AM":"PM")),b=b.replace("%B",""+a.translate(h[c.getMonth()])),b=b.replace("%b",""+a.translate(g[c.getMonth()])),b=b.replace("%A",""+a.translate(f[c.getDay()])),b=b.replace("%a",""+a.translate(e[c.getDay()])),b=b.replace("%%","%")}function e(b){var c=a.dom,d=a.getParam("template_replace_values");h(c.select("*",b),function(a){h(d,function(b,e){c.hasClass(a,e)&&"function"==typeof d[e]&&d[e](a)})})}function f(b,c){return h(a.getParam(c),function(a,c){"function"!=typeof a&&(b=b.replace(new RegExp("\\{\\$"+c+"\\}","g"),a))}),b}function g(b,c){function g(a,b){return new RegExp("\\b"+b+"\\b","g").test(a.className)}var i,j,k=a.dom,l=a.selection.getContent();c=f(c,"template_replace_values"),i=k.create("div",null,c),j=k.select(".mceTmpl",i),j&&j.length>0&&(i=k.create("div",null),i.appendChild(j[0].cloneNode(!0))),h(k.select("*",i),function(b){g(b,a.getParam("template_cdate_classes","cdate").replace(/\s+/g,"|"))&&(b.innerHTML=d(a.getParam("template_cdate_format",a.getLang("template.cdate_format")))),g(b,a.getParam("template_mdate_classes","mdate").replace(/\s+/g,"|"))&&(b.innerHTML=d(a.getParam("template_mdate_format",a.getLang("template.mdate_format")))),g(b,a.getParam("template_selected_content_classes","selcontent").replace(/\s+/g,"|"))&&(b.innerHTML=l)}),e(i),a.execCommand("mceInsertContent",!1,i.innerHTML),a.addVisual()}var h=tinymce.each;a.addCommand("mceInsertTemplate",g),a.addButton("template",{title:"Insert template",onclick:b(c)}),a.addMenuItem("template",{text:"Insert template",onclick:b(c),context:"insert"}),a.on("PreProcess",function(b){var c=a.dom;h(c.select("div",b.node),function(b){c.hasClass(b,"mceTmpl")&&(h(c.select("*",b),function(b){c.hasClass(b,a.getParam("template_mdate_classes","mdate").replace(/\s+/g,"|"))&&(b.innerHTML=d(a.getParam("template_mdate_format",a.getLang("template.mdate_format"))))}),e(b))})})});
+(function () {
+var template = (function () {
+  'use strict';
+
+  var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+  var curry = function (f) {
+    var x = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+      x[_i - 1] = arguments[_i];
+    }
+    var args = new Array(arguments.length - 1);
+    for (var i = 1; i < arguments.length; i++)
+      args[i - 1] = arguments[i];
+    return function () {
+      var x = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        x[_i] = arguments[_i];
+      }
+      var newArgs = new Array(arguments.length);
+      for (var j = 0; j < newArgs.length; j++)
+        newArgs[j] = arguments[j];
+      var all = args.concat(newArgs);
+      return f.apply(null, all);
+    };
+  };
+
+  var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+  var global$2 = tinymce.util.Tools.resolve('tinymce.util.XHR');
+
+  var global$3 = tinymce.util.Tools.resolve('tinymce.dom.DOMUtils');
+
+  var getCreationDateClasses = function (editor) {
+    return editor.getParam('template_cdate_classes', 'cdate');
+  };
+  var getModificationDateClasses = function (editor) {
+    return editor.getParam('template_mdate_classes', 'mdate');
+  };
+  var getSelectedContentClasses = function (editor) {
+    return editor.getParam('template_selected_content_classes', 'selcontent');
+  };
+  var getPreviewReplaceValues = function (editor) {
+    return editor.getParam('template_preview_replace_values');
+  };
+  var getTemplateReplaceValues = function (editor) {
+    return editor.getParam('template_replace_values');
+  };
+  var getTemplates = function (editorSettings) {
+    return editorSettings.templates;
+  };
+  var getCdateFormat = function (editor) {
+    return editor.getParam('template_cdate_format', editor.getLang('template.cdate_format'));
+  };
+  var getMdateFormat = function (editor) {
+    return editor.getParam('template_mdate_format', editor.getLang('template.mdate_format'));
+  };
+  var getDialogWidth = function (editor) {
+    return editor.getParam('template_popup_width', 600);
+  };
+  var getDialogHeight = function (editor) {
+    return Math.min(global$3.DOM.getViewPort().h, editor.getParam('template_popup_height', 500));
+  };
+  var $_eb06zhr9jlnuefmd = {
+    getCreationDateClasses: getCreationDateClasses,
+    getModificationDateClasses: getModificationDateClasses,
+    getSelectedContentClasses: getSelectedContentClasses,
+    getPreviewReplaceValues: getPreviewReplaceValues,
+    getTemplateReplaceValues: getTemplateReplaceValues,
+    getTemplates: getTemplates,
+    getCdateFormat: getCdateFormat,
+    getMdateFormat: getMdateFormat,
+    getDialogWidth: getDialogWidth,
+    getDialogHeight: getDialogHeight
+  };
+
+  var addZeros = function (value, len) {
+    value = '' + value;
+    if (value.length < len) {
+      for (var i = 0; i < len - value.length; i++) {
+        value = '0' + value;
+      }
+    }
+    return value;
+  };
+  var getDateTime = function (editor, fmt, date) {
+    var daysShort = 'Sun Mon Tue Wed Thu Fri Sat Sun'.split(' ');
+    var daysLong = 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split(' ');
+    var monthsShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+    var monthsLong = 'January February March April May June July August September October November December'.split(' ');
+    date = date || new Date();
+    fmt = fmt.replace('%D', '%m/%d/%Y');
+    fmt = fmt.replace('%r', '%I:%M:%S %p');
+    fmt = fmt.replace('%Y', '' + date.getFullYear());
+    fmt = fmt.replace('%y', '' + date.getYear());
+    fmt = fmt.replace('%m', addZeros(date.getMonth() + 1, 2));
+    fmt = fmt.replace('%d', addZeros(date.getDate(), 2));
+    fmt = fmt.replace('%H', '' + addZeros(date.getHours(), 2));
+    fmt = fmt.replace('%M', '' + addZeros(date.getMinutes(), 2));
+    fmt = fmt.replace('%S', '' + addZeros(date.getSeconds(), 2));
+    fmt = fmt.replace('%I', '' + ((date.getHours() + 11) % 12 + 1));
+    fmt = fmt.replace('%p', '' + (date.getHours() < 12 ? 'AM' : 'PM'));
+    fmt = fmt.replace('%B', '' + editor.translate(monthsLong[date.getMonth()]));
+    fmt = fmt.replace('%b', '' + editor.translate(monthsShort[date.getMonth()]));
+    fmt = fmt.replace('%A', '' + editor.translate(daysLong[date.getDay()]));
+    fmt = fmt.replace('%a', '' + editor.translate(daysShort[date.getDay()]));
+    fmt = fmt.replace('%%', '%');
+    return fmt;
+  };
+  var $_64kh1lrbjlnuefmh = { getDateTime: getDateTime };
+
+  var createTemplateList = function (editorSettings, callback) {
+    return function () {
+      var templateList = $_eb06zhr9jlnuefmd.getTemplates(editorSettings);
+      if (typeof templateList === 'function') {
+        templateList(callback);
+        return;
+      }
+      if (typeof templateList === 'string') {
+        global$2.send({
+          url: templateList,
+          success: function (text) {
+            callback(JSON.parse(text));
+          }
+        });
+      } else {
+        callback(templateList);
+      }
+    };
+  };
+  var replaceTemplateValues = function (editor, html, templateValues) {
+    global$1.each(templateValues, function (v, k) {
+      if (typeof v === 'function') {
+        v = v(k);
+      }
+      html = html.replace(new RegExp('\\{\\$' + k + '\\}', 'g'), v);
+    });
+    return html;
+  };
+  var replaceVals = function (editor, e) {
+    var dom = editor.dom, vl = $_eb06zhr9jlnuefmd.getTemplateReplaceValues(editor);
+    global$1.each(dom.select('*', e), function (e) {
+      global$1.each(vl, function (v, k) {
+        if (dom.hasClass(e, k)) {
+          if (typeof vl[k] === 'function') {
+            vl[k](e);
+          }
+        }
+      });
+    });
+  };
+  var hasClass = function (n, c) {
+    return new RegExp('\\b' + c + '\\b', 'g').test(n.className);
+  };
+  var insertTemplate = function (editor, ui, html) {
+    var el;
+    var n;
+    var dom = editor.dom;
+    var sel = editor.selection.getContent();
+    html = replaceTemplateValues(editor, html, $_eb06zhr9jlnuefmd.getTemplateReplaceValues(editor));
+    el = dom.create('div', null, html);
+    n = dom.select('.mceTmpl', el);
+    if (n && n.length > 0) {
+      el = dom.create('div', null);
+      el.appendChild(n[0].cloneNode(true));
+    }
+    global$1.each(dom.select('*', el), function (n) {
+      if (hasClass(n, $_eb06zhr9jlnuefmd.getCreationDateClasses(editor).replace(/\s+/g, '|'))) {
+        n.innerHTML = $_64kh1lrbjlnuefmh.getDateTime(editor, $_eb06zhr9jlnuefmd.getCdateFormat(editor));
+      }
+      if (hasClass(n, $_eb06zhr9jlnuefmd.getModificationDateClasses(editor).replace(/\s+/g, '|'))) {
+        n.innerHTML = $_64kh1lrbjlnuefmh.getDateTime(editor, $_eb06zhr9jlnuefmd.getMdateFormat(editor));
+      }
+      if (hasClass(n, $_eb06zhr9jlnuefmd.getSelectedContentClasses(editor).replace(/\s+/g, '|'))) {
+        n.innerHTML = sel;
+      }
+    });
+    replaceVals(editor, el);
+    editor.execCommand('mceInsertContent', false, el.innerHTML);
+    editor.addVisual();
+  };
+  var $_25e0iwr6jlnuefm7 = {
+    createTemplateList: createTemplateList,
+    replaceTemplateValues: replaceTemplateValues,
+    replaceVals: replaceVals,
+    insertTemplate: insertTemplate
+  };
+
+  var register = function (editor) {
+    editor.addCommand('mceInsertTemplate', curry($_25e0iwr6jlnuefm7.insertTemplate, editor));
+  };
+  var $_ehvq3er4jlnueflq = { register: register };
+
+  var setup = function (editor) {
+    editor.on('PreProcess', function (o) {
+      var dom = editor.dom, dateFormat = $_eb06zhr9jlnuefmd.getMdateFormat(editor);
+      global$1.each(dom.select('div', o.node), function (e) {
+        if (dom.hasClass(e, 'mceTmpl')) {
+          global$1.each(dom.select('*', e), function (e) {
+            if (dom.hasClass(e, editor.getParam('template_mdate_classes', 'mdate').replace(/\s+/g, '|'))) {
+              e.innerHTML = $_64kh1lrbjlnuefmh.getDateTime(editor, dateFormat);
+            }
+          });
+          $_25e0iwr6jlnuefm7.replaceVals(editor, e);
+        }
+      });
+    });
+  };
+  var $_143xabrcjlnuefml = { setup: setup };
+
+  var insertIframeHtml = function (editor, win, html) {
+    if (html.indexOf('<html>') === -1) {
+      var contentCssLinks_1 = '';
+      global$1.each(editor.contentCSS, function (url) {
+        contentCssLinks_1 += '<link type="text/css" rel="stylesheet" href="' + editor.documentBaseURI.toAbsolute(url) + '">';
+      });
+      var bodyClass = editor.settings.body_class || '';
+      if (bodyClass.indexOf('=') !== -1) {
+        bodyClass = editor.getParam('body_class', '', 'hash');
+        bodyClass = bodyClass[editor.id] || '';
+      }
+      html = '<!DOCTYPE html>' + '<html>' + '<head>' + contentCssLinks_1 + '</head>' + '<body class="' + bodyClass + '">' + html + '</body>' + '</html>';
+    }
+    html = $_25e0iwr6jlnuefm7.replaceTemplateValues(editor, html, $_eb06zhr9jlnuefmd.getPreviewReplaceValues(editor));
+    var doc = win.find('iframe')[0].getEl().contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+  };
+  var open = function (editor, templateList) {
+    var win;
+    var values = [];
+    var templateHtml;
+    if (!templateList || templateList.length === 0) {
+      var message = editor.translate('No templates defined.');
+      editor.notificationManager.open({
+        text: message,
+        type: 'info'
+      });
+      return;
+    }
+    global$1.each(templateList, function (template) {
+      values.push({
+        selected: !values.length,
+        text: template.title,
+        value: {
+          url: template.url,
+          content: template.content,
+          description: template.description
+        }
+      });
+    });
+    var onSelectTemplate = function (e) {
+      var value = e.control.value();
+      if (value.url) {
+        global$2.send({
+          url: value.url,
+          success: function (html) {
+            templateHtml = html;
+            insertIframeHtml(editor, win, templateHtml);
+          }
+        });
+      } else {
+        templateHtml = value.content;
+        insertIframeHtml(editor, win, templateHtml);
+      }
+      win.find('#description')[0].text(e.control.value().description);
+    };
+    win = editor.windowManager.open({
+      title: 'Insert template',
+      layout: 'flex',
+      direction: 'column',
+      align: 'stretch',
+      padding: 15,
+      spacing: 10,
+      items: [
+        {
+          type: 'form',
+          flex: 0,
+          padding: 0,
+          items: [{
+              type: 'container',
+              label: 'Templates',
+              items: {
+                type: 'listbox',
+                label: 'Templates',
+                name: 'template',
+                values: values,
+                onselect: onSelectTemplate
+              }
+            }]
+        },
+        {
+          type: 'label',
+          name: 'description',
+          label: 'Description',
+          text: '\xA0'
+        },
+        {
+          type: 'iframe',
+          flex: 1,
+          border: 1
+        }
+      ],
+      onsubmit: function () {
+        $_25e0iwr6jlnuefm7.insertTemplate(editor, false, templateHtml);
+      },
+      minWidth: $_eb06zhr9jlnuefmd.getDialogWidth(editor),
+      minHeight: $_eb06zhr9jlnuefmd.getDialogHeight(editor)
+    });
+    win.find('listbox')[0].fire('select');
+  };
+  var $_cj5pemrejlnuefmr = { open: open };
+
+  var showDialog = function (editor) {
+    return function (templates) {
+      $_cj5pemrejlnuefmr.open(editor, templates);
+    };
+  };
+  var register$1 = function (editor) {
+    editor.addButton('template', {
+      title: 'Insert template',
+      onclick: $_25e0iwr6jlnuefm7.createTemplateList(editor.settings, showDialog(editor))
+    });
+    editor.addMenuItem('template', {
+      text: 'Template',
+      onclick: $_25e0iwr6jlnuefm7.createTemplateList(editor.settings, showDialog(editor)),
+      icon: 'template',
+      context: 'insert'
+    });
+  };
+  var $_69fpw0rdjlnuefmp = { register: register$1 };
+
+  global.add('template', function (editor) {
+    $_69fpw0rdjlnuefmp.register(editor);
+    $_ehvq3er4jlnueflq.register(editor);
+    $_143xabrcjlnuefml.setup(editor);
+  });
+  function Plugin () {
+  }
+
+  return Plugin;
+
+}());
+})();

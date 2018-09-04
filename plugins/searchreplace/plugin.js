@@ -1,1 +1,603 @@
-!function(){function a(a,b,c,d,e){function f(a,b){if(b=b||0,!a[0])throw"findAndReplaceDOMText cannot handle zero-length matches";var c=a.index;if(b>0){var d=a[b];if(!d)throw"Invalid capture group";c+=a[0].indexOf(d),a[0]=d}return[c,c+a[0].length,[a[0]]]}function g(a){var b;if(3===a.nodeType)return a.data;if(n[a.nodeName]&&!m[a.nodeName])return"";if(b="",(m[a.nodeName]||o[a.nodeName])&&(b+="\n"),a=a.firstChild)do b+=g(a);while(a=a.nextSibling);return b}function h(a,b,c){var d,e,f,g,h=[],i=0,j=a,k=b.shift(),l=0;a:for(;;){if((m[j.nodeName]||o[j.nodeName])&&i++,3===j.nodeType&&(!e&&j.length+i>=k[1]?(e=j,g=k[1]-i):d&&h.push(j),!d&&j.length+i>k[0]&&(d=j,f=k[0]-i),i+=j.length),d&&e){if(j=c({startNode:d,startNodeIndex:f,endNode:e,endNodeIndex:g,innerNodes:h,match:k[2],matchIndex:l}),i-=e.length-g,d=null,e=null,h=[],k=b.shift(),l++,!k)break}else{if((!n[j.nodeName]||m[j.nodeName])&&j.firstChild){j=j.firstChild;continue}if(j.nextSibling){j=j.nextSibling;continue}}for(;;){if(j.nextSibling){j=j.nextSibling;break}if(j.parentNode===a)break a;j=j.parentNode}}}function i(a){var b;if("function"!=typeof a){var c=a.nodeType?a:l.createElement(a);b=function(a,b){var d=c.cloneNode(!1);return d.setAttribute("data-mce-index",b),a&&d.appendChild(l.createTextNode(a)),d}}else b=a;return function(a){var c,d,e,f=a.startNode,g=a.endNode,h=a.matchIndex;if(f===g){var i=f;e=i.parentNode,a.startNodeIndex>0&&(c=l.createTextNode(i.data.substring(0,a.startNodeIndex)),e.insertBefore(c,i));var j=b(a.match[0],h);return e.insertBefore(j,i),a.endNodeIndex<i.length&&(d=l.createTextNode(i.data.substring(a.endNodeIndex)),e.insertBefore(d,i)),i.parentNode.removeChild(i),j}c=l.createTextNode(f.data.substring(0,a.startNodeIndex)),d=l.createTextNode(g.data.substring(a.endNodeIndex));for(var k=b(f.data.substring(a.startNodeIndex),h),m=[],n=0,o=a.innerNodes.length;o>n;++n){var p=a.innerNodes[n],q=b(p.data,h);p.parentNode.replaceChild(q,p),m.push(q)}var r=b(g.data.substring(0,a.endNodeIndex),h);return e=f.parentNode,e.insertBefore(c,f),e.insertBefore(k,f),e.removeChild(f),e=g.parentNode,e.insertBefore(r,g),e.insertBefore(d,g),e.removeChild(g),r}}var j,k,l,m,n,o,p=[],q=0;if(l=b.ownerDocument,m=e.getBlockElements(),n=e.getWhiteSpaceElements(),o=e.getShortEndedElements(),k=g(b)){if(a.global)for(;j=a.exec(k);)p.push(f(j,d));else j=k.match(a),p.push(f(j,d));return p.length&&(q=p.length,h(b,p,i(c))),q}}function b(b){function c(){function a(){e.statusbar.find("#next").disabled(!g(k+1).length),e.statusbar.find("#prev").disabled(!g(k-1).length)}function c(){tinymce.ui.MessageBox.alert("Could not find the specified string.",function(){e.find("#find")[0].focus()})}var d={},e=tinymce.ui.Factory.create({type:"window",layout:"flex",pack:"center",align:"center",onClose:function(){b.focus(),j.done()},onSubmit:function(b){var f,h,i,l;return b.preventDefault(),h=e.find("#case").checked(),l=e.find("#words").checked(),i=e.find("#find").value(),i.length?d.text==i&&d.caseState==h&&d.wholeWord==l?0===g(k+1).length?void c():(j.next(),void a()):(f=j.find(i,h,l),f||c(),e.statusbar.items().slice(1).disabled(0===f),a(),void(d={text:i,caseState:h,wholeWord:l})):(j.done(!1),void e.statusbar.items().slice(1).disabled(!0))},buttons:[{text:"Find",subtype:"primary",onclick:function(){e.submit()}},{text:"Replace",disabled:!0,onclick:function(){j.replace(e.find("#replace").value())||(e.statusbar.items().slice(1).disabled(!0),k=-1,d={})}},{text:"Replace all",disabled:!0,onclick:function(){j.replace(e.find("#replace").value(),!0,!0),e.statusbar.items().slice(1).disabled(!0),d={}}},{type:"spacer",flex:1},{text:"Prev",name:"prev",disabled:!0,onclick:function(){j.prev(),a()}},{text:"Next",name:"next",disabled:!0,onclick:function(){j.next(),a()}}],title:"Find and replace",items:{type:"form",padding:20,labelGap:30,spacing:10,items:[{type:"textbox",name:"find",size:40,label:"Find",value:b.selection.getNode().src},{type:"textbox",name:"replace",size:40,label:"Replace with"},{type:"checkbox",name:"case",text:"Match case",label:" "},{type:"checkbox",name:"words",text:"Whole words",label:" "}]}}).renderTo().reflow()}function d(a){var b=a.getAttribute("data-mce-index");return"number"==typeof b?""+b:b}function e(c){var d,e;return e=b.dom.create("span",{"data-mce-bogus":1}),e.className="mce-match-marker",d=b.getBody(),j.done(!1),a(c,d,e,!1,b.schema)}function f(a){var b=a.parentNode;a.firstChild&&b.insertBefore(a.firstChild,a),a.parentNode.removeChild(a)}function g(a){var c,e=[];if(c=tinymce.toArray(b.getBody().getElementsByTagName("span")),c.length)for(var f=0;f<c.length;f++){var g=d(c[f]);null!==g&&g.length&&g===a.toString()&&e.push(c[f])}return e}function h(a){var c=k,d=b.dom;a=a!==!1,a?c++:c--,d.removeClass(g(k),"mce-match-marker-selected");var e=g(c);return e.length?(d.addClass(g(c),"mce-match-marker-selected"),b.selection.scrollIntoView(e[0]),c):-1}function i(a){a.parentNode.removeChild(a)}var j=this,k=-1;j.init=function(a){a.addMenuItem("searchreplace",{text:"Find and replace",shortcut:"Meta+F",onclick:c,separator:"before",context:"edit"}),a.addButton("searchreplace",{tooltip:"Find and replace",shortcut:"Meta+F",onclick:c}),a.addCommand("SearchReplace",c),a.shortcuts.add("Meta+F","",c)},j.find=function(a,b,c){a=a.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,"\\$&"),a=c?"\\b"+a+"\\b":a;var d=e(new RegExp(a,b?"g":"gi"));return d&&(k=-1,k=h(!0)),d},j.next=function(){var a=h(!0);-1!==a&&(k=a)},j.prev=function(){var a=h(!1);-1!==a&&(k=a)},j.replace=function(a,c,e){var h,l,m,n,o,p,q=k;for(c=c!==!1,m=b.getBody(),l=tinymce.toArray(m.getElementsByTagName("span")),h=0;h<l.length;h++){var r=d(l[h]);if(null!==r&&r.length)if(n=o=parseInt(r,10),e||n===k){for(a.length?(l[h].firstChild.nodeValue=a,f(l[h])):i(l[h]);l[++h];)if(n=d(l[h]),null!==r&&r.length){if(n!==o){h--;break}i(l[h])}c&&q--}else o>k&&l[h].setAttribute("data-mce-index",o-1)}return b.undoManager.add(),k=q,c?(p=g(q+1).length>0,j.next()):(p=g(q-1).length>0,j.prev()),!e&&p},j.done=function(a){var c,e,g,h;for(e=tinymce.toArray(b.getBody().getElementsByTagName("span")),c=0;c<e.length;c++){var i=d(e[c]);null!==i&&i.length&&(i===k.toString()&&(g||(g=e[c].firstChild),h=e[c].firstChild),f(e[c]))}if(g&&h){var j=b.dom.createRng();return j.setStart(g,0),j.setEnd(h,h.data.length),a!==!1&&b.selection.setRng(j),j}}}tinymce.PluginManager.add("searchreplace",b)}();
+(function () {
+var searchreplace = (function () {
+  'use strict';
+
+  var Cell = function (initial) {
+    var value = initial;
+    var get = function () {
+      return value;
+    };
+    var set = function (v) {
+      value = v;
+    };
+    var clone = function () {
+      return Cell(get());
+    };
+    return {
+      get: get,
+      set: set,
+      clone: clone
+    };
+  };
+
+  var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+  var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+  function isContentEditableFalse(node) {
+    return node && node.nodeType === 1 && node.contentEditable === 'false';
+  }
+  function findAndReplaceDOMText(regex, node, replacementNode, captureGroup, schema) {
+    var m;
+    var matches = [];
+    var text, count = 0, doc;
+    var blockElementsMap, hiddenTextElementsMap, shortEndedElementsMap;
+    doc = node.ownerDocument;
+    blockElementsMap = schema.getBlockElements();
+    hiddenTextElementsMap = schema.getWhiteSpaceElements();
+    shortEndedElementsMap = schema.getShortEndedElements();
+    function getMatchIndexes(m, captureGroup) {
+      captureGroup = captureGroup || 0;
+      if (!m[0]) {
+        throw new Error('findAndReplaceDOMText cannot handle zero-length matches');
+      }
+      var index = m.index;
+      if (captureGroup > 0) {
+        var cg = m[captureGroup];
+        if (!cg) {
+          throw new Error('Invalid capture group');
+        }
+        index += m[0].indexOf(cg);
+        m[0] = cg;
+      }
+      return [
+        index,
+        index + m[0].length,
+        [m[0]]
+      ];
+    }
+    function getText(node) {
+      var txt;
+      if (node.nodeType === 3) {
+        return node.data;
+      }
+      if (hiddenTextElementsMap[node.nodeName] && !blockElementsMap[node.nodeName]) {
+        return '';
+      }
+      txt = '';
+      if (isContentEditableFalse(node)) {
+        return '\n';
+      }
+      if (blockElementsMap[node.nodeName] || shortEndedElementsMap[node.nodeName]) {
+        txt += '\n';
+      }
+      if (node = node.firstChild) {
+        do {
+          txt += getText(node);
+        } while (node = node.nextSibling);
+      }
+      return txt;
+    }
+    function stepThroughMatches(node, matches, replaceFn) {
+      var startNode, endNode, startNodeIndex, endNodeIndex, innerNodes = [], atIndex = 0, curNode = node, matchLocation = matches.shift(), matchIndex = 0;
+      out:
+        while (true) {
+          if (blockElementsMap[curNode.nodeName] || shortEndedElementsMap[curNode.nodeName] || isContentEditableFalse(curNode)) {
+            atIndex++;
+          }
+          if (curNode.nodeType === 3) {
+            if (!endNode && curNode.length + atIndex >= matchLocation[1]) {
+              endNode = curNode;
+              endNodeIndex = matchLocation[1] - atIndex;
+            } else if (startNode) {
+              innerNodes.push(curNode);
+            }
+            if (!startNode && curNode.length + atIndex > matchLocation[0]) {
+              startNode = curNode;
+              startNodeIndex = matchLocation[0] - atIndex;
+            }
+            atIndex += curNode.length;
+          }
+          if (startNode && endNode) {
+            curNode = replaceFn({
+              startNode: startNode,
+              startNodeIndex: startNodeIndex,
+              endNode: endNode,
+              endNodeIndex: endNodeIndex,
+              innerNodes: innerNodes,
+              match: matchLocation[2],
+              matchIndex: matchIndex
+            });
+            atIndex -= endNode.length - endNodeIndex;
+            startNode = null;
+            endNode = null;
+            innerNodes = [];
+            matchLocation = matches.shift();
+            matchIndex++;
+            if (!matchLocation) {
+              break;
+            }
+          } else if ((!hiddenTextElementsMap[curNode.nodeName] || blockElementsMap[curNode.nodeName]) && curNode.firstChild) {
+            if (!isContentEditableFalse(curNode)) {
+              curNode = curNode.firstChild;
+              continue;
+            }
+          } else if (curNode.nextSibling) {
+            curNode = curNode.nextSibling;
+            continue;
+          }
+          while (true) {
+            if (curNode.nextSibling) {
+              curNode = curNode.nextSibling;
+              break;
+            } else if (curNode.parentNode !== node) {
+              curNode = curNode.parentNode;
+            } else {
+              break out;
+            }
+          }
+        }
+    }
+    function genReplacer(nodeName) {
+      var makeReplacementNode;
+      if (typeof nodeName !== 'function') {
+        var stencilNode_1 = nodeName.nodeType ? nodeName : doc.createElement(nodeName);
+        makeReplacementNode = function (fill, matchIndex) {
+          var clone = stencilNode_1.cloneNode(false);
+          clone.setAttribute('data-mce-index', matchIndex);
+          if (fill) {
+            clone.appendChild(doc.createTextNode(fill));
+          }
+          return clone;
+        };
+      } else {
+        makeReplacementNode = nodeName;
+      }
+      return function (range) {
+        var before;
+        var after;
+        var parentNode;
+        var startNode = range.startNode;
+        var endNode = range.endNode;
+        var matchIndex = range.matchIndex;
+        if (startNode === endNode) {
+          var node_1 = startNode;
+          parentNode = node_1.parentNode;
+          if (range.startNodeIndex > 0) {
+            before = doc.createTextNode(node_1.data.substring(0, range.startNodeIndex));
+            parentNode.insertBefore(before, node_1);
+          }
+          var el = makeReplacementNode(range.match[0], matchIndex);
+          parentNode.insertBefore(el, node_1);
+          if (range.endNodeIndex < node_1.length) {
+            after = doc.createTextNode(node_1.data.substring(range.endNodeIndex));
+            parentNode.insertBefore(after, node_1);
+          }
+          node_1.parentNode.removeChild(node_1);
+          return el;
+        }
+        before = doc.createTextNode(startNode.data.substring(0, range.startNodeIndex));
+        after = doc.createTextNode(endNode.data.substring(range.endNodeIndex));
+        var elA = makeReplacementNode(startNode.data.substring(range.startNodeIndex), matchIndex);
+        var innerEls = [];
+        for (var i = 0, l = range.innerNodes.length; i < l; ++i) {
+          var innerNode = range.innerNodes[i];
+          var innerEl = makeReplacementNode(innerNode.data, matchIndex);
+          innerNode.parentNode.replaceChild(innerEl, innerNode);
+          innerEls.push(innerEl);
+        }
+        var elB = makeReplacementNode(endNode.data.substring(0, range.endNodeIndex), matchIndex);
+        parentNode = startNode.parentNode;
+        parentNode.insertBefore(before, startNode);
+        parentNode.insertBefore(elA, startNode);
+        parentNode.removeChild(startNode);
+        parentNode = endNode.parentNode;
+        parentNode.insertBefore(elB, endNode);
+        parentNode.insertBefore(after, endNode);
+        parentNode.removeChild(endNode);
+        return elB;
+      };
+    }
+    text = getText(node);
+    if (!text) {
+      return;
+    }
+    if (regex.global) {
+      while (m = regex.exec(text)) {
+        matches.push(getMatchIndexes(m, captureGroup));
+      }
+    } else {
+      m = text.match(regex);
+      matches.push(getMatchIndexes(m, captureGroup));
+    }
+    if (matches.length) {
+      count = matches.length;
+      stepThroughMatches(node, matches, genReplacer(replacementNode));
+    }
+    return count;
+  }
+  var $_97bkoek1jlnuec17 = { findAndReplaceDOMText: findAndReplaceDOMText };
+
+  var getElmIndex = function (elm) {
+    var value = elm.getAttribute('data-mce-index');
+    if (typeof value === 'number') {
+      return '' + value;
+    }
+    return value;
+  };
+  var markAllMatches = function (editor, currentIndexState, regex) {
+    var node, marker;
+    marker = editor.dom.create('span', { 'data-mce-bogus': 1 });
+    marker.className = 'mce-match-marker';
+    node = editor.getBody();
+    done(editor, currentIndexState, false);
+    return $_97bkoek1jlnuec17.findAndReplaceDOMText(regex, node, marker, false, editor.schema);
+  };
+  var unwrap = function (node) {
+    var parentNode = node.parentNode;
+    if (node.firstChild) {
+      parentNode.insertBefore(node.firstChild, node);
+    }
+    node.parentNode.removeChild(node);
+  };
+  var findSpansByIndex = function (editor, index) {
+    var nodes;
+    var spans = [];
+    nodes = global$1.toArray(editor.getBody().getElementsByTagName('span'));
+    if (nodes.length) {
+      for (var i = 0; i < nodes.length; i++) {
+        var nodeIndex = getElmIndex(nodes[i]);
+        if (nodeIndex === null || !nodeIndex.length) {
+          continue;
+        }
+        if (nodeIndex === index.toString()) {
+          spans.push(nodes[i]);
+        }
+      }
+    }
+    return spans;
+  };
+  var moveSelection = function (editor, currentIndexState, forward) {
+    var testIndex = currentIndexState.get();
+    var dom = editor.dom;
+    forward = forward !== false;
+    if (forward) {
+      testIndex++;
+    } else {
+      testIndex--;
+    }
+    dom.removeClass(findSpansByIndex(editor, currentIndexState.get()), 'mce-match-marker-selected');
+    var spans = findSpansByIndex(editor, testIndex);
+    if (spans.length) {
+      dom.addClass(findSpansByIndex(editor, testIndex), 'mce-match-marker-selected');
+      editor.selection.scrollIntoView(spans[0]);
+      return testIndex;
+    }
+    return -1;
+  };
+  var removeNode = function (dom, node) {
+    var parent = node.parentNode;
+    dom.remove(node);
+    if (dom.isEmpty(parent)) {
+      dom.remove(parent);
+    }
+  };
+  var find = function (editor, currentIndexState, text, matchCase, wholeWord) {
+    text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+    text = text.replace(/\s/g, '\\s');
+    text = wholeWord ? '\\b' + text + '\\b' : text;
+    var count = markAllMatches(editor, currentIndexState, new RegExp(text, matchCase ? 'g' : 'gi'));
+    if (count) {
+      currentIndexState.set(-1);
+      currentIndexState.set(moveSelection(editor, currentIndexState, true));
+    }
+    return count;
+  };
+  var next = function (editor, currentIndexState) {
+    var index = moveSelection(editor, currentIndexState, true);
+    if (index !== -1) {
+      currentIndexState.set(index);
+    }
+  };
+  var prev = function (editor, currentIndexState) {
+    var index = moveSelection(editor, currentIndexState, false);
+    if (index !== -1) {
+      currentIndexState.set(index);
+    }
+  };
+  var isMatchSpan = function (node) {
+    var matchIndex = getElmIndex(node);
+    return matchIndex !== null && matchIndex.length > 0;
+  };
+  var replace = function (editor, currentIndexState, text, forward, all) {
+    var i, nodes, node, matchIndex, currentMatchIndex, nextIndex = currentIndexState.get(), hasMore;
+    forward = forward !== false;
+    node = editor.getBody();
+    nodes = global$1.grep(global$1.toArray(node.getElementsByTagName('span')), isMatchSpan);
+    for (i = 0; i < nodes.length; i++) {
+      var nodeIndex = getElmIndex(nodes[i]);
+      matchIndex = currentMatchIndex = parseInt(nodeIndex, 10);
+      if (all || matchIndex === currentIndexState.get()) {
+        if (text.length) {
+          nodes[i].firstChild.nodeValue = text;
+          unwrap(nodes[i]);
+        } else {
+          removeNode(editor.dom, nodes[i]);
+        }
+        while (nodes[++i]) {
+          matchIndex = parseInt(getElmIndex(nodes[i]), 10);
+          if (matchIndex === currentMatchIndex) {
+            removeNode(editor.dom, nodes[i]);
+          } else {
+            i--;
+            break;
+          }
+        }
+        if (forward) {
+          nextIndex--;
+        }
+      } else if (currentMatchIndex > currentIndexState.get()) {
+        nodes[i].setAttribute('data-mce-index', currentMatchIndex - 1);
+      }
+    }
+    currentIndexState.set(nextIndex);
+    if (forward) {
+      hasMore = hasNext(editor, currentIndexState);
+      next(editor, currentIndexState);
+    } else {
+      hasMore = hasPrev(editor, currentIndexState);
+      prev(editor, currentIndexState);
+    }
+    return !all && hasMore;
+  };
+  var done = function (editor, currentIndexState, keepEditorSelection) {
+    var i, nodes, startContainer, endContainer;
+    nodes = global$1.toArray(editor.getBody().getElementsByTagName('span'));
+    for (i = 0; i < nodes.length; i++) {
+      var nodeIndex = getElmIndex(nodes[i]);
+      if (nodeIndex !== null && nodeIndex.length) {
+        if (nodeIndex === currentIndexState.get().toString()) {
+          if (!startContainer) {
+            startContainer = nodes[i].firstChild;
+          }
+          endContainer = nodes[i].firstChild;
+        }
+        unwrap(nodes[i]);
+      }
+    }
+    if (startContainer && endContainer) {
+      var rng = editor.dom.createRng();
+      rng.setStart(startContainer, 0);
+      rng.setEnd(endContainer, endContainer.data.length);
+      if (keepEditorSelection !== false) {
+        editor.selection.setRng(rng);
+      }
+      return rng;
+    }
+  };
+  var hasNext = function (editor, currentIndexState) {
+    return findSpansByIndex(editor, currentIndexState.get() + 1).length > 0;
+  };
+  var hasPrev = function (editor, currentIndexState) {
+    return findSpansByIndex(editor, currentIndexState.get() - 1).length > 0;
+  };
+  var $_48a5v5jzjlnuec11 = {
+    done: done,
+    find: find,
+    next: next,
+    prev: prev,
+    replace: replace,
+    hasNext: hasNext,
+    hasPrev: hasPrev
+  };
+
+  var get = function (editor, currentIndexState) {
+    var done = function (keepEditorSelection) {
+      return $_48a5v5jzjlnuec11.done(editor, currentIndexState, keepEditorSelection);
+    };
+    var find = function (text, matchCase, wholeWord) {
+      return $_48a5v5jzjlnuec11.find(editor, currentIndexState, text, matchCase, wholeWord);
+    };
+    var next = function () {
+      return $_48a5v5jzjlnuec11.next(editor, currentIndexState);
+    };
+    var prev = function () {
+      return $_48a5v5jzjlnuec11.prev(editor, currentIndexState);
+    };
+    var replace = function (text, forward, all) {
+      return $_48a5v5jzjlnuec11.replace(editor, currentIndexState, text, forward, all);
+    };
+    return {
+      done: done,
+      find: find,
+      next: next,
+      prev: prev,
+      replace: replace
+    };
+  };
+  var $_3ejc1vjyjlnuec0y = { get: get };
+
+  var open = function (editor, currentIndexState) {
+    var last = {}, selectedText;
+    editor.undoManager.add();
+    selectedText = global$1.trim(editor.selection.getContent({ format: 'text' }));
+    function updateButtonStates() {
+      win.statusbar.find('#next').disabled($_48a5v5jzjlnuec11.hasNext(editor, currentIndexState) === false);
+      win.statusbar.find('#prev').disabled($_48a5v5jzjlnuec11.hasPrev(editor, currentIndexState) === false);
+    }
+    function notFoundAlert() {
+      editor.windowManager.alert('Could not find the specified string.', function () {
+        win.find('#find')[0].focus();
+      });
+    }
+    var win = editor.windowManager.open({
+      layout: 'flex',
+      pack: 'center',
+      align: 'center',
+      onClose: function () {
+        editor.focus();
+        $_48a5v5jzjlnuec11.done(editor, currentIndexState);
+        editor.undoManager.add();
+      },
+      onSubmit: function (e) {
+        var count, caseState, text, wholeWord;
+        e.preventDefault();
+        caseState = win.find('#case').checked();
+        wholeWord = win.find('#words').checked();
+        text = win.find('#find').value();
+        if (!text.length) {
+          $_48a5v5jzjlnuec11.done(editor, currentIndexState, false);
+          win.statusbar.items().slice(1).disabled(true);
+          return;
+        }
+        if (last.text === text && last.caseState === caseState && last.wholeWord === wholeWord) {
+          if (!$_48a5v5jzjlnuec11.hasNext(editor, currentIndexState)) {
+            notFoundAlert();
+            return;
+          }
+          $_48a5v5jzjlnuec11.next(editor, currentIndexState);
+          updateButtonStates();
+          return;
+        }
+        count = $_48a5v5jzjlnuec11.find(editor, currentIndexState, text, caseState, wholeWord);
+        if (!count) {
+          notFoundAlert();
+        }
+        win.statusbar.items().slice(1).disabled(count === 0);
+        updateButtonStates();
+        last = {
+          text: text,
+          caseState: caseState,
+          wholeWord: wholeWord
+        };
+      },
+      buttons: [
+        {
+          text: 'Find',
+          subtype: 'primary',
+          onclick: function () {
+            win.submit();
+          }
+        },
+        {
+          text: 'Replace',
+          disabled: true,
+          onclick: function () {
+            if (!$_48a5v5jzjlnuec11.replace(editor, currentIndexState, win.find('#replace').value())) {
+              win.statusbar.items().slice(1).disabled(true);
+              currentIndexState.set(-1);
+              last = {};
+            }
+          }
+        },
+        {
+          text: 'Replace all',
+          disabled: true,
+          onclick: function () {
+            $_48a5v5jzjlnuec11.replace(editor, currentIndexState, win.find('#replace').value(), true, true);
+            win.statusbar.items().slice(1).disabled(true);
+            last = {};
+          }
+        },
+        {
+          type: 'spacer',
+          flex: 1
+        },
+        {
+          text: 'Prev',
+          name: 'prev',
+          disabled: true,
+          onclick: function () {
+            $_48a5v5jzjlnuec11.prev(editor, currentIndexState);
+            updateButtonStates();
+          }
+        },
+        {
+          text: 'Next',
+          name: 'next',
+          disabled: true,
+          onclick: function () {
+            $_48a5v5jzjlnuec11.next(editor, currentIndexState);
+            updateButtonStates();
+          }
+        }
+      ],
+      title: 'Find and replace',
+      items: {
+        type: 'form',
+        padding: 20,
+        labelGap: 30,
+        spacing: 10,
+        items: [
+          {
+            type: 'textbox',
+            name: 'find',
+            size: 40,
+            label: 'Find',
+            value: selectedText
+          },
+          {
+            type: 'textbox',
+            name: 'replace',
+            size: 40,
+            label: 'Replace with'
+          },
+          {
+            type: 'checkbox',
+            name: 'case',
+            text: 'Match case',
+            label: ' '
+          },
+          {
+            type: 'checkbox',
+            name: 'words',
+            text: 'Whole words',
+            label: ' '
+          }
+        ]
+      }
+    });
+  };
+  var $_a4ees4k3jlnuec1d = { open: open };
+
+  var register = function (editor, currentIndexState) {
+    editor.addCommand('SearchReplace', function () {
+      $_a4ees4k3jlnuec1d.open(editor, currentIndexState);
+    });
+  };
+  var $_44s0i9k2jlnuec1b = { register: register };
+
+  var showDialog = function (editor, currentIndexState) {
+    return function () {
+      $_a4ees4k3jlnuec1d.open(editor, currentIndexState);
+    };
+  };
+  var register$1 = function (editor, currentIndexState) {
+    editor.addMenuItem('searchreplace', {
+      text: 'Find and replace',
+      shortcut: 'Meta+F',
+      onclick: showDialog(editor, currentIndexState),
+      separator: 'before',
+      context: 'edit'
+    });
+    editor.addButton('searchreplace', {
+      tooltip: 'Find and replace',
+      onclick: showDialog(editor, currentIndexState)
+    });
+    editor.shortcuts.add('Meta+F', '', showDialog(editor, currentIndexState));
+  };
+  var $_5ocsypk4jlnuec1h = { register: register$1 };
+
+  global.add('searchreplace', function (editor) {
+    var currentIndexState = Cell(-1);
+    $_44s0i9k2jlnuec1b.register(editor, currentIndexState);
+    $_5ocsypk4jlnuec1h.register(editor, currentIndexState);
+    return $_3ejc1vjyjlnuec0y.get(editor, currentIndexState);
+  });
+  function Plugin () {
+  }
+
+  return Plugin;
+
+}());
+})();

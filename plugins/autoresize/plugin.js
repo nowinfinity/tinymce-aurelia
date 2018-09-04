@@ -1,1 +1,169 @@
-tinymce.PluginManager.add("autoresize",function(a){function b(){return a.plugins.fullscreen&&a.plugins.fullscreen.isFullscreen()}function c(d){var g,h,i,j,k,l,m,n,o,p,q,r,s=tinymce.DOM;if(h=a.getDoc()){if(i=h.body,j=h.documentElement,k=e.autoresize_min_height,!i||d&&"setcontent"===d.type&&d.initial||b())return void(i&&j&&(i.style.overflowY="auto",j.style.overflowY="auto"));m=a.dom.getStyle(i,"margin-top",!0),n=a.dom.getStyle(i,"margin-bottom",!0),o=a.dom.getStyle(i,"padding-top",!0),p=a.dom.getStyle(i,"padding-bottom",!0),q=a.dom.getStyle(i,"border-top-width",!0),r=a.dom.getStyle(i,"border-bottom-width",!0),l=i.offsetHeight+parseInt(m,10)+parseInt(n,10)+parseInt(o,10)+parseInt(p,10)+parseInt(q,10)+parseInt(r,10),(isNaN(l)||0>=l)&&(l=tinymce.Env.ie?i.scrollHeight:tinymce.Env.webkit&&0===i.clientHeight?0:i.offsetHeight),l>e.autoresize_min_height&&(k=l),e.autoresize_max_height&&l>e.autoresize_max_height?(k=e.autoresize_max_height,i.style.overflowY="auto",j.style.overflowY="auto"):(i.style.overflowY="hidden",j.style.overflowY="hidden",i.scrollTop=0),k!==f&&(g=k-f,s.setStyle(a.iframeElement,"height",k+"px"),f=k,tinymce.isWebKit&&0>g&&c(d))}}function d(a,b,e){setTimeout(function(){c({}),a--?d(a,b,e):e&&e()},b)}var e=a.settings,f=0;a.settings.inline||(e.autoresize_min_height=parseInt(a.getParam("autoresize_min_height",a.getElement().offsetHeight),10),e.autoresize_max_height=parseInt(a.getParam("autoresize_max_height",0),10),a.on("init",function(){var b,c;b=a.getParam("autoresize_overflow_padding",1),c=a.getParam("autoresize_bottom_margin",50),b!==!1&&a.dom.setStyles(a.getBody(),{paddingLeft:b,paddingRight:b}),c!==!1&&a.dom.setStyles(a.getBody(),{paddingBottom:c})}),a.on("nodechange setcontent keyup FullscreenStateChanged",c),a.getParam("autoresize_on_init",!0)&&a.on("init",function(){d(20,100,function(){d(5,1e3)})}),a.addCommand("mceAutoResize",c))});
+(function () {
+var autoresize = (function () {
+  'use strict';
+
+  var Cell = function (initial) {
+    var value = initial;
+    var get = function () {
+      return value;
+    };
+    var set = function (v) {
+      value = v;
+    };
+    var clone = function () {
+      return Cell(get());
+    };
+    return {
+      get: get,
+      set: set,
+      clone: clone
+    };
+  };
+
+  var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+  var global$1 = tinymce.util.Tools.resolve('tinymce.Env');
+
+  var global$2 = tinymce.util.Tools.resolve('tinymce.util.Delay');
+
+  var getAutoResizeMinHeight = function (editor) {
+    return parseInt(editor.getParam('autoresize_min_height', editor.getElement().offsetHeight), 10);
+  };
+  var getAutoResizeMaxHeight = function (editor) {
+    return parseInt(editor.getParam('autoresize_max_height', 0), 10);
+  };
+  var getAutoResizeOverflowPadding = function (editor) {
+    return editor.getParam('autoresize_overflow_padding', 1);
+  };
+  var getAutoResizeBottomMargin = function (editor) {
+    return editor.getParam('autoresize_bottom_margin', 50);
+  };
+  var shouldAutoResizeOnInit = function (editor) {
+    return editor.getParam('autoresize_on_init', true);
+  };
+  var $_aq3jw93jlnue9rq = {
+    getAutoResizeMinHeight: getAutoResizeMinHeight,
+    getAutoResizeMaxHeight: getAutoResizeMaxHeight,
+    getAutoResizeOverflowPadding: getAutoResizeOverflowPadding,
+    getAutoResizeBottomMargin: getAutoResizeBottomMargin,
+    shouldAutoResizeOnInit: shouldAutoResizeOnInit
+  };
+
+  var isFullscreen = function (editor) {
+    return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
+  };
+  var wait = function (editor, oldSize, times, interval, callback) {
+    global$2.setEditorTimeout(editor, function () {
+      resize(editor, oldSize);
+      if (times--) {
+        wait(editor, oldSize, times, interval, callback);
+      } else if (callback) {
+        callback();
+      }
+    }, interval);
+  };
+  var toggleScrolling = function (editor, state) {
+    var body = editor.getBody();
+    if (body) {
+      body.style.overflowY = state ? '' : 'hidden';
+      if (!state) {
+        body.scrollTop = 0;
+      }
+    }
+  };
+  var resize = function (editor, oldSize) {
+    var deltaSize, doc, body, resizeHeight, myHeight;
+    var marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
+    var dom = editor.dom;
+    doc = editor.getDoc();
+    if (!doc) {
+      return;
+    }
+    if (isFullscreen(editor)) {
+      toggleScrolling(editor, true);
+      return;
+    }
+    body = doc.body;
+    resizeHeight = $_aq3jw93jlnue9rq.getAutoResizeMinHeight(editor);
+    marginTop = dom.getStyle(body, 'margin-top', true);
+    marginBottom = dom.getStyle(body, 'margin-bottom', true);
+    paddingTop = dom.getStyle(body, 'padding-top', true);
+    paddingBottom = dom.getStyle(body, 'padding-bottom', true);
+    borderTop = dom.getStyle(body, 'border-top-width', true);
+    borderBottom = dom.getStyle(body, 'border-bottom-width', true);
+    myHeight = body.offsetHeight + parseInt(marginTop, 10) + parseInt(marginBottom, 10) + parseInt(paddingTop, 10) + parseInt(paddingBottom, 10) + parseInt(borderTop, 10) + parseInt(borderBottom, 10);
+    if (isNaN(myHeight) || myHeight <= 0) {
+      myHeight = global$1.ie ? body.scrollHeight : global$1.webkit && body.clientHeight === 0 ? 0 : body.offsetHeight;
+    }
+    if (myHeight > $_aq3jw93jlnue9rq.getAutoResizeMinHeight(editor)) {
+      resizeHeight = myHeight;
+    }
+    var maxHeight = $_aq3jw93jlnue9rq.getAutoResizeMaxHeight(editor);
+    if (maxHeight && myHeight > maxHeight) {
+      resizeHeight = maxHeight;
+      toggleScrolling(editor, true);
+    } else {
+      toggleScrolling(editor, false);
+    }
+    if (resizeHeight !== oldSize.get()) {
+      deltaSize = resizeHeight - oldSize.get();
+      dom.setStyle(editor.iframeElement, 'height', resizeHeight + 'px');
+      oldSize.set(resizeHeight);
+      if (global$1.webkit && deltaSize < 0) {
+        resize(editor, oldSize);
+      }
+    }
+  };
+  var setup = function (editor, oldSize) {
+    editor.on('init', function () {
+      var overflowPadding, bottomMargin;
+      var dom = editor.dom;
+      overflowPadding = $_aq3jw93jlnue9rq.getAutoResizeOverflowPadding(editor);
+      bottomMargin = $_aq3jw93jlnue9rq.getAutoResizeBottomMargin(editor);
+      if (overflowPadding !== false) {
+        dom.setStyles(editor.getBody(), {
+          paddingLeft: overflowPadding,
+          paddingRight: overflowPadding
+        });
+      }
+      if (bottomMargin !== false) {
+        dom.setStyles(editor.getBody(), { paddingBottom: bottomMargin });
+      }
+    });
+    editor.on('nodechange setcontent keyup FullscreenStateChanged', function (e) {
+      resize(editor, oldSize);
+    });
+    if ($_aq3jw93jlnue9rq.shouldAutoResizeOnInit(editor)) {
+      editor.on('init', function () {
+        wait(editor, oldSize, 20, 100, function () {
+          wait(editor, oldSize, 5, 1000);
+        });
+      });
+    }
+  };
+  var $_d9550690jlnue9ri = {
+    setup: setup,
+    resize: resize
+  };
+
+  var register = function (editor, oldSize) {
+    editor.addCommand('mceAutoResize', function () {
+      $_d9550690jlnue9ri.resize(editor, oldSize);
+    });
+  };
+  var $_2pyv1r8zjlnue9rf = { register: register };
+
+  global.add('autoresize', function (editor) {
+    if (!editor.inline) {
+      var oldSize = Cell(0);
+      $_2pyv1r8zjlnue9rf.register(editor, oldSize);
+      $_d9550690jlnue9ri.setup(editor, oldSize);
+    }
+  });
+  function Plugin () {
+  }
+
+  return Plugin;
+
+}());
+})();
