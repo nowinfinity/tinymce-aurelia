@@ -1,1 +1,10144 @@
-!function(a,b){"use strict";function c(a,b){for(var c,d=[],g=0;g<a.length;++g){if(c=f[a[g]]||e(a[g]),!c)throw"module definition dependecy not found: "+a[g];d.push(c)}b.apply(null,d)}function d(a,d,e){if("string"!=typeof a)throw"invalid module definition, module id must be defined and be a string";if(d===b)throw"invalid module definition, dependencies must be specified";if(e===b)throw"invalid module definition, definition function must be specified";c(d,function(){f[a]=e.apply(null,arguments)})}function e(b){for(var c=a,d=b.split(/[.\/]/),e=0;e<d.length;++e){if(!c[d[e]])return;c=c[d[e]]}return c}var f={};d("tinymce/tableplugin/Utils",["tinymce/Env"],function(a){function b(a,b){return parseInt(a.getAttribute(b)||1,10)}function c(b){(!a.ie||a.ie>10)&&(b.innerHTML='<br data-mce-bogus="1" />')}return{getSpanVal:b,paddCell:c}}),d("tinymce/tableplugin/TableGrid",["tinymce/util/Tools","tinymce/Env","tinymce/tableplugin/Utils"],function(a,c,d){var e=a.each,f=d.getSpanVal;return function(g,h){function i(){var a=0;G=[],H=0,e(["thead","tbody","tfoot"],function(b){var c=M.select("> "+b+" tr",h);e(c,function(c,d){d+=a,e(M.select("> td, > th",c),function(a,c){var e,g,h,i;if(G[d])for(;G[d][c];)c++;for(h=f(a,"rowspan"),i=f(a,"colspan"),g=d;d+h>g;g++)for(G[g]||(G[g]=[]),e=c;c+i>e;e++)G[g][e]={part:b,real:g==d&&e==c,elm:a,rowspan:h,colspan:i};H=Math.max(H,c+1)})}),a+=c.length})}function j(a,b){return a=a.cloneNode(b),a.removeAttribute("id"),a}function k(a,b){var c;return c=G[b],c?c[a]:void 0}function l(a,b,c){a&&(c=parseInt(c,10),1===c?a.removeAttribute(b,1):a.setAttribute(b,c,1))}function m(a){return a&&(M.hasClass(a.elm,"mce-item-selected")||a==K)}function n(){var a=[];return e(h.rows,function(b){e(b.cells,function(c){return M.hasClass(c,"mce-item-selected")||K&&c==K.elm?(a.push(b),!1):void 0})}),a}function o(){var a=M.createRng();a.setStartAfter(h),a.setEndAfter(h),L.setRng(a),M.remove(h)}function p(b){var f,h={};return g.settings.table_clone_elements!==!1&&(h=a.makeMap((g.settings.table_clone_elements||"strong em b i span font h1 h2 h3 h4 h5 h6 p div").toUpperCase(),/[ ,]/)),a.walk(b,function(a){var d;return 3==a.nodeType?(e(M.getParents(a.parentNode,null,b).reverse(),function(a){h[a.nodeName]&&(a=j(a,!1),f?d&&d.appendChild(a):f=d=a,d=a)}),d&&(d.innerHTML=c.ie?"&nbsp;":'<br data-mce-bogus="1" />'),!1):void 0},"childNodes"),b=j(b,!1),l(b,"rowSpan",1),l(b,"colSpan",1),f?b.appendChild(f):d.paddCell(b),b}function q(){var a,b=M.createRng();return e(M.select("tr",h),function(a){0===a.cells.length&&M.remove(a)}),0===M.select("tr",h).length?(b.setStartBefore(h),b.setEndBefore(h),L.setRng(b),void M.remove(h)):(e(M.select("thead,tbody,tfoot",h),function(a){0===a.rows.length&&M.remove(a)}),i(),void(I&&(a=G[Math.min(G.length-1,I.y)],a&&(L.select(a[Math.min(a.length-1,I.x)].elm,!0),L.collapse(!0)))))}function r(a,b,c,d){var e,f,g,h,i;for(e=G[b][a].elm.parentNode,g=1;c>=g;g++)if(e=M.getNext(e,"tr")){for(f=a;f>=0;f--)if(i=G[b+g][f].elm,i.parentNode==e){for(h=1;d>=h;h++)M.insertAfter(p(i),i);break}if(-1==f)for(h=1;d>=h;h++)e.insertBefore(p(e.cells[0]),e.cells[0])}}function s(){e(G,function(a,b){e(a,function(a,c){var d,e,g;if(m(a)&&(a=a.elm,d=f(a,"colspan"),e=f(a,"rowspan"),d>1||e>1)){for(l(a,"rowSpan",1),l(a,"colSpan",1),g=0;d-1>g;g++)M.insertAfter(p(a),a);r(c,b,e-1,d)}})})}function t(b,c,d){var f,g,h,j,n,o,p,r,t,u,v;if(b?(f=B(b),g=f.x,h=f.y,j=g+(c-1),n=h+(d-1)):(I=J=null,e(G,function(a,b){e(a,function(a,c){m(a)&&(I||(I={x:c,y:b}),J={x:c,y:b})})}),I&&(g=I.x,h=I.y,j=J.x,n=J.y)),r=k(g,h),t=k(j,n),r&&t&&r.part==t.part){for(s(),i(),r=k(g,h).elm,l(r,"colSpan",j-g+1),l(r,"rowSpan",n-h+1),p=h;n>=p;p++)for(o=g;j>=o;o++)G[p]&&G[p][o]&&(b=G[p][o].elm,b!=r&&(u=a.grep(b.childNodes),e(u,function(a){r.appendChild(a)}),u.length&&(u=a.grep(r.childNodes),v=0,e(u,function(a){"BR"==a.nodeName&&M.getAttrib(a,"data-mce-bogus")&&v++<u.length-1&&r.removeChild(a)})),M.remove(b)));q()}}function u(a){var c,d,g,h,i,k,n,o,q;if(e(G,function(b,d){return e(b,function(b){return m(b)&&(b=b.elm,i=b.parentNode,k=j(i,!1),c=d,a)?!1:void 0}),a?!c:void 0}),c!==b){for(h=0;h<G[0].length;h++)if(G[c][h]&&(d=G[c][h].elm,d!=g)){if(a){if(c>0&&G[c-1][h]&&(o=G[c-1][h].elm,q=f(o,"rowSpan"),q>1)){l(o,"rowSpan",q+1);continue}}else if(q=f(d,"rowspan"),q>1){l(d,"rowSpan",q+1);continue}n=p(d),l(n,"colSpan",d.colSpan),k.appendChild(n),g=d}k.hasChildNodes()&&(a?i.parentNode.insertBefore(k,i):M.insertAfter(k,i))}}function v(a){var b,c;e(G,function(c){return e(c,function(c,d){return m(c)&&(b=d,a)?!1:void 0}),a?!b:void 0}),e(G,function(d,e){var g,h,i;d[b]&&(g=d[b].elm,g!=c&&(i=f(g,"colspan"),h=f(g,"rowspan"),1==i?a?(g.parentNode.insertBefore(p(g),g),r(b,e,h-1,i)):(M.insertAfter(p(g),g),r(b,e,h-1,i)):l(g,"colSpan",g.colSpan+1),c=g))})}function w(){var b=[];e(G,function(c){e(c,function(c,d){m(c)&&-1===a.inArray(b,d)&&(e(G,function(a){var b,c=a[d].elm;b=f(c,"colSpan"),b>1?l(c,"colSpan",b-1):M.remove(c)}),b.push(d))})}),q()}function x(){function a(a){var b,c;e(a.cells,function(a){var c=f(a,"rowSpan");c>1&&(l(a,"rowSpan",c-1),b=B(a),r(b.x,b.y,1,1))}),b=B(a.cells[0]),e(G[b.y],function(a){var b;a=a.elm,a!=c&&(b=f(a,"rowSpan"),1>=b?M.remove(a):l(a,"rowSpan",b-1),c=a)})}var b;b=n(),e(b.reverse(),function(b){a(b)}),q()}function y(){var a=n();return M.remove(a),q(),a}function z(){var a=n();return e(a,function(b,c){a[c]=j(b,!0)}),a}function A(a,b){var c=n(),d=c[b?0:c.length-1],f=d.cells.length;a&&(e(G,function(a){var b;return f=0,e(a,function(a){a.real&&(f+=a.colspan),a.elm.parentNode==d&&(b=1)}),b?!1:void 0}),b||a.reverse(),e(a,function(a){var c,e,g=a.cells.length;for(c=0;g>c;c++)e=a.cells[c],l(e,"colSpan",1),l(e,"rowSpan",1);for(c=g;f>c;c++)a.appendChild(p(a.cells[g-1]));for(c=f;g>c;c++)M.remove(a.cells[c]);b?d.parentNode.insertBefore(a,d):M.insertAfter(a,d)}),M.removeClass(M.select("td.mce-item-selected,th.mce-item-selected"),"mce-item-selected"))}function B(a){var b;return e(G,function(c,d){return e(c,function(c,e){return c.elm==a?(b={x:e,y:d},!1):void 0}),!b}),b}function C(a){I=B(a)}function D(){var a,b;return a=b=0,e(G,function(c,d){e(c,function(c,e){var f,g;m(c)&&(c=G[d][e],e>a&&(a=e),d>b&&(b=d),c.real&&(f=c.colspan-1,g=c.rowspan-1,f&&e+f>a&&(a=e+f),g&&d+g>b&&(b=d+g)))})}),{x:a,y:b}}function E(a){var b,c,d,e,f,g,h,i,j,k;if(J=B(a),I&&J){for(b=Math.min(I.x,J.x),c=Math.min(I.y,J.y),d=Math.max(I.x,J.x),e=Math.max(I.y,J.y),f=d,g=e,k=c;g>=k;k++)a=G[k][b],a.real||b-(a.colspan-1)<b&&(b-=a.colspan-1);for(j=b;f>=j;j++)a=G[c][j],a.real||c-(a.rowspan-1)<c&&(c-=a.rowspan-1);for(k=c;e>=k;k++)for(j=b;d>=j;j++)a=G[k][j],a.real&&(h=a.colspan-1,i=a.rowspan-1,h&&j+h>f&&(f=j+h),i&&k+i>g&&(g=k+i));for(M.removeClass(M.select("td.mce-item-selected,th.mce-item-selected"),"mce-item-selected"),k=c;g>=k;k++)for(j=b;f>=j;j++)G[k][j]&&M.addClass(G[k][j].elm,"mce-item-selected")}}function F(a,b){var c,d,e;c=B(a),d=c.y*H+c.x;do{if(d+=b,e=k(d%H,Math.floor(d/H)),!e)break;if(e.elm!=a)return L.select(e.elm,!0),M.isEmpty(e.elm)&&L.collapse(!0),!0}while(e.elm==a);return!1}var G,H,I,J,K,L=g.selection,M=L.dom;h=h||M.getParent(L.getStart(),"table"),i(),K=M.getParent(L.getStart(),"th,td"),K&&(I=B(K),J=D(),K=k(I.x,I.y)),a.extend(this,{deleteTable:o,split:s,merge:t,insertRow:u,insertCol:v,deleteCols:w,deleteRows:x,cutRows:y,copyRows:z,pasteRows:A,getPos:B,setStartCell:C,setEndCell:E,moveRelIdx:F,refresh:i})}}),d("tinymce/tableplugin/Quirks",["tinymce/util/VK","tinymce/Env","tinymce/util/Tools","tinymce/tableplugin/Utils"],function(a,b,c,d){var e=c.each,f=d.getSpanVal;return function(g){function h(){function b(b){function c(a,c){var e=a?"previousSibling":"nextSibling",f=g.dom.getParent(c,"tr"),h=f[e];if(h)return q(g,c,h,a),b.preventDefault(),!0;var k=g.dom.getParent(f,"table"),l=f.parentNode,m=l.nodeName.toLowerCase();if("tbody"===m||m===(a?"tfoot":"thead")){var n=d(a,k,l,"tbody");if(null!==n)return i(a,n,c)}return j(a,f,e,k)}function d(a,b,c,d){var e=g.dom.select(">"+d,b),f=e.indexOf(c);if(a&&0===f||!a&&f===e.length-1)return h(a,b);if(-1===f){var i="thead"===c.tagName.toLowerCase()?0:e.length-1;return e[i]}return e[f+(a?-1:1)]}function h(a,b){var c=a?"thead":"tfoot",d=g.dom.select(">"+c,b);return 0!==d.length?d[0]:null}function i(a,c,d){var e=k(c,a);return e&&q(g,d,e,a),b.preventDefault(),!0}function j(a,d,e,f){var h=f[e];if(h)return l(h),!0;var i=g.dom.getParent(f,"td,th");if(i)return c(a,i,b);var j=k(d,!a);return l(j),b.preventDefault(),!1}function k(a,b){var c=a&&a[b?"lastChild":"firstChild"];return c&&"BR"===c.nodeName?g.dom.getParent(c,"td,th"):c}function l(a){g.selection.setCursorLocation(a,0)}function m(){return t==a.UP||t==a.DOWN}function n(a){var b=a.selection.getNode(),c=a.dom.getParent(b,"tr");return null!==c}function o(a){for(var b=0,c=a;c.previousSibling;)c=c.previousSibling,b+=f(c,"colspan");return b}function p(a,b){var c=0,d=0;return e(a.children,function(a,e){return c+=f(a,"colspan"),d=e,c>b?!1:void 0}),d}function q(a,b,c,d){var e=o(g.dom.getParent(b,"td,th")),f=p(c,e),h=c.childNodes[f],i=k(h,d);l(i||h)}function r(a){var b=g.selection.getNode(),c=g.dom.getParent(b,"td,th"),d=g.dom.getParent(a,"td,th");return c&&c!==d&&s(c,d)}function s(a,b){return g.dom.getParent(a,"TABLE")===g.dom.getParent(b,"TABLE")}var t=b.keyCode;if(m()&&n(g)){var u=g.selection.getNode();setTimeout(function(){r(u)&&c(!b.shiftKey&&t===a.UP,u,b)},0)}}g.on("KeyDown",function(a){b(a)})}function i(){function a(a,b){var c,d=b.ownerDocument,e=d.createRange();return e.setStartBefore(b),e.setEnd(a.endContainer,a.endOffset),c=d.createElement("body"),c.appendChild(e.cloneContents()),0===c.innerHTML.replace(/<(br|img|object|embed|input|textarea)[^>]*>/gi,"-").replace(/<[^>]+>/g,"").length}g.on("KeyDown",function(b){var c,d,e=g.dom;(37==b.keyCode||38==b.keyCode)&&(c=g.selection.getRng(),d=e.getParent(c.startContainer,"table"),d&&g.getBody().firstChild==d&&a(c,d)&&(c=e.createRng(),c.setStartBefore(d),c.setEndBefore(d),g.selection.setRng(c),b.preventDefault()))})}function j(){g.on("KeyDown SetContent VisualAid",function(){var a;for(a=g.getBody().lastChild;a;a=a.previousSibling)if(3==a.nodeType){if(a.nodeValue.length>0)break}else if(1==a.nodeType&&("BR"==a.tagName||!a.getAttribute("data-mce-bogus")))break;a&&"TABLE"==a.nodeName&&(g.settings.forced_root_block?g.dom.add(g.getBody(),g.settings.forced_root_block,g.settings.forced_root_block_attrs,b.ie&&b.ie<11?"&nbsp;":'<br data-mce-bogus="1" />'):g.dom.add(g.getBody(),"br",{"data-mce-bogus":"1"}))}),g.on("PreProcess",function(a){var b=a.node.lastChild;b&&("BR"==b.nodeName||1==b.childNodes.length&&("BR"==b.firstChild.nodeName||"\xa0"==b.firstChild.nodeValue))&&b.previousSibling&&"TABLE"==b.previousSibling.nodeName&&g.dom.remove(b)})}function k(){function a(a,b,c,d){var e,f,g,h=3,i=a.dom.getParent(b.startContainer,"TABLE");return i&&(e=i.parentNode),f=b.startContainer.nodeType==h&&0===b.startOffset&&0===b.endOffset&&d&&("TR"==c.nodeName||c==e),g=("TD"==c.nodeName||"TH"==c.nodeName)&&!d,f||g}function b(){var b=g.selection.getRng(),c=g.selection.getNode(),d=g.dom.getParent(b.startContainer,"TD,TH");if(a(g,b,c,d)){d||(d=c);for(var e=d.lastChild;e.lastChild;)e=e.lastChild;3==e.nodeType&&(b.setEnd(e,e.data.length),g.selection.setRng(b))}}g.on("KeyDown",function(){b()}),g.on("MouseDown",function(a){2!=a.button&&b()})}function l(){function b(a){g.selection.select(a,!0),g.selection.collapse(!0)}function e(a){g.$(a).empty(),d.paddCell(a)}g.on("keydown",function(d){if((d.keyCode==a.DELETE||d.keyCode==a.BACKSPACE)&&!d.isDefaultPrevented()){var f,h,i,j;if(f=g.dom.getParent(g.selection.getStart(),"table")){if(h=g.dom.select("td,th",f),i=c.grep(h,function(a){return g.dom.hasClass(a,"mce-item-selected")}),0===i.length)return j=g.dom.getParent(g.selection.getStart(),"td,th"),void(g.selection.isCollapsed()&&j&&g.dom.isEmpty(j)&&(d.preventDefault(),e(j),b(j)));d.preventDefault(),h.length==i.length?g.execCommand("mceTableDelete"):(c.each(i,e),b(i[0]))}}})}l(),b.webkit&&(h(),k()),b.gecko&&(i(),j()),b.ie>10&&(i(),j())}}),d("tinymce/tableplugin/CellSelection",["tinymce/tableplugin/TableGrid","tinymce/dom/TreeWalker","tinymce/util/Tools"],function(a,b,c){return function(d){function e(a){d.getBody().style.webkitUserSelect="",(a||l)&&(d.dom.removeClass(d.dom.select("td.mce-item-selected,th.mce-item-selected"),"mce-item-selected"),l=!1)}function f(b){var c,e,f=b.target;if(!j&&h&&(g||f!=h)&&("TD"==f.nodeName||"TH"==f.nodeName)){e=k.getParent(f,"table"),e==i&&(g||(g=new a(d,e),g.setStartCell(h),d.getBody().style.webkitUserSelect="none"),g.setEndCell(f),l=!0),c=d.selection.getSel();try{c.removeAllRanges?c.removeAllRanges():c.empty()}catch(m){}b.preventDefault()}}var g,h,i,j,k=d.dom,l=!0;return d.on("MouseDown",function(a){2==a.button||j||(e(),h=k.getParent(a.target,"td,th"),i=k.getParent(h,"table"))}),d.on("mouseover",f),d.on("remove",function(){k.unbind(d.getDoc(),"mouseover",f)}),d.on("MouseUp",function(){function a(a,d){var f=new b(a,a);do{if(3==a.nodeType&&0!==c.trim(a.nodeValue).length)return void(d?e.setStart(a,0):e.setEnd(a,a.nodeValue.length));if("BR"==a.nodeName)return void(d?e.setStartBefore(a):e.setEndBefore(a))}while(a=d?f.next():f.prev())}var e,f,j,l,m,n=d.selection;if(h){if(g&&(d.getBody().style.webkitUserSelect=""),f=k.select("td.mce-item-selected,th.mce-item-selected"),f.length>0){e=k.createRng(),l=f[0],e.setStartBefore(l),e.setEndAfter(l),a(l,1),j=new b(l,k.getParent(f[0],"table"));do if("TD"==l.nodeName||"TH"==l.nodeName){if(!k.hasClass(l,"mce-item-selected"))break;m=l}while(l=j.next());a(m),n.setRng(e)}d.nodeChanged(),h=g=i=null}}),d.on("KeyUp Drop SetContent",function(a){e("setcontent"==a.type),h=g=i=null,j=!1}),d.on("ObjectResizeStart ObjectResized",function(a){j="objectresized"!=a.type}),{clear:e}}}),d("tinymce/tableplugin/Dialogs",["tinymce/util/Tools","tinymce/Env"],function(a,b){var c=a.each;return function(d){function e(){var a=d.settings.color_picker_callback;return a?function(){var b=this;a.call(d,function(a){b.value(a).fire("change")},b.value())}:void 0}function f(a){return{title:"Advanced",type:"form",defaults:{onchange:function(){l(a,this.parents().reverse()[0],"style"==this.name())}},items:[{label:"Style",name:"style",type:"textbox"},{type:"form",padding:0,formItemDefaults:{layout:"grid",alignH:["start","right"]},defaults:{size:7},items:[{label:"Border color",type:"colorbox",name:"borderColor",onaction:e()},{label:"Background color",type:"colorbox",name:"backgroundColor",onaction:e()}]}]}}function g(a){return a?a.replace(/px$/,""):""}function h(a){return/^[0-9]+$/.test(a)&&(a+="px"),a}function i(a){c("left center right".split(" "),function(b){d.formatter.remove("align"+b,{},a)})}function j(a){c("top middle bottom".split(" "),function(b){d.formatter.remove("valign"+b,{},a)})}function k(b,c,d){function e(b,d){return d=d||[],a.each(b,function(a){var b={text:a.text||a.title};a.menu?b.menu=e(a.menu):(b.value=a.value,c&&c(b)),d.push(b)}),d}return e(b,d||[])}function l(a,b,c){var d=b.toJSON(),e=a.parseStyle(d.style);c?(b.find("#borderColor").value(e["border-color"]||"")[0].fire("change"),b.find("#backgroundColor").value(e["background-color"]||"")[0].fire("change")):(e["border-color"]=d.borderColor,e["background-color"]=d.backgroundColor),b.find("#style").value(a.serializeStyle(a.parseStyle(a.serializeStyle(e))))}function m(a,b,c){var d=a.parseStyle(a.getAttrib(c,"style"));d["border-color"]&&(b.borderColor=d["border-color"]),d["background-color"]&&(b.backgroundColor=d["background-color"]),b.style=a.serializeStyle(d)}function n(a,b,d){var e=a.parseStyle(a.getAttrib(b,"style"));c(d,function(a){e[a.name]=a.value}),a.setAttrib(b,"style",a.serializeStyle(a.parseStyle(a.serializeStyle(e))))}var o=this;o.tableProps=function(){o.table(!0)},o.table=function(e){function j(){function c(a,b,d){if("TD"===a.tagName||"TH"===a.tagName)v.setStyle(a,b,d);else if(a.children)for(var e=0;e<a.children.length;e++)c(a.children[e],b,d)}var e;l(v,this),w=a.extend(w,this.toJSON()),w["class"]===!1&&delete w["class"],d.undoManager.transact(function(){if(p||(p=d.plugins.table.insertTable(w.cols||1,w.rows||1)),d.dom.setAttribs(p,{style:w.style,"class":w["class"]}),d.settings.table_style_by_css){if(u=[],u.push({name:"border",value:w.border}),u.push({name:"border-spacing",value:h(w.cellspacing)}),n(v,p,u),v.setAttribs(p,{"data-mce-border-color":w.borderColor,"data-mce-cell-padding":w.cellpadding,"data-mce-border":w.border}),p.children)for(var a=0;a<p.children.length;a++)c(p.children[a],"border",w.border),c(p.children[a],"padding",h(w.cellpadding))}else d.dom.setAttribs(p,{border:w.border,cellpadding:w.cellpadding,cellspacing:w.cellspacing});v.getAttrib(p,"width")&&!d.settings.table_style_by_css?v.setAttrib(p,"width",g(w.width)):v.setStyle(p,"width",h(w.width)),v.setStyle(p,"height",h(w.height)),e=v.select("caption",p)[0],e&&!w.caption&&v.remove(e),!e&&w.caption&&(e=v.create("caption"),e.innerHTML=b.ie?"\xa0":'<br data-mce-bogus="1"/>',p.insertBefore(e,p.firstChild)),i(p),w.align&&d.formatter.apply("align"+w.align,{},p),d.focus(),d.addVisual()})}function o(a,b){function c(a,c){for(var d=0;d<c.length;d++){var e=v.getStyle(c[d],b);if("undefined"==typeof a&&(a=e),a!=e)return""}return a}var e,f=d.dom.select("td,th",a);return e=c(e,f)}var p,q,r,s,t,u,v=d.dom,w={};e===!0?(p=v.getParent(d.selection.getStart(),"table"),p&&(w={width:g(v.getStyle(p,"width")||v.getAttrib(p,"width")),height:g(v.getStyle(p,"height")||v.getAttrib(p,"height")),cellspacing:g(v.getStyle(p,"border-spacing")||v.getAttrib(p,"cellspacing")),cellpadding:v.getAttrib(p,"data-mce-cell-padding")||v.getAttrib(p,"cellpadding")||o(p,"padding"),border:v.getAttrib(p,"data-mce-border")||v.getAttrib(p,"border")||o(p,"border"),borderColor:v.getAttrib(p,"data-mce-border-color"),caption:!!v.select("caption",p)[0],"class":v.getAttrib(p,"class")},c("left center right".split(" "),function(a){d.formatter.matchNode(p,"align"+a)&&(w.align=a)}))):(q={label:"Cols",name:"cols"},r={label:"Rows",name:"rows"}),d.settings.table_class_list&&(w["class"]&&(w["class"]=w["class"].replace(/\s*mce\-item\-table\s*/g,"")),s={name:"class",type:"listbox",label:"Class",values:k(d.settings.table_class_list,function(a){a.value&&(a.textStyle=function(){return d.formatter.getCssText({block:"table",classes:[a.value]})})})}),t={type:"form",layout:"flex",direction:"column",labelGapCalc:"children",padding:0,items:[{type:"form",labelGapCalc:!1,padding:0,layout:"grid",columns:2,defaults:{type:"textbox",maxWidth:50},items:d.settings.table_appearance_options!==!1?[q,r,{label:"Width",name:"width"},{label:"Height",name:"height"},{label:"Cell spacing",name:"cellspacing"},{label:"Cell padding",name:"cellpadding"},{label:"Border",name:"border"},{label:"Caption",name:"caption",type:"checkbox"}]:[q,r,{label:"Width",name:"width"},{label:"Height",name:"height"}]},{label:"Alignment",name:"align",type:"listbox",text:"None",values:[{text:"None",value:""},{text:"Left",value:"left"},{text:"Center",value:"center"},{text:"Right",value:"right"}]},s]},d.settings.table_advtab!==!1?(m(v,w,p),d.windowManager.open({title:"Table properties",data:w,bodyType:"tabpanel",body:[{title:"General",type:"form",items:t},f(v)],onsubmit:j})):d.windowManager.open({title:"Table properties",data:w,body:t,onsubmit:j})},o.merge=function(a,b){d.windowManager.open({title:"Merge cells",body:[{label:"Cols",name:"cols",type:"textbox",value:"1",size:10},{label:"Rows",name:"rows",type:"textbox",value:"1",size:10}],onsubmit:function(){var c=this.toJSON();d.undoManager.transact(function(){a.merge(b,c.cols,c.rows)})}})},o.cell=function(){function b(){l(p,this),n=a.extend(n,this.toJSON()),d.undoManager.transact(function(){c(q,function(a){d.dom.setAttribs(a,{scope:n.scope,style:n.style,"class":n["class"]}),d.dom.setStyles(a,{width:h(n.width),height:h(n.height)}),n.type&&a.nodeName.toLowerCase()!=n.type&&(a=p.rename(a,n.type)),i(a),n.align&&d.formatter.apply("align"+n.align,{},a),j(a),n.valign&&d.formatter.apply("valign"+n.valign,{},a)}),d.focus()})}var e,n,o,p=d.dom,q=[];if(q=d.dom.select("td.mce-item-selected,th.mce-item-selected"),e=d.dom.getParent(d.selection.getStart(),"td,th"),!q.length&&e&&q.push(e),e=e||q[0]){n={width:g(p.getStyle(e,"width")||p.getAttrib(e,"width")),height:g(p.getStyle(e,"height")||p.getAttrib(e,"height")),scope:p.getAttrib(e,"scope"),"class":p.getAttrib(e,"class")},n.type=e.nodeName.toLowerCase(),c("left center right".split(" "),function(a){d.formatter.matchNode(e,"align"+a)&&(n.align=a)}),c("top middle bottom".split(" "),function(a){d.formatter.matchNode(e,"valign"+a)&&(n.valign=a)}),d.settings.table_cell_class_list&&(o={name:"class",type:"listbox",label:"Class",values:k(d.settings.table_cell_class_list,function(a){a.value&&(a.textStyle=function(){return d.formatter.getCssText({block:"td",classes:[a.value]})})})});var r={type:"form",layout:"flex",direction:"column",labelGapCalc:"children",padding:0,items:[{type:"form",layout:"grid",columns:2,labelGapCalc:!1,padding:0,defaults:{type:"textbox",maxWidth:50},items:[{label:"Width",name:"width"},{label:"Height",name:"height"},{label:"Cell type",name:"type",type:"listbox",text:"None",minWidth:90,maxWidth:null,values:[{text:"Cell",value:"td"},{text:"Header cell",value:"th"}]},{label:"Scope",name:"scope",type:"listbox",text:"None",minWidth:90,maxWidth:null,values:[{text:"None",value:""},{text:"Row",value:"row"},{text:"Column",value:"col"},{text:"Row group",value:"rowgroup"},{text:"Column group",value:"colgroup"}]},{label:"H Align",name:"align",type:"listbox",text:"None",minWidth:90,maxWidth:null,values:[{text:"None",value:""},{text:"Left",value:"left"},{text:"Center",value:"center"},{text:"Right",value:"right"}]},{label:"V Align",name:"valign",type:"listbox",text:"None",minWidth:90,maxWidth:null,values:[{text:"None",value:""},{text:"Top",value:"top"},{text:"Middle",value:"middle"},{text:"Bottom",value:"bottom"}]}]},o]};d.settings.table_cell_advtab!==!1?(m(p,n,e),d.windowManager.open({title:"Cell properties",bodyType:"tabpanel",data:n,body:[{title:"General",type:"form",items:r},f(p)],onsubmit:b})):d.windowManager.open({title:"Cell properties",data:n,body:r,onsubmit:b})}},o.row=function(){function b(){var b,e,f;l(r,this),p=a.extend(p,this.toJSON()),d.undoManager.transact(function(){var a=p.type;c(s,function(c){d.dom.setAttribs(c,{scope:p.scope,style:p.style,"class":p["class"]}),d.dom.setStyles(c,{height:h(p.height)}),a!=c.parentNode.nodeName.toLowerCase()&&(b=r.getParent(c,"table"),e=c.parentNode,f=r.select(a,b)[0],f||(f=r.create(a),b.firstChild?b.insertBefore(f,b.firstChild):b.appendChild(f)),f.appendChild(c),e.hasChildNodes()||r.remove(e)),i(c),p.align&&d.formatter.apply("align"+p.align,{},c)}),d.focus()})}var e,j,n,o,p,q,r=d.dom,s=[];e=d.dom.getParent(d.selection.getStart(),"table"),j=d.dom.getParent(d.selection.getStart(),"td,th"),c(e.rows,function(a){c(a.cells,function(b){return r.hasClass(b,"mce-item-selected")||b==j?(s.push(a),!1):void 0})}),n=s[0],n&&(p={height:g(r.getStyle(n,"height")||r.getAttrib(n,"height")),scope:r.getAttrib(n,"scope"),"class":r.getAttrib(n,"class")},p.type=n.parentNode.nodeName.toLowerCase(),c("left center right".split(" "),function(a){d.formatter.matchNode(n,"align"+a)&&(p.align=a)}),d.settings.table_row_class_list&&(o={name:"class",type:"listbox",label:"Class",values:k(d.settings.table_row_class_list,function(a){a.value&&(a.textStyle=function(){return d.formatter.getCssText({block:"tr",classes:[a.value]})})})}),q={type:"form",columns:2,padding:0,defaults:{type:"textbox"},items:[{type:"listbox",name:"type",label:"Row type",text:"None",maxWidth:null,values:[{text:"Header",value:"thead"},{text:"Body",value:"tbody"},{text:"Footer",value:"tfoot"}]},{type:"listbox",name:"align",label:"Alignment",text:"None",maxWidth:null,values:[{text:"None",value:""},{text:"Left",value:"left"},{text:"Center",value:"center"},{text:"Right",value:"right"}]},{label:"Height",name:"height"},o]},d.settings.table_row_advtab!==!1?(m(r,p,n),d.windowManager.open({title:"Row properties",data:p,bodyType:"tabpanel",body:[{title:"General",type:"form",items:q},f(r)],onsubmit:b})):d.windowManager.open({title:"Row properties",data:p,body:q,onsubmit:b}))}}}),d("tinymce/tableplugin/Plugin",["tinymce/tableplugin/TableGrid","tinymce/tableplugin/Quirks","tinymce/tableplugin/CellSelection","tinymce/tableplugin/Dialogs","tinymce/util/Tools","tinymce/dom/TreeWalker","tinymce/Env","tinymce/PluginManager"],function(a,b,c,d,e,f,g,h){function i(e){function f(a){return function(){e.execCommand(a)}}function h(a,b){var c,d,f,h;for(f='<table id="__mce"><tbody>',c=0;b>c;c++){for(f+="<tr>",d=0;a>d;d++)f+="<td>"+(g.ie?" ":"<br>")+"</td>";f+="</tr>"}return f+="</tbody></table>",e.undoManager.transact(function(){e.insertContent(f),h=e.dom.get("__mce"),e.dom.setAttrib(h,"id",null),e.dom.setAttribs(h,e.settings.table_default_attributes||{}),e.dom.setStyles(h,e.settings.table_default_styles||{})}),h}function i(a,b){function c(){a.disabled(!e.dom.getParent(e.selection.getStart(),b)),e.selection.selectorChanged(b,function(b){a.disabled(!b)})}e.initialized?c():e.on("init",c)}function k(){i(this,"table")}function l(){i(this,"td,th")}function m(){var a="";a='<table role="grid" class="mce-grid mce-grid-border" aria-readonly="true">';for(var b=0;10>b;b++){a+="<tr>";for(var c=0;10>c;c++)a+='<td role="gridcell" tabindex="-1"><a id="mcegrid'+(10*b+c)+'" href="#" data-mce-x="'+c+'" data-mce-y="'+b+'"></a></td>';a+="</tr>"}return a+="</table>",a+='<div class="mce-text-center" role="presentation">1 x 1</div>'}function n(a,b,c){var d,f,g,h,i,j=c.getEl().getElementsByTagName("table")[0],k=c.isRtl()||"tl-tr"==c.parent().rel;for(j.nextSibling.innerHTML=a+1+" x "+(b+1),k&&(a=9-a),f=0;10>f;f++)for(d=0;10>d;d++)h=j.rows[f].childNodes[d].firstChild,i=(k?d>=a:a>=d)&&b>=f,e.dom.toggleClass(h,"mce-active",i),i&&(g=h);return g.parentNode}var o,p=this,q=new d(e);e.settings.table_grid===!1?e.addMenuItem("inserttable",{text:"Insert table",icon:"table",context:"table",onclick:q.table}):e.addMenuItem("inserttable",{text:"Insert table",icon:"table",context:"table",ariaHideMenu:!0,onclick:function(a){a.aria&&(this.parent().hideAll(),a.stopImmediatePropagation(),q.table())},onshow:function(){n(0,0,this.menu.items()[0])},onhide:function(){var a=this.menu.items()[0].getEl().getElementsByTagName("a");e.dom.removeClass(a,"mce-active"),e.dom.addClass(a[0],"mce-active")},menu:[{type:"container",html:m(),onPostRender:function(){this.lastX=this.lastY=0},onmousemove:function(a){var b,c,d=a.target;"A"==d.tagName.toUpperCase()&&(b=parseInt(d.getAttribute("data-mce-x"),10),c=parseInt(d.getAttribute("data-mce-y"),10),(this.isRtl()||"tl-tr"==this.parent().rel)&&(b=9-b),(b!==this.lastX||c!==this.lastY)&&(n(b,c,a.control),this.lastX=b,this.lastY=c))},onclick:function(a){var b=this;"A"==a.target.tagName.toUpperCase()&&(a.preventDefault(),a.stopPropagation(),b.parent().cancel(),e.undoManager.transact(function(){h(b.lastX+1,b.lastY+1)}),e.addVisual())}}]}),e.addMenuItem("tableprops",{text:"Table properties",context:"table",onPostRender:k,onclick:q.tableProps}),e.addMenuItem("deletetable",{text:"Delete table",context:"table",onPostRender:k,cmd:"mceTableDelete"}),e.addMenuItem("cell",{separator:"before",text:"Cell",context:"table",menu:[{text:"Cell properties",onclick:f("mceTableCellProps"),onPostRender:l},{text:"Merge cells",onclick:f("mceTableMergeCells"),onPostRender:l},{text:"Split cell",onclick:f("mceTableSplitCells"),onPostRender:l}]}),e.addMenuItem("row",{text:"Row",context:"table",menu:[{text:"Insert row before",onclick:f("mceTableInsertRowBefore"),onPostRender:l},{text:"Insert row after",onclick:f("mceTableInsertRowAfter"),onPostRender:l},{text:"Delete row",onclick:f("mceTableDeleteRow"),onPostRender:l},{text:"Row properties",onclick:f("mceTableRowProps"),onPostRender:l},{text:"-"},{text:"Cut row",onclick:f("mceTableCutRow"),onPostRender:l},{text:"Copy row",onclick:f("mceTableCopyRow"),onPostRender:l},{text:"Paste row before",onclick:f("mceTablePasteRowBefore"),onPostRender:l},{text:"Paste row after",onclick:f("mceTablePasteRowAfter"),onPostRender:l}]}),e.addMenuItem("column",{text:"Column",context:"table",menu:[{text:"Insert column before",onclick:f("mceTableInsertColBefore"),onPostRender:l},{text:"Insert column after",onclick:f("mceTableInsertColAfter"),onPostRender:l},{text:"Delete column",onclick:f("mceTableDeleteCol"),onPostRender:l}]});var r=[];j("inserttable tableprops deletetable | cell row column".split(" "),function(a){r.push("|"==a?{text:"-"}:e.menuItems[a])}),e.addButton("table",{type:"menubutton",title:"Table",menu:r}),g.isIE||e.on("click",function(a){a=a.target,"TABLE"===a.nodeName&&(e.selection.select(a),e.nodeChanged())}),p.quirks=new b(e),e.on("Init",function(){p.cellSelection=new c(e)}),e.on("PreInit",function(){e.serializer.addAttributeFilter("data-mce-cell-padding,data-mce-border,data-mce-border-color",function(a,b){for(var c=a.length;c--;)a[c].attr(b,null)})}),j({mceTableSplitCells:function(a){a.split()},mceTableMergeCells:function(a){var b;b=e.dom.getParent(e.selection.getStart(),"th,td"),e.dom.select("td.mce-item-selected,th.mce-item-selected").length?a.merge():q.merge(a,b)},mceTableInsertRowBefore:function(a){a.insertRow(!0)},mceTableInsertRowAfter:function(a){a.insertRow()},mceTableInsertColBefore:function(a){a.insertCol(!0)},mceTableInsertColAfter:function(a){a.insertCol()},mceTableDeleteCol:function(a){a.deleteCols()},mceTableDeleteRow:function(a){a.deleteRows()},mceTableCutRow:function(a){o=a.cutRows()},mceTableCopyRow:function(a){o=a.copyRows()},mceTablePasteRowBefore:function(a){a.pasteRows(o,!0)},mceTablePasteRowAfter:function(a){a.pasteRows(o)},mceTableDelete:function(a){a.deleteTable()}},function(b,c){e.addCommand(c,function(){var c=new a(e);c&&(b(c),e.execCommand("mceRepaint"),p.cellSelection.clear())})}),j({mceInsertTable:q.table,mceTableProps:function(){q.table(!0)},mceTableRowProps:q.row,mceTableCellProps:q.cell},function(a,b){e.addCommand(b,function(b,c){a(c)})}),e.settings.table_tab_navigation!==!1&&e.on("keydown",function(b){var c,d,f;9==b.keyCode&&(c=e.dom.getParent(e.selection.getStart(),"th,td"),c&&(b.preventDefault(),d=new a(e),f=b.shiftKey?-1:1,e.undoManager.transact(function(){!d.moveRelIdx(c,f)&&f>0&&(d.insertRow(),d.refresh(),d.moveRelIdx(c,f))})))}),p.insertTable=h}var j=e.each;h.add("table",i)})}(this);
+(function () {
+var table = (function () {
+  'use strict';
+
+  var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+  var noop = function () {
+    var x = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      x[_i] = arguments[_i];
+    }
+  };
+
+  var compose = function (fa, fb) {
+    return function () {
+      var x = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        x[_i] = arguments[_i];
+      }
+      return fa(fb.apply(null, arguments));
+    };
+  };
+  var constant = function (value) {
+    return function () {
+      return value;
+    };
+  };
+  var identity = function (x) {
+    return x;
+  };
+
+  var curry = function (f) {
+    var x = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+      x[_i - 1] = arguments[_i];
+    }
+    var args = new Array(arguments.length - 1);
+    for (var i = 1; i < arguments.length; i++)
+      args[i - 1] = arguments[i];
+    return function () {
+      var x = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        x[_i] = arguments[_i];
+      }
+      var newArgs = new Array(arguments.length);
+      for (var j = 0; j < newArgs.length; j++)
+        newArgs[j] = arguments[j];
+      var all = args.concat(newArgs);
+      return f.apply(null, all);
+    };
+  };
+  var not = function (f) {
+    return function () {
+      var x = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        x[_i] = arguments[_i];
+      }
+      return !f.apply(null, arguments);
+    };
+  };
+  var die = function (msg) {
+    return function () {
+      throw new Error(msg);
+    };
+  };
+  var apply = function (f) {
+    return f();
+  };
+
+  var never = constant(false);
+  var always = constant(true);
+
+  var never$1 = never;
+  var always$1 = always;
+  var none = function () {
+    return NONE;
+  };
+  var NONE = function () {
+    var eq = function (o) {
+      return o.isNone();
+    };
+    var call$$1 = function (thunk) {
+      return thunk();
+    };
+    var id = function (n) {
+      return n;
+    };
+    var noop$$1 = function () {
+    };
+    var nul = function () {
+      return null;
+    };
+    var undef = function () {
+      return undefined;
+    };
+    var me = {
+      fold: function (n, s) {
+        return n();
+      },
+      is: never$1,
+      isSome: never$1,
+      isNone: always$1,
+      getOr: id,
+      getOrThunk: call$$1,
+      getOrDie: function (msg) {
+        throw new Error(msg || 'error: getOrDie called on none.');
+      },
+      getOrNull: nul,
+      getOrUndefined: undef,
+      or: id,
+      orThunk: call$$1,
+      map: none,
+      ap: none,
+      each: noop$$1,
+      bind: none,
+      flatten: none,
+      exists: never$1,
+      forall: always$1,
+      filter: none,
+      equals: eq,
+      equals_: eq,
+      toArray: function () {
+        return [];
+      },
+      toString: constant('none()')
+    };
+    if (Object.freeze)
+      Object.freeze(me);
+    return me;
+  }();
+  var some = function (a) {
+    var constant_a = function () {
+      return a;
+    };
+    var self = function () {
+      return me;
+    };
+    var map = function (f) {
+      return some(f(a));
+    };
+    var bind = function (f) {
+      return f(a);
+    };
+    var me = {
+      fold: function (n, s) {
+        return s(a);
+      },
+      is: function (v) {
+        return a === v;
+      },
+      isSome: always$1,
+      isNone: never$1,
+      getOr: constant_a,
+      getOrThunk: constant_a,
+      getOrDie: constant_a,
+      getOrNull: constant_a,
+      getOrUndefined: constant_a,
+      or: self,
+      orThunk: self,
+      map: map,
+      ap: function (optfab) {
+        return optfab.fold(none, function (fab) {
+          return some(fab(a));
+        });
+      },
+      each: function (f) {
+        f(a);
+      },
+      bind: bind,
+      flatten: constant_a,
+      exists: bind,
+      forall: bind,
+      filter: function (f) {
+        return f(a) ? me : NONE;
+      },
+      equals: function (o) {
+        return o.is(a);
+      },
+      equals_: function (o, elementEq) {
+        return o.fold(never$1, function (b) {
+          return elementEq(a, b);
+        });
+      },
+      toArray: function () {
+        return [a];
+      },
+      toString: function () {
+        return 'some(' + a + ')';
+      }
+    };
+    return me;
+  };
+  var from = function (value) {
+    return value === null || value === undefined ? NONE : some(value);
+  };
+  var Option = {
+    some: some,
+    none: none,
+    from: from
+  };
+
+  var typeOf = function (x) {
+    if (x === null)
+      return 'null';
+    var t = typeof x;
+    if (t === 'object' && Array.prototype.isPrototypeOf(x))
+      return 'array';
+    if (t === 'object' && String.prototype.isPrototypeOf(x))
+      return 'string';
+    return t;
+  };
+  var isType = function (type) {
+    return function (value) {
+      return typeOf(value) === type;
+    };
+  };
+  var isString = isType('string');
+
+  var isArray = isType('array');
+
+  var isBoolean = isType('boolean');
+
+  var isFunction = isType('function');
+  var isNumber = isType('number');
+
+  var rawIndexOf = function () {
+    var pIndexOf = Array.prototype.indexOf;
+    var fastIndex = function (xs, x) {
+      return pIndexOf.call(xs, x);
+    };
+    var slowIndex = function (xs, x) {
+      return slowIndexOf(xs, x);
+    };
+    return pIndexOf === undefined ? slowIndex : fastIndex;
+  }();
+
+  var contains = function (xs, x) {
+    return rawIndexOf(xs, x) > -1;
+  };
+  var exists = function (xs, pred) {
+    return findIndex(xs, pred).isSome();
+  };
+
+
+  var map = function (xs, f) {
+    var len = xs.length;
+    var r = new Array(len);
+    for (var i = 0; i < len; i++) {
+      var x = xs[i];
+      r[i] = f(x, i, xs);
+    }
+    return r;
+  };
+  var each = function (xs, f) {
+    for (var i = 0, len = xs.length; i < len; i++) {
+      var x = xs[i];
+      f(x, i, xs);
+    }
+  };
+  var eachr = function (xs, f) {
+    for (var i = xs.length - 1; i >= 0; i--) {
+      var x = xs[i];
+      f(x, i, xs);
+    }
+  };
+
+  var filter = function (xs, pred) {
+    var r = [];
+    for (var i = 0, len = xs.length; i < len; i++) {
+      var x = xs[i];
+      if (pred(x, i, xs)) {
+        r.push(x);
+      }
+    }
+    return r;
+  };
+
+  var foldr = function (xs, f, acc) {
+    eachr(xs, function (x) {
+      acc = f(acc, x);
+    });
+    return acc;
+  };
+  var foldl = function (xs, f, acc) {
+    each(xs, function (x) {
+      acc = f(acc, x);
+    });
+    return acc;
+  };
+  var find = function (xs, pred) {
+    for (var i = 0, len = xs.length; i < len; i++) {
+      var x = xs[i];
+      if (pred(x, i, xs)) {
+        return Option.some(x);
+      }
+    }
+    return Option.none();
+  };
+  var findIndex = function (xs, pred) {
+    for (var i = 0, len = xs.length; i < len; i++) {
+      var x = xs[i];
+      if (pred(x, i, xs)) {
+        return Option.some(i);
+      }
+    }
+    return Option.none();
+  };
+  var slowIndexOf = function (xs, x) {
+    for (var i = 0, len = xs.length; i < len; ++i) {
+      if (xs[i] === x) {
+        return i;
+      }
+    }
+    return -1;
+  };
+  var push = Array.prototype.push;
+  var flatten = function (xs) {
+    var r = [];
+    for (var i = 0, len = xs.length; i < len; ++i) {
+      if (!Array.prototype.isPrototypeOf(xs[i]))
+        throw new Error('Arr.flatten item ' + i + ' was not an array, input: ' + xs);
+      push.apply(r, xs[i]);
+    }
+    return r;
+  };
+  var bind = function (xs, f) {
+    var output = map(xs, f);
+    return flatten(output);
+  };
+  var forall = function (xs, pred) {
+    for (var i = 0, len = xs.length; i < len; ++i) {
+      var x = xs[i];
+      if (pred(x, i, xs) !== true) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  var slice = Array.prototype.slice;
+  var reverse = function (xs) {
+    var r = slice.call(xs, 0);
+    r.reverse();
+    return r;
+  };
+
+
+
+
+
+  var last = function (xs) {
+    return xs.length === 0 ? Option.none() : Option.some(xs[xs.length - 1]);
+  };
+  var from$1 = isFunction(Array.from) ? Array.from : function (x) {
+    return slice.call(x);
+  };
+
+  var keys = Object.keys;
+  var each$1 = function (obj, f) {
+    var props = keys(obj);
+    for (var k = 0, len = props.length; k < len; k++) {
+      var i = props[k];
+      var x = obj[i];
+      f(x, i, obj);
+    }
+  };
+  var map$1 = function (obj, f) {
+    return tupleMap(obj, function (x, i, obj) {
+      return {
+        k: i,
+        v: f(x, i, obj)
+      };
+    });
+  };
+  var tupleMap = function (obj, f) {
+    var r = {};
+    each$1(obj, function (x, i) {
+      var tuple = f(x, i, obj);
+      r[tuple.k] = tuple.v;
+    });
+    return r;
+  };
+
+  var Immutable = function () {
+    var fields = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      fields[_i] = arguments[_i];
+    }
+    return function () {
+      var values = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+      }
+      if (fields.length !== values.length) {
+        throw new Error('Wrong number of arguments to struct. Expected "[' + fields.length + ']", got ' + values.length + ' arguments');
+      }
+      var struct = {};
+      each(fields, function (name, i) {
+        struct[name] = constant(values[i]);
+      });
+      return struct;
+    };
+  };
+
+  var sort$1 = function (arr) {
+    return arr.slice(0).sort();
+  };
+  var reqMessage = function (required, keys) {
+    throw new Error('All required keys (' + sort$1(required).join(', ') + ') were not specified. Specified keys were: ' + sort$1(keys).join(', ') + '.');
+  };
+  var unsuppMessage = function (unsupported) {
+    throw new Error('Unsupported keys for object: ' + sort$1(unsupported).join(', '));
+  };
+  var validateStrArr = function (label, array) {
+    if (!isArray(array))
+      throw new Error('The ' + label + ' fields must be an array. Was: ' + array + '.');
+    each(array, function (a) {
+      if (!isString(a))
+        throw new Error('The value ' + a + ' in the ' + label + ' fields was not a string.');
+    });
+  };
+  var invalidTypeMessage = function (incorrect, type) {
+    throw new Error('All values need to be of type: ' + type + '. Keys (' + sort$1(incorrect).join(', ') + ') were not.');
+  };
+  var checkDupes = function (everything) {
+    var sorted = sort$1(everything);
+    var dupe = find(sorted, function (s, i) {
+      return i < sorted.length - 1 && s === sorted[i + 1];
+    });
+    dupe.each(function (d) {
+      throw new Error('The field: ' + d + ' occurs more than once in the combined fields: [' + sorted.join(', ') + '].');
+    });
+  };
+
+  var MixedBag = function (required, optional) {
+    var everything = required.concat(optional);
+    if (everything.length === 0)
+      throw new Error('You must specify at least one required or optional field.');
+    validateStrArr('required', required);
+    validateStrArr('optional', optional);
+    checkDupes(everything);
+    return function (obj) {
+      var keys$$1 = keys(obj);
+      var allReqd = forall(required, function (req) {
+        return contains(keys$$1, req);
+      });
+      if (!allReqd)
+        reqMessage(required, keys$$1);
+      var unsupported = filter(keys$$1, function (key) {
+        return !contains(everything, key);
+      });
+      if (unsupported.length > 0)
+        unsuppMessage(unsupported);
+      var r = {};
+      each(required, function (req) {
+        r[req] = constant(obj[req]);
+      });
+      each(optional, function (opt) {
+        r[opt] = constant(Object.prototype.hasOwnProperty.call(obj, opt) ? Option.some(obj[opt]) : Option.none());
+      });
+      return r;
+    };
+  };
+
+  var dimensions = Immutable('width', 'height');
+  var grid = Immutable('rows', 'columns');
+  var address = Immutable('row', 'column');
+  var coords = Immutable('x', 'y');
+  var detail = Immutable('element', 'rowspan', 'colspan');
+  var detailnew = Immutable('element', 'rowspan', 'colspan', 'isNew');
+  var extended = Immutable('element', 'rowspan', 'colspan', 'row', 'column');
+  var rowdata = Immutable('element', 'cells', 'section');
+  var elementnew = Immutable('element', 'isNew');
+  var rowdatanew = Immutable('element', 'cells', 'section', 'isNew');
+  var rowcells = Immutable('cells', 'section');
+  var rowdetails = Immutable('details', 'section');
+  var bounds = Immutable('startRow', 'startCol', 'finishRow', 'finishCol');
+  var $_63m7jdlcjlnuecdk = {
+    dimensions: dimensions,
+    grid: grid,
+    address: address,
+    coords: coords,
+    extended: extended,
+    detail: detail,
+    detailnew: detailnew,
+    rowdata: rowdata,
+    elementnew: elementnew,
+    rowdatanew: rowdatanew,
+    rowcells: rowcells,
+    rowdetails: rowdetails,
+    bounds: bounds
+  };
+
+  var fromHtml = function (html, scope) {
+    var doc = scope || document;
+    var div = doc.createElement('div');
+    div.innerHTML = html;
+    if (!div.hasChildNodes() || div.childNodes.length > 1) {
+      console.error('HTML does not have a single root node', html);
+      throw 'HTML must have a single root node';
+    }
+    return fromDom(div.childNodes[0]);
+  };
+  var fromTag = function (tag, scope) {
+    var doc = scope || document;
+    var node = doc.createElement(tag);
+    return fromDom(node);
+  };
+  var fromText = function (text, scope) {
+    var doc = scope || document;
+    var node = doc.createTextNode(text);
+    return fromDom(node);
+  };
+  var fromDom = function (node) {
+    if (node === null || node === undefined)
+      throw new Error('Node cannot be null or undefined');
+    return { dom: constant(node) };
+  };
+  var fromPoint = function (docElm, x, y) {
+    var doc = docElm.dom();
+    return Option.from(doc.elementFromPoint(x, y)).map(fromDom);
+  };
+  var Element$$1 = {
+    fromHtml: fromHtml,
+    fromTag: fromTag,
+    fromText: fromText,
+    fromDom: fromDom,
+    fromPoint: fromPoint
+  };
+
+  var $_1659m3lijlnuecgt = {
+    ATTRIBUTE: Node.ATTRIBUTE_NODE,
+    CDATA_SECTION: Node.CDATA_SECTION_NODE,
+    COMMENT: Node.COMMENT_NODE,
+    DOCUMENT: Node.DOCUMENT_NODE,
+    DOCUMENT_TYPE: Node.DOCUMENT_TYPE_NODE,
+    DOCUMENT_FRAGMENT: Node.DOCUMENT_FRAGMENT_NODE,
+    ELEMENT: Node.ELEMENT_NODE,
+    TEXT: Node.TEXT_NODE,
+    PROCESSING_INSTRUCTION: Node.PROCESSING_INSTRUCTION_NODE,
+    ENTITY_REFERENCE: Node.ENTITY_REFERENCE_NODE,
+    ENTITY: Node.ENTITY_NODE,
+    NOTATION: Node.NOTATION_NODE
+  };
+
+  var ELEMENT = $_1659m3lijlnuecgt.ELEMENT;
+  var DOCUMENT = $_1659m3lijlnuecgt.DOCUMENT;
+  var is = function (element, selector) {
+    var elem = element.dom();
+    if (elem.nodeType !== ELEMENT)
+      return false;
+    else if (elem.matches !== undefined)
+      return elem.matches(selector);
+    else if (elem.msMatchesSelector !== undefined)
+      return elem.msMatchesSelector(selector);
+    else if (elem.webkitMatchesSelector !== undefined)
+      return elem.webkitMatchesSelector(selector);
+    else if (elem.mozMatchesSelector !== undefined)
+      return elem.mozMatchesSelector(selector);
+    else
+      throw new Error('Browser lacks native selectors');
+  };
+  var bypassSelector = function (dom) {
+    return dom.nodeType !== ELEMENT && dom.nodeType !== DOCUMENT || dom.childElementCount === 0;
+  };
+  var all = function (selector, scope) {
+    var base = scope === undefined ? document : scope.dom();
+    return bypassSelector(base) ? [] : map(base.querySelectorAll(selector), Element$$1.fromDom);
+  };
+  var one = function (selector, scope) {
+    var base = scope === undefined ? document : scope.dom();
+    return bypassSelector(base) ? Option.none() : Option.from(base.querySelector(selector)).map(Element$$1.fromDom);
+  };
+  var $_fjyr6olfjlnuecfn = {
+    all: all,
+    is: is,
+    one: one
+  };
+
+  var toArray = function (target, f) {
+    var r = [];
+    var recurse = function (e) {
+      r.push(e);
+      return f(e);
+    };
+    var cur = f(target);
+    do {
+      cur = cur.bind(recurse);
+    } while (cur.isSome());
+    return r;
+  };
+  var $_2v7p3jlkjlnuechq = { toArray: toArray };
+
+  var Global = typeof window !== 'undefined' ? window : Function('return this;')();
+
+  var path = function (parts, scope) {
+    var o = scope !== undefined && scope !== null ? scope : Global;
+    for (var i = 0; i < parts.length && o !== undefined && o !== null; ++i)
+      o = o[parts[i]];
+    return o;
+  };
+  var resolve = function (p, scope) {
+    var parts = p.split('.');
+    return path(parts, scope);
+  };
+
+  var unsafe = function (name, scope) {
+    return resolve(name, scope);
+  };
+  var getOrDie = function (name, scope) {
+    var actual = unsafe(name, scope);
+    if (actual === undefined || actual === null)
+      throw name + ' not available on this browser';
+    return actual;
+  };
+  var $_b59t90lnjlnuecik = { getOrDie: getOrDie };
+
+  var node = function () {
+    var f = $_b59t90lnjlnuecik.getOrDie('Node');
+    return f;
+  };
+  var compareDocumentPosition = function (a, b, match) {
+    return (a.compareDocumentPosition(b) & match) !== 0;
+  };
+  var documentPositionPreceding = function (a, b) {
+    return compareDocumentPosition(a, b, node().DOCUMENT_POSITION_PRECEDING);
+  };
+  var documentPositionContainedBy = function (a, b) {
+    return compareDocumentPosition(a, b, node().DOCUMENT_POSITION_CONTAINED_BY);
+  };
+  var $_f42uynlmjlnuecii = {
+    documentPositionPreceding: documentPositionPreceding,
+    documentPositionContainedBy: documentPositionContainedBy
+  };
+
+  var cached = function (f) {
+    var called = false;
+    var r;
+    return function () {
+      var args = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+      }
+      if (!called) {
+        called = true;
+        r = f.apply(null, args);
+      }
+      return r;
+    };
+  };
+
+  var firstMatch = function (regexes, s) {
+    for (var i = 0; i < regexes.length; i++) {
+      var x = regexes[i];
+      if (x.test(s))
+        return x;
+    }
+    return undefined;
+  };
+  var find$2 = function (regexes, agent) {
+    var r = firstMatch(regexes, agent);
+    if (!r)
+      return {
+        major: 0,
+        minor: 0
+      };
+    var group = function (i) {
+      return Number(agent.replace(r, '$' + i));
+    };
+    return nu(group(1), group(2));
+  };
+  var detect = function (versionRegexes, agent) {
+    var cleanedAgent = String(agent).toLowerCase();
+    if (versionRegexes.length === 0)
+      return unknown();
+    return find$2(versionRegexes, cleanedAgent);
+  };
+  var unknown = function () {
+    return nu(0, 0);
+  };
+  var nu = function (major, minor) {
+    return {
+      major: major,
+      minor: minor
+    };
+  };
+  var $_3oadfjlujlnuecjp = {
+    nu: nu,
+    detect: detect,
+    unknown: unknown
+  };
+
+  var edge = 'Edge';
+  var chrome = 'Chrome';
+  var ie = 'IE';
+  var opera = 'Opera';
+  var firefox = 'Firefox';
+  var safari = 'Safari';
+  var isBrowser = function (name, current) {
+    return function () {
+      return current === name;
+    };
+  };
+  var unknown$1 = function () {
+    return nu$1({
+      current: undefined,
+      version: $_3oadfjlujlnuecjp.unknown()
+    });
+  };
+  var nu$1 = function (info) {
+    var current = info.current;
+    var version = info.version;
+    return {
+      current: current,
+      version: version,
+      isEdge: isBrowser(edge, current),
+      isChrome: isBrowser(chrome, current),
+      isIE: isBrowser(ie, current),
+      isOpera: isBrowser(opera, current),
+      isFirefox: isBrowser(firefox, current),
+      isSafari: isBrowser(safari, current)
+    };
+  };
+  var $_2xbtlxltjlnuecjc = {
+    unknown: unknown$1,
+    nu: nu$1,
+    edge: constant(edge),
+    chrome: constant(chrome),
+    ie: constant(ie),
+    opera: constant(opera),
+    firefox: constant(firefox),
+    safari: constant(safari)
+  };
+
+  var windows = 'Windows';
+  var ios = 'iOS';
+  var android = 'Android';
+  var linux = 'Linux';
+  var osx = 'OSX';
+  var solaris = 'Solaris';
+  var freebsd = 'FreeBSD';
+  var isOS = function (name, current) {
+    return function () {
+      return current === name;
+    };
+  };
+  var unknown$2 = function () {
+    return nu$2({
+      current: undefined,
+      version: $_3oadfjlujlnuecjp.unknown()
+    });
+  };
+  var nu$2 = function (info) {
+    var current = info.current;
+    var version = info.version;
+    return {
+      current: current,
+      version: version,
+      isWindows: isOS(windows, current),
+      isiOS: isOS(ios, current),
+      isAndroid: isOS(android, current),
+      isOSX: isOS(osx, current),
+      isLinux: isOS(linux, current),
+      isSolaris: isOS(solaris, current),
+      isFreeBSD: isOS(freebsd, current)
+    };
+  };
+  var $_92qb4elvjlnuecjr = {
+    unknown: unknown$2,
+    nu: nu$2,
+    windows: constant(windows),
+    ios: constant(ios),
+    android: constant(android),
+    linux: constant(linux),
+    osx: constant(osx),
+    solaris: constant(solaris),
+    freebsd: constant(freebsd)
+  };
+
+  function DeviceType (os, browser, userAgent) {
+    var isiPad = os.isiOS() && /ipad/i.test(userAgent) === true;
+    var isiPhone = os.isiOS() && !isiPad;
+    var isAndroid3 = os.isAndroid() && os.version.major === 3;
+    var isAndroid4 = os.isAndroid() && os.version.major === 4;
+    var isTablet = isiPad || isAndroid3 || isAndroid4 && /mobile/i.test(userAgent) === true;
+    var isTouch = os.isiOS() || os.isAndroid();
+    var isPhone = isTouch && !isTablet;
+    var iOSwebview = browser.isSafari() && os.isiOS() && /safari/i.test(userAgent) === false;
+    return {
+      isiPad: constant(isiPad),
+      isiPhone: constant(isiPhone),
+      isTablet: constant(isTablet),
+      isPhone: constant(isPhone),
+      isTouch: constant(isTouch),
+      isAndroid: os.isAndroid,
+      isiOS: os.isiOS,
+      isWebView: constant(iOSwebview)
+    };
+  }
+
+  var detect$1 = function (candidates, userAgent) {
+    var agent = String(userAgent).toLowerCase();
+    return find(candidates, function (candidate) {
+      return candidate.search(agent);
+    });
+  };
+  var detectBrowser = function (browsers, userAgent) {
+    return detect$1(browsers, userAgent).map(function (browser) {
+      var version = $_3oadfjlujlnuecjp.detect(browser.versionRegexes, userAgent);
+      return {
+        current: browser.name,
+        version: version
+      };
+    });
+  };
+  var detectOs = function (oses, userAgent) {
+    return detect$1(oses, userAgent).map(function (os) {
+      var version = $_3oadfjlujlnuecjp.detect(os.versionRegexes, userAgent);
+      return {
+        current: os.name,
+        version: version
+      };
+    });
+  };
+  var $_ak4ehlxjlnueck5 = {
+    detectBrowser: detectBrowser,
+    detectOs: detectOs
+  };
+
+  var checkRange = function (str, substr, start) {
+    if (substr === '')
+      return true;
+    if (str.length < substr.length)
+      return false;
+    var x = str.substr(start, start + substr.length);
+    return x === substr;
+  };
+
+
+
+
+
+  var contains$1 = function (str, substr) {
+    return str.indexOf(substr) !== -1;
+  };
+
+
+  var endsWith = function (str, suffix) {
+    return checkRange(str, suffix, str.length - suffix.length);
+  };
+  var trim = function (str) {
+    return str.replace(/^\s+|\s+$/g, '');
+  };
+
+  var normalVersionRegex = /.*?version\/\ ?([0-9]+)\.([0-9]+).*/;
+  var checkContains = function (target) {
+    return function (uastring) {
+      return contains$1(uastring, target);
+    };
+  };
+  var browsers = [
+    {
+      name: 'Edge',
+      versionRegexes: [/.*?edge\/ ?([0-9]+)\.([0-9]+)$/],
+      search: function (uastring) {
+        var monstrosity = contains$1(uastring, 'edge/') && contains$1(uastring, 'chrome') && contains$1(uastring, 'safari') && contains$1(uastring, 'applewebkit');
+        return monstrosity;
+      }
+    },
+    {
+      name: 'Chrome',
+      versionRegexes: [
+        /.*?chrome\/([0-9]+)\.([0-9]+).*/,
+        normalVersionRegex
+      ],
+      search: function (uastring) {
+        return contains$1(uastring, 'chrome') && !contains$1(uastring, 'chromeframe');
+      }
+    },
+    {
+      name: 'IE',
+      versionRegexes: [
+        /.*?msie\ ?([0-9]+)\.([0-9]+).*/,
+        /.*?rv:([0-9]+)\.([0-9]+).*/
+      ],
+      search: function (uastring) {
+        return contains$1(uastring, 'msie') || contains$1(uastring, 'trident');
+      }
+    },
+    {
+      name: 'Opera',
+      versionRegexes: [
+        normalVersionRegex,
+        /.*?opera\/([0-9]+)\.([0-9]+).*/
+      ],
+      search: checkContains('opera')
+    },
+    {
+      name: 'Firefox',
+      versionRegexes: [/.*?firefox\/\ ?([0-9]+)\.([0-9]+).*/],
+      search: checkContains('firefox')
+    },
+    {
+      name: 'Safari',
+      versionRegexes: [
+        normalVersionRegex,
+        /.*?cpu os ([0-9]+)_([0-9]+).*/
+      ],
+      search: function (uastring) {
+        return (contains$1(uastring, 'safari') || contains$1(uastring, 'mobile/')) && contains$1(uastring, 'applewebkit');
+      }
+    }
+  ];
+  var oses = [
+    {
+      name: 'Windows',
+      search: checkContains('win'),
+      versionRegexes: [/.*?windows\ nt\ ?([0-9]+)\.([0-9]+).*/]
+    },
+    {
+      name: 'iOS',
+      search: function (uastring) {
+        return contains$1(uastring, 'iphone') || contains$1(uastring, 'ipad');
+      },
+      versionRegexes: [
+        /.*?version\/\ ?([0-9]+)\.([0-9]+).*/,
+        /.*cpu os ([0-9]+)_([0-9]+).*/,
+        /.*cpu iphone os ([0-9]+)_([0-9]+).*/
+      ]
+    },
+    {
+      name: 'Android',
+      search: checkContains('android'),
+      versionRegexes: [/.*?android\ ?([0-9]+)\.([0-9]+).*/]
+    },
+    {
+      name: 'OSX',
+      search: checkContains('os x'),
+      versionRegexes: [/.*?os\ x\ ?([0-9]+)_([0-9]+).*/]
+    },
+    {
+      name: 'Linux',
+      search: checkContains('linux'),
+      versionRegexes: []
+    },
+    {
+      name: 'Solaris',
+      search: checkContains('sunos'),
+      versionRegexes: []
+    },
+    {
+      name: 'FreeBSD',
+      search: checkContains('freebsd'),
+      versionRegexes: []
+    }
+  ];
+  var $_btvcyclyjlnueckc = {
+    browsers: constant(browsers),
+    oses: constant(oses)
+  };
+
+  var detect$2 = function (userAgent) {
+    var browsers = $_btvcyclyjlnueckc.browsers();
+    var oses = $_btvcyclyjlnueckc.oses();
+    var browser = $_ak4ehlxjlnueck5.detectBrowser(browsers, userAgent).fold($_2xbtlxltjlnuecjc.unknown, $_2xbtlxltjlnuecjc.nu);
+    var os = $_ak4ehlxjlnueck5.detectOs(oses, userAgent).fold($_92qb4elvjlnuecjr.unknown, $_92qb4elvjlnuecjr.nu);
+    var deviceType = DeviceType(os, browser, userAgent);
+    return {
+      browser: browser,
+      os: os,
+      deviceType: deviceType
+    };
+  };
+  var $_5zrxaalsjlnuecja = { detect: detect$2 };
+
+  var detect$3 = cached(function () {
+    var userAgent = navigator.userAgent;
+    return $_5zrxaalsjlnuecja.detect(userAgent);
+  });
+  var $_gdzrivlqjlnueciv = { detect: detect$3 };
+
+  var eq = function (e1, e2) {
+    return e1.dom() === e2.dom();
+  };
+  var isEqualNode = function (e1, e2) {
+    return e1.dom().isEqualNode(e2.dom());
+  };
+  var member = function (element, elements) {
+    return exists(elements, curry(eq, element));
+  };
+  var regularContains = function (e1, e2) {
+    var d1 = e1.dom(), d2 = e2.dom();
+    return d1 === d2 ? false : d1.contains(d2);
+  };
+  var ieContains = function (e1, e2) {
+    return $_f42uynlmjlnuecii.documentPositionContainedBy(e1.dom(), e2.dom());
+  };
+  var browser = $_gdzrivlqjlnueciv.detect().browser;
+  var contains$2 = browser.isIE() ? ieContains : regularContains;
+  var $_45sffllljlnuecht = {
+    eq: eq,
+    isEqualNode: isEqualNode,
+    member: member,
+    contains: contains$2,
+    is: $_fjyr6olfjlnuecfn.is
+  };
+
+  var owner = function (element) {
+    return Element$$1.fromDom(element.dom().ownerDocument);
+  };
+  var documentElement = function (element) {
+    return Element$$1.fromDom(element.dom().ownerDocument.documentElement);
+  };
+  var defaultView = function (element) {
+    var el = element.dom();
+    var defaultView = el.ownerDocument.defaultView;
+    return Element$$1.fromDom(defaultView);
+  };
+  var parent = function (element) {
+    var dom = element.dom();
+    return Option.from(dom.parentNode).map(Element$$1.fromDom);
+  };
+  var findIndex$1 = function (element) {
+    return parent(element).bind(function (p) {
+      var kin = children(p);
+      return findIndex(kin, function (elem) {
+        return $_45sffllljlnuecht.eq(element, elem);
+      });
+    });
+  };
+  var parents = function (element, isRoot) {
+    var stop = isFunction(isRoot) ? isRoot : constant(false);
+    var dom = element.dom();
+    var ret = [];
+    while (dom.parentNode !== null && dom.parentNode !== undefined) {
+      var rawParent = dom.parentNode;
+      var parent = Element$$1.fromDom(rawParent);
+      ret.push(parent);
+      if (stop(parent) === true)
+        break;
+      else
+        dom = rawParent;
+    }
+    return ret;
+  };
+  var siblings = function (element) {
+    var filterSelf = function (elements) {
+      return filter(elements, function (x) {
+        return !$_45sffllljlnuecht.eq(element, x);
+      });
+    };
+    return parent(element).map(children).map(filterSelf).getOr([]);
+  };
+  var offsetParent = function (element) {
+    var dom = element.dom();
+    return Option.from(dom.offsetParent).map(Element$$1.fromDom);
+  };
+  var prevSibling = function (element) {
+    var dom = element.dom();
+    return Option.from(dom.previousSibling).map(Element$$1.fromDom);
+  };
+  var nextSibling = function (element) {
+    var dom = element.dom();
+    return Option.from(dom.nextSibling).map(Element$$1.fromDom);
+  };
+  var prevSiblings = function (element) {
+    return reverse($_2v7p3jlkjlnuechq.toArray(element, prevSibling));
+  };
+  var nextSiblings = function (element) {
+    return $_2v7p3jlkjlnuechq.toArray(element, nextSibling);
+  };
+  var children = function (element) {
+    var dom = element.dom();
+    return map(dom.childNodes, Element$$1.fromDom);
+  };
+  var child = function (element, index) {
+    var children = element.dom().childNodes;
+    return Option.from(children[index]).map(Element$$1.fromDom);
+  };
+  var firstChild = function (element) {
+    return child(element, 0);
+  };
+  var lastChild = function (element) {
+    return child(element, element.dom().childNodes.length - 1);
+  };
+  var childNodesCount = function (element) {
+    return element.dom().childNodes.length;
+  };
+  var hasChildNodes = function (element) {
+    return element.dom().hasChildNodes();
+  };
+  var spot = Immutable('element', 'offset');
+  var leaf = function (element, offset) {
+    var cs = children(element);
+    return cs.length > 0 && offset < cs.length ? spot(cs[offset], 0) : spot(element, offset);
+  };
+  var $_cvabpuljjlnuecgz = {
+    owner: owner,
+    defaultView: defaultView,
+    documentElement: documentElement,
+    parent: parent,
+    findIndex: findIndex$1,
+    parents: parents,
+    siblings: siblings,
+    prevSibling: prevSibling,
+    offsetParent: offsetParent,
+    prevSiblings: prevSiblings,
+    nextSibling: nextSibling,
+    nextSiblings: nextSiblings,
+    children: children,
+    child: child,
+    firstChild: firstChild,
+    lastChild: lastChild,
+    childNodesCount: childNodesCount,
+    hasChildNodes: hasChildNodes,
+    leaf: leaf
+  };
+
+  var firstLayer = function (scope, selector) {
+    return filterFirstLayer(scope, selector, constant(true));
+  };
+  var filterFirstLayer = function (scope, selector, predicate) {
+    return bind($_cvabpuljjlnuecgz.children(scope), function (x) {
+      return $_fjyr6olfjlnuecfn.is(x, selector) ? predicate(x) ? [x] : [] : filterFirstLayer(x, selector, predicate);
+    });
+  };
+  var $_66s20klejlnuecf4 = {
+    firstLayer: firstLayer,
+    filterFirstLayer: filterFirstLayer
+  };
+
+  var name = function (element) {
+    var r = element.dom().nodeName;
+    return r.toLowerCase();
+  };
+  var type = function (element) {
+    return element.dom().nodeType;
+  };
+  var value = function (element) {
+    return element.dom().nodeValue;
+  };
+  var isType$1 = function (t) {
+    return function (element) {
+      return type(element) === t;
+    };
+  };
+  var isComment = function (element) {
+    return type(element) === $_1659m3lijlnuecgt.COMMENT || name(element) === '#comment';
+  };
+  var isElement = isType$1($_1659m3lijlnuecgt.ELEMENT);
+  var isText = isType$1($_1659m3lijlnuecgt.TEXT);
+  var isDocument = isType$1($_1659m3lijlnuecgt.DOCUMENT);
+  var $_moydym3jlnueclb = {
+    name: name,
+    type: type,
+    value: value,
+    isElement: isElement,
+    isText: isText,
+    isDocument: isDocument,
+    isComment: isComment
+  };
+
+  var rawSet = function (dom, key, value) {
+    if (isString(value) || isBoolean(value) || isNumber(value)) {
+      dom.setAttribute(key, value + '');
+    } else {
+      console.error('Invalid call to Attr.set. Key ', key, ':: Value ', value, ':: Element ', dom);
+      throw new Error('Attribute value was not simple');
+    }
+  };
+  var set = function (element, key, value) {
+    rawSet(element.dom(), key, value);
+  };
+  var setAll = function (element, attrs) {
+    var dom = element.dom();
+    each$1(attrs, function (v, k) {
+      rawSet(dom, k, v);
+    });
+  };
+  var get = function (element, key) {
+    var v = element.dom().getAttribute(key);
+    return v === null ? undefined : v;
+  };
+  var has = function (element, key) {
+    var dom = element.dom();
+    return dom && dom.hasAttribute ? dom.hasAttribute(key) : false;
+  };
+  var remove = function (element, key) {
+    element.dom().removeAttribute(key);
+  };
+  var hasNone = function (element) {
+    var attrs = element.dom().attributes;
+    return attrs === undefined || attrs === null || attrs.length === 0;
+  };
+  var clone = function (element) {
+    return foldl(element.dom().attributes, function (acc, attr) {
+      acc[attr.name] = attr.value;
+      return acc;
+    }, {});
+  };
+  var transferOne = function (source, destination, attr) {
+    if (has(source, attr) && !has(destination, attr))
+      set(destination, attr, get(source, attr));
+  };
+  var transfer = function (source, destination, attrs) {
+    if (!$_moydym3jlnueclb.isElement(source) || !$_moydym3jlnueclb.isElement(destination))
+      return;
+    each(attrs, function (attr) {
+      transferOne(source, destination, attr);
+    });
+  };
+  var $_6f9wwmm2jlnueckv = {
+    clone: clone,
+    set: set,
+    setAll: setAll,
+    get: get,
+    has: has,
+    remove: remove,
+    hasNone: hasNone,
+    transfer: transfer
+  };
+
+  var inBody = function (element) {
+    var dom = $_moydym3jlnueclb.isText(element) ? element.dom().parentNode : element.dom();
+    return dom !== undefined && dom !== null && dom.ownerDocument.body.contains(dom);
+  };
+  var body = cached(function () {
+    return getBody(Element$$1.fromDom(document));
+  });
+  var getBody = function (doc) {
+    var body = doc.dom().body;
+    if (body === null || body === undefined)
+      throw 'Body is not available yet';
+    return Element$$1.fromDom(body);
+  };
+  var $_fq9qoxm6jlnuecln = {
+    body: body,
+    getBody: getBody,
+    inBody: inBody
+  };
+
+  var all$1 = function (predicate) {
+    return descendants($_fq9qoxm6jlnuecln.body(), predicate);
+  };
+  var ancestors = function (scope, predicate, isRoot) {
+    return filter($_cvabpuljjlnuecgz.parents(scope, isRoot), predicate);
+  };
+  var siblings$1 = function (scope, predicate) {
+    return filter($_cvabpuljjlnuecgz.siblings(scope), predicate);
+  };
+  var children$1 = function (scope, predicate) {
+    return filter($_cvabpuljjlnuecgz.children(scope), predicate);
+  };
+  var descendants = function (scope, predicate) {
+    var result = [];
+    each($_cvabpuljjlnuecgz.children(scope), function (x) {
+      if (predicate(x)) {
+        result = result.concat([x]);
+      }
+      result = result.concat(descendants(x, predicate));
+    });
+    return result;
+  };
+  var $_24x44vm5jlnueclg = {
+    all: all$1,
+    ancestors: ancestors,
+    siblings: siblings$1,
+    children: children$1,
+    descendants: descendants
+  };
+
+  var all$2 = function (selector) {
+    return $_fjyr6olfjlnuecfn.all(selector);
+  };
+  var ancestors$1 = function (scope, selector, isRoot) {
+    return $_24x44vm5jlnueclg.ancestors(scope, function (e) {
+      return $_fjyr6olfjlnuecfn.is(e, selector);
+    }, isRoot);
+  };
+  var siblings$2 = function (scope, selector) {
+    return $_24x44vm5jlnueclg.siblings(scope, function (e) {
+      return $_fjyr6olfjlnuecfn.is(e, selector);
+    });
+  };
+  var children$2 = function (scope, selector) {
+    return $_24x44vm5jlnueclg.children(scope, function (e) {
+      return $_fjyr6olfjlnuecfn.is(e, selector);
+    });
+  };
+  var descendants$1 = function (scope, selector) {
+    return $_fjyr6olfjlnuecfn.all(selector, scope);
+  };
+  var $_49wdgem4jlnuecle = {
+    all: all$2,
+    ancestors: ancestors$1,
+    siblings: siblings$2,
+    children: children$2,
+    descendants: descendants$1
+  };
+
+  function ClosestOrAncestor (is, ancestor, scope, a, isRoot) {
+    return is(scope, a) ? Option.some(scope) : isFunction(isRoot) && isRoot(scope) ? Option.none() : ancestor(scope, a, isRoot);
+  }
+
+  var first$1 = function (predicate) {
+    return descendant($_fq9qoxm6jlnuecln.body(), predicate);
+  };
+  var ancestor = function (scope, predicate, isRoot) {
+    var element = scope.dom();
+    var stop = isFunction(isRoot) ? isRoot : constant(false);
+    while (element.parentNode) {
+      element = element.parentNode;
+      var el = Element$$1.fromDom(element);
+      if (predicate(el))
+        return Option.some(el);
+      else if (stop(el))
+        break;
+    }
+    return Option.none();
+  };
+  var closest = function (scope, predicate, isRoot) {
+    var is = function (scope) {
+      return predicate(scope);
+    };
+    return ClosestOrAncestor(is, ancestor, scope, predicate, isRoot);
+  };
+  var sibling = function (scope, predicate) {
+    var element = scope.dom();
+    if (!element.parentNode)
+      return Option.none();
+    return child$1(Element$$1.fromDom(element.parentNode), function (x) {
+      return !$_45sffllljlnuecht.eq(scope, x) && predicate(x);
+    });
+  };
+  var child$1 = function (scope, predicate) {
+    var result = find(scope.dom().childNodes, compose(predicate, Element$$1.fromDom));
+    return result.map(Element$$1.fromDom);
+  };
+  var descendant = function (scope, predicate) {
+    var descend = function (node) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (predicate(Element$$1.fromDom(node.childNodes[i])))
+          return Option.some(Element$$1.fromDom(node.childNodes[i]));
+        var res = descend(node.childNodes[i]);
+        if (res.isSome())
+          return res;
+      }
+      return Option.none();
+    };
+    return descend(scope.dom());
+  };
+  var $_957pbwm8jlnueclx = {
+    first: first$1,
+    ancestor: ancestor,
+    closest: closest,
+    sibling: sibling,
+    child: child$1,
+    descendant: descendant
+  };
+
+  var first$2 = function (selector) {
+    return $_fjyr6olfjlnuecfn.one(selector);
+  };
+  var ancestor$1 = function (scope, selector, isRoot) {
+    return $_957pbwm8jlnueclx.ancestor(scope, function (e) {
+      return $_fjyr6olfjlnuecfn.is(e, selector);
+    }, isRoot);
+  };
+  var sibling$1 = function (scope, selector) {
+    return $_957pbwm8jlnueclx.sibling(scope, function (e) {
+      return $_fjyr6olfjlnuecfn.is(e, selector);
+    });
+  };
+  var child$2 = function (scope, selector) {
+    return $_957pbwm8jlnueclx.child(scope, function (e) {
+      return $_fjyr6olfjlnuecfn.is(e, selector);
+    });
+  };
+  var descendant$1 = function (scope, selector) {
+    return $_fjyr6olfjlnuecfn.one(selector, scope);
+  };
+  var closest$1 = function (scope, selector, isRoot) {
+    return ClosestOrAncestor($_fjyr6olfjlnuecfn.is, ancestor$1, scope, selector, isRoot);
+  };
+  var $_17q5jxm7jlnueclv = {
+    first: first$2,
+    ancestor: ancestor$1,
+    sibling: sibling$1,
+    child: child$2,
+    descendant: descendant$1,
+    closest: closest$1
+  };
+
+  var lookup = function (tags, element, _isRoot) {
+    var isRoot = _isRoot !== undefined ? _isRoot : constant(false);
+    if (isRoot(element))
+      return Option.none();
+    if (contains(tags, $_moydym3jlnueclb.name(element)))
+      return Option.some(element);
+    var isRootOrUpperTable = function (element) {
+      return $_fjyr6olfjlnuecfn.is(element, 'table') || isRoot(element);
+    };
+    return $_17q5jxm7jlnueclv.ancestor(element, tags.join(','), isRootOrUpperTable);
+  };
+  var cell = function (element, isRoot) {
+    return lookup([
+      'td',
+      'th'
+    ], element, isRoot);
+  };
+  var cells = function (ancestor) {
+    return $_66s20klejlnuecf4.firstLayer(ancestor, 'th,td');
+  };
+  var notCell = function (element, isRoot) {
+    return lookup([
+      'caption',
+      'tr',
+      'tbody',
+      'tfoot',
+      'thead'
+    ], element, isRoot);
+  };
+  var neighbours = function (selector, element) {
+    return $_cvabpuljjlnuecgz.parent(element).map(function (parent) {
+      return $_49wdgem4jlnuecle.children(parent, selector);
+    });
+  };
+  var neighbourCells = curry(neighbours, 'th,td');
+  var neighbourRows = curry(neighbours, 'tr');
+  var firstCell = function (ancestor) {
+    return $_17q5jxm7jlnueclv.descendant(ancestor, 'th,td');
+  };
+  var table = function (element, isRoot) {
+    return $_17q5jxm7jlnueclv.closest(element, 'table', isRoot);
+  };
+  var row = function (element, isRoot) {
+    return lookup(['tr'], element, isRoot);
+  };
+  var rows = function (ancestor) {
+    return $_66s20klejlnuecf4.firstLayer(ancestor, 'tr');
+  };
+  var attr = function (element, property) {
+    return parseInt($_6f9wwmm2jlnueckv.get(element, property), 10);
+  };
+  var grid$1 = function (element, rowProp, colProp) {
+    var rows = attr(element, rowProp);
+    var cols = attr(element, colProp);
+    return $_63m7jdlcjlnuecdk.grid(rows, cols);
+  };
+  var $_enoas1ldjlnuecdr = {
+    cell: cell,
+    firstCell: firstCell,
+    cells: cells,
+    neighbourCells: neighbourCells,
+    table: table,
+    row: row,
+    rows: rows,
+    notCell: notCell,
+    neighbourRows: neighbourRows,
+    attr: attr,
+    grid: grid$1
+  };
+
+  var fromTable = function (table) {
+    var rows = $_enoas1ldjlnuecdr.rows(table);
+    return map(rows, function (row) {
+      var element = row;
+      var parent = $_cvabpuljjlnuecgz.parent(element);
+      var parentSection = parent.map(function (parent) {
+        var parentName = $_moydym3jlnueclb.name(parent);
+        return parentName === 'tfoot' || parentName === 'thead' || parentName === 'tbody' ? parentName : 'tbody';
+      }).getOr('tbody');
+      var cells = map($_enoas1ldjlnuecdr.cells(row), function (cell) {
+        var rowspan = $_6f9wwmm2jlnueckv.has(cell, 'rowspan') ? parseInt($_6f9wwmm2jlnueckv.get(cell, 'rowspan'), 10) : 1;
+        var colspan = $_6f9wwmm2jlnueckv.has(cell, 'colspan') ? parseInt($_6f9wwmm2jlnueckv.get(cell, 'colspan'), 10) : 1;
+        return $_63m7jdlcjlnuecdk.detail(cell, rowspan, colspan);
+      });
+      return $_63m7jdlcjlnuecdk.rowdata(element, cells, parentSection);
+    });
+  };
+  var fromPastedRows = function (rows, example) {
+    return map(rows, function (row) {
+      var cells = map($_enoas1ldjlnuecdr.cells(row), function (cell) {
+        var rowspan = $_6f9wwmm2jlnueckv.has(cell, 'rowspan') ? parseInt($_6f9wwmm2jlnueckv.get(cell, 'rowspan'), 10) : 1;
+        var colspan = $_6f9wwmm2jlnueckv.has(cell, 'colspan') ? parseInt($_6f9wwmm2jlnueckv.get(cell, 'colspan'), 10) : 1;
+        return $_63m7jdlcjlnuecdk.detail(cell, rowspan, colspan);
+      });
+      return $_63m7jdlcjlnuecdk.rowdata(row, cells, example.section());
+    });
+  };
+  var $_24qbqwlbjlnueccz = {
+    fromTable: fromTable,
+    fromPastedRows: fromPastedRows
+  };
+
+  var key = function (row, column) {
+    return row + ',' + column;
+  };
+  var getAt = function (warehouse, row, column) {
+    var raw = warehouse.access()[key(row, column)];
+    return raw !== undefined ? Option.some(raw) : Option.none();
+  };
+  var findItem = function (warehouse, item, comparator) {
+    var filtered = filterItems(warehouse, function (detail) {
+      return comparator(item, detail.element());
+    });
+    return filtered.length > 0 ? Option.some(filtered[0]) : Option.none();
+  };
+  var filterItems = function (warehouse, predicate) {
+    var all = bind(warehouse.all(), function (r) {
+      return r.cells();
+    });
+    return filter(all, predicate);
+  };
+  var generate = function (list) {
+    var access = {};
+    var cells = [];
+    var maxRows = list.length;
+    var maxColumns = 0;
+    each(list, function (details, r) {
+      var currentRow = [];
+      each(details.cells(), function (detail, c) {
+        var start = 0;
+        while (access[key(r, start)] !== undefined) {
+          start++;
+        }
+        var current = $_63m7jdlcjlnuecdk.extended(detail.element(), detail.rowspan(), detail.colspan(), r, start);
+        for (var i = 0; i < detail.colspan(); i++) {
+          for (var j = 0; j < detail.rowspan(); j++) {
+            var cr = r + j;
+            var cc = start + i;
+            var newpos = key(cr, cc);
+            access[newpos] = current;
+            maxColumns = Math.max(maxColumns, cc + 1);
+          }
+        }
+        currentRow.push(current);
+      });
+      cells.push($_63m7jdlcjlnuecdk.rowdata(details.element(), currentRow, details.section()));
+    });
+    var grid = $_63m7jdlcjlnuecdk.grid(maxRows, maxColumns);
+    return {
+      grid: constant(grid),
+      access: constant(access),
+      all: constant(cells)
+    };
+  };
+  var justCells = function (warehouse) {
+    var rows = map(warehouse.all(), function (w) {
+      return w.cells();
+    });
+    return flatten(rows);
+  };
+  var $_5pxk82majlnuecn1 = {
+    generate: generate,
+    getAt: getAt,
+    findItem: findItem,
+    filterItems: filterItems,
+    justCells: justCells
+  };
+
+  var isSupported = function (dom) {
+    return dom.style !== undefined;
+  };
+  var $_gbqrzgmcjlnueco7 = { isSupported: isSupported };
+
+  var internalSet = function (dom, property, value) {
+    if (!isString(value)) {
+      console.error('Invalid call to CSS.set. Property ', property, ':: Value ', value, ':: Element ', dom);
+      throw new Error('CSS value must be a string: ' + value);
+    }
+    if ($_gbqrzgmcjlnueco7.isSupported(dom))
+      dom.style.setProperty(property, value);
+  };
+  var internalRemove = function (dom, property) {
+    if ($_gbqrzgmcjlnueco7.isSupported(dom))
+      dom.style.removeProperty(property);
+  };
+  var set$1 = function (element, property, value) {
+    var dom = element.dom();
+    internalSet(dom, property, value);
+  };
+  var setAll$1 = function (element, css) {
+    var dom = element.dom();
+    each$1(css, function (v, k) {
+      internalSet(dom, k, v);
+    });
+  };
+  var setOptions = function (element, css) {
+    var dom = element.dom();
+    each$1(css, function (v, k) {
+      v.fold(function () {
+        internalRemove(dom, k);
+      }, function (value) {
+        internalSet(dom, k, value);
+      });
+    });
+  };
+  var get$1 = function (element, property) {
+    var dom = element.dom();
+    var styles = window.getComputedStyle(dom);
+    var r = styles.getPropertyValue(property);
+    var v = r === '' && !$_fq9qoxm6jlnuecln.inBody(element) ? getUnsafeProperty(dom, property) : r;
+    return v === null ? undefined : v;
+  };
+  var getUnsafeProperty = function (dom, property) {
+    return $_gbqrzgmcjlnueco7.isSupported(dom) ? dom.style.getPropertyValue(property) : '';
+  };
+  var getRaw = function (element, property) {
+    var dom = element.dom();
+    var raw = getUnsafeProperty(dom, property);
+    return Option.from(raw).filter(function (r) {
+      return r.length > 0;
+    });
+  };
+  var getAllRaw = function (element) {
+    var css = {};
+    var dom = element.dom();
+    if ($_gbqrzgmcjlnueco7.isSupported(dom)) {
+      for (var i = 0; i < dom.style.length; i++) {
+        var ruleName = dom.style.item(i);
+        css[ruleName] = dom.style[ruleName];
+      }
+    }
+    return css;
+  };
+  var isValidValue = function (tag, property, value) {
+    var element = Element$$1.fromTag(tag);
+    set$1(element, property, value);
+    var style = getRaw(element, property);
+    return style.isSome();
+  };
+  var remove$1 = function (element, property) {
+    var dom = element.dom();
+    internalRemove(dom, property);
+    if ($_6f9wwmm2jlnueckv.has(element, 'style') && trim($_6f9wwmm2jlnueckv.get(element, 'style')) === '') {
+      $_6f9wwmm2jlnueckv.remove(element, 'style');
+    }
+  };
+  var preserve = function (element, f) {
+    var oldStyles = $_6f9wwmm2jlnueckv.get(element, 'style');
+    var result = f(element);
+    var restore = oldStyles === undefined ? $_6f9wwmm2jlnueckv.remove : $_6f9wwmm2jlnueckv.set;
+    restore(element, 'style', oldStyles);
+    return result;
+  };
+  var copy = function (source, target) {
+    var sourceDom = source.dom();
+    var targetDom = target.dom();
+    if ($_gbqrzgmcjlnueco7.isSupported(sourceDom) && $_gbqrzgmcjlnueco7.isSupported(targetDom)) {
+      targetDom.style.cssText = sourceDom.style.cssText;
+    }
+  };
+  var reflow = function (e) {
+    return e.dom().offsetWidth;
+  };
+  var transferOne$1 = function (source, destination, style) {
+    getRaw(source, style).each(function (value) {
+      if (getRaw(destination, style).isNone())
+        set$1(destination, style, value);
+    });
+  };
+  var transfer$1 = function (source, destination, styles) {
+    if (!$_moydym3jlnueclb.isElement(source) || !$_moydym3jlnueclb.isElement(destination))
+      return;
+    each(styles, function (style) {
+      transferOne$1(source, destination, style);
+    });
+  };
+  var $_77s8gzmbjlnuecni = {
+    copy: copy,
+    set: set$1,
+    preserve: preserve,
+    setAll: setAll$1,
+    setOptions: setOptions,
+    remove: remove$1,
+    get: get$1,
+    getRaw: getRaw,
+    getAllRaw: getAllRaw,
+    isValidValue: isValidValue,
+    reflow: reflow,
+    transfer: transfer$1
+  };
+
+  var before = function (marker, element) {
+    var parent = $_cvabpuljjlnuecgz.parent(marker);
+    parent.each(function (v) {
+      v.dom().insertBefore(element.dom(), marker.dom());
+    });
+  };
+  var after = function (marker, element) {
+    var sibling = $_cvabpuljjlnuecgz.nextSibling(marker);
+    sibling.fold(function () {
+      var parent = $_cvabpuljjlnuecgz.parent(marker);
+      parent.each(function (v) {
+        append(v, element);
+      });
+    }, function (v) {
+      before(v, element);
+    });
+  };
+  var prepend = function (parent, element) {
+    var firstChild = $_cvabpuljjlnuecgz.firstChild(parent);
+    firstChild.fold(function () {
+      append(parent, element);
+    }, function (v) {
+      parent.dom().insertBefore(element.dom(), v.dom());
+    });
+  };
+  var append = function (parent, element) {
+    parent.dom().appendChild(element.dom());
+  };
+  var appendAt = function (parent, element, index) {
+    $_cvabpuljjlnuecgz.child(parent, index).fold(function () {
+      append(parent, element);
+    }, function (v) {
+      before(v, element);
+    });
+  };
+  var wrap = function (element, wrapper) {
+    before(element, wrapper);
+    append(wrapper, element);
+  };
+  var $_881al2mdjlnuecoa = {
+    before: before,
+    after: after,
+    prepend: prepend,
+    append: append,
+    appendAt: appendAt,
+    wrap: wrap
+  };
+
+  var before$1 = function (marker, elements) {
+    each(elements, function (x) {
+      $_881al2mdjlnuecoa.before(marker, x);
+    });
+  };
+  var after$1 = function (marker, elements) {
+    each(elements, function (x, i) {
+      var e = i === 0 ? marker : elements[i - 1];
+      $_881al2mdjlnuecoa.after(e, x);
+    });
+  };
+  var prepend$1 = function (parent, elements) {
+    each(elements.slice().reverse(), function (x) {
+      $_881al2mdjlnuecoa.prepend(parent, x);
+    });
+  };
+  var append$1 = function (parent, elements) {
+    each(elements, function (x) {
+      $_881al2mdjlnuecoa.append(parent, x);
+    });
+  };
+  var $_78znkumfjlnuecoj = {
+    before: before$1,
+    after: after$1,
+    prepend: prepend$1,
+    append: append$1
+  };
+
+  var empty = function (element) {
+    element.dom().textContent = '';
+    each($_cvabpuljjlnuecgz.children(element), function (rogue) {
+      remove$2(rogue);
+    });
+  };
+  var remove$2 = function (element) {
+    var dom = element.dom();
+    if (dom.parentNode !== null)
+      dom.parentNode.removeChild(dom);
+  };
+  var unwrap = function (wrapper) {
+    var children = $_cvabpuljjlnuecgz.children(wrapper);
+    if (children.length > 0)
+      $_78znkumfjlnuecoj.before(wrapper, children);
+    remove$2(wrapper);
+  };
+  var $_dzcomomejlnuecod = {
+    empty: empty,
+    remove: remove$2,
+    unwrap: unwrap
+  };
+
+  var stats = Immutable('minRow', 'minCol', 'maxRow', 'maxCol');
+  var findSelectedStats = function (house, isSelected) {
+    var totalColumns = house.grid().columns();
+    var totalRows = house.grid().rows();
+    var minRow = totalRows;
+    var minCol = totalColumns;
+    var maxRow = 0;
+    var maxCol = 0;
+    each$1(house.access(), function (detail) {
+      if (isSelected(detail)) {
+        var startRow = detail.row();
+        var endRow = startRow + detail.rowspan() - 1;
+        var startCol = detail.column();
+        var endCol = startCol + detail.colspan() - 1;
+        if (startRow < minRow)
+          minRow = startRow;
+        else if (endRow > maxRow)
+          maxRow = endRow;
+        if (startCol < minCol)
+          minCol = startCol;
+        else if (endCol > maxCol)
+          maxCol = endCol;
+      }
+    });
+    return stats(minRow, minCol, maxRow, maxCol);
+  };
+  var makeCell = function (list, seenSelected, rowIndex) {
+    var row = list[rowIndex].element();
+    var td = Element$$1.fromTag('td');
+    $_881al2mdjlnuecoa.append(td, Element$$1.fromTag('br'));
+    var f = seenSelected ? $_881al2mdjlnuecoa.append : $_881al2mdjlnuecoa.prepend;
+    f(row, td);
+  };
+  var fillInGaps = function (list, house, stats, isSelected) {
+    var totalColumns = house.grid().columns();
+    var totalRows = house.grid().rows();
+    for (var i = 0; i < totalRows; i++) {
+      var seenSelected = false;
+      for (var j = 0; j < totalColumns; j++) {
+        if (!(i < stats.minRow() || i > stats.maxRow() || j < stats.minCol() || j > stats.maxCol())) {
+          var needCell = $_5pxk82majlnuecn1.getAt(house, i, j).filter(isSelected).isNone();
+          if (needCell)
+            makeCell(list, seenSelected, i);
+          else
+            seenSelected = true;
+        }
+      }
+    }
+  };
+  var clean = function (table, stats) {
+    var emptyRows = filter($_66s20klejlnuecf4.firstLayer(table, 'tr'), function (row) {
+      return row.dom().childElementCount === 0;
+    });
+    each(emptyRows, $_dzcomomejlnuecod.remove);
+    if (stats.minCol() === stats.maxCol() || stats.minRow() === stats.maxRow()) {
+      each($_66s20klejlnuecf4.firstLayer(table, 'th,td'), function (cell) {
+        $_6f9wwmm2jlnueckv.remove(cell, 'rowspan');
+        $_6f9wwmm2jlnueckv.remove(cell, 'colspan');
+      });
+    }
+    $_6f9wwmm2jlnueckv.remove(table, 'width');
+    $_6f9wwmm2jlnueckv.remove(table, 'height');
+    $_77s8gzmbjlnuecni.remove(table, 'width');
+    $_77s8gzmbjlnuecni.remove(table, 'height');
+  };
+  var extract = function (table, selectedSelector) {
+    var isSelected = function (detail) {
+      return $_fjyr6olfjlnuecfn.is(detail.element(), selectedSelector);
+    };
+    var list = $_24qbqwlbjlnueccz.fromTable(table);
+    var house = $_5pxk82majlnuecn1.generate(list);
+    var stats = findSelectedStats(house, isSelected);
+    var selector = 'th:not(' + selectedSelector + ')' + ',td:not(' + selectedSelector + ')';
+    var unselectedCells = $_66s20klejlnuecf4.filterFirstLayer(table, 'th,td', function (cell) {
+      return $_fjyr6olfjlnuecfn.is(cell, selector);
+    });
+    each(unselectedCells, $_dzcomomejlnuecod.remove);
+    fillInGaps(list, house, stats, isSelected);
+    clean(table, stats);
+    return table;
+  };
+  var $_99iegnl5jlnuecau = { extract: extract };
+
+  var clone$1 = function (original, deep) {
+    return Element$$1.fromDom(original.dom().cloneNode(deep));
+  };
+  var shallow = function (original) {
+    return clone$1(original, false);
+  };
+  var deep = function (original) {
+    return clone$1(original, true);
+  };
+  var shallowAs = function (original, tag) {
+    var nu = Element$$1.fromTag(tag);
+    var attributes = $_6f9wwmm2jlnueckv.clone(original);
+    $_6f9wwmm2jlnueckv.setAll(nu, attributes);
+    return nu;
+  };
+  var copy$1 = function (original, tag) {
+    var nu = shallowAs(original, tag);
+    var cloneChildren = $_cvabpuljjlnuecgz.children(deep(original));
+    $_78znkumfjlnuecoj.append(nu, cloneChildren);
+    return nu;
+  };
+  var mutate = function (original, tag) {
+    var nu = shallowAs(original, tag);
+    $_881al2mdjlnuecoa.before(original, nu);
+    var children = $_cvabpuljjlnuecgz.children(original);
+    $_78znkumfjlnuecoj.append(nu, children);
+    $_dzcomomejlnuecod.remove(original);
+    return nu;
+  };
+  var $_e4aet6mhjlnuecr3 = {
+    shallow: shallow,
+    shallowAs: shallowAs,
+    deep: deep,
+    copy: copy$1,
+    mutate: mutate
+  };
+
+  function NodeValue (is, name) {
+    var get = function (element) {
+      if (!is(element))
+        throw new Error('Can only get ' + name + ' value of a ' + name + ' node');
+      return getOption(element).getOr('');
+    };
+    var getOptionIE10 = function (element) {
+      try {
+        return getOptionSafe(element);
+      } catch (e) {
+        return Option.none();
+      }
+    };
+    var getOptionSafe = function (element) {
+      return is(element) ? Option.from(element.dom().nodeValue) : Option.none();
+    };
+    var browser = $_gdzrivlqjlnueciv.detect().browser;
+    var getOption = browser.isIE() && browser.version.major === 10 ? getOptionIE10 : getOptionSafe;
+    var set = function (element, value) {
+      if (!is(element))
+        throw new Error('Can only set raw ' + name + ' value of a ' + name + ' node');
+      element.dom().nodeValue = value;
+    };
+    return {
+      get: get,
+      getOption: getOption,
+      set: set
+    };
+  }
+
+  var api = NodeValue($_moydym3jlnueclb.isText, 'text');
+  var get$2 = function (element) {
+    return api.get(element);
+  };
+  var getOption = function (element) {
+    return api.getOption(element);
+  };
+  var set$2 = function (element, value) {
+    api.set(element, value);
+  };
+  var $_u2vdgmkjlnuecrz = {
+    get: get$2,
+    getOption: getOption,
+    set: set$2
+  };
+
+  var getEnd = function (element) {
+    return $_moydym3jlnueclb.name(element) === 'img' ? 1 : $_u2vdgmkjlnuecrz.getOption(element).fold(function () {
+      return $_cvabpuljjlnuecgz.children(element).length;
+    }, function (v) {
+      return v.length;
+    });
+  };
+  var isEnd = function (element, offset) {
+    return getEnd(element) === offset;
+  };
+  var isStart = function (element, offset) {
+    return offset === 0;
+  };
+  var NBSP = '\xA0';
+  var isTextNodeWithCursorPosition = function (el) {
+    return $_u2vdgmkjlnuecrz.getOption(el).filter(function (text) {
+      return text.trim().length !== 0 || text.indexOf(NBSP) > -1;
+    }).isSome();
+  };
+  var elementsWithCursorPosition = [
+    'img',
+    'br'
+  ];
+  var isCursorPosition = function (elem) {
+    var hasCursorPosition = isTextNodeWithCursorPosition(elem);
+    return hasCursorPosition || contains(elementsWithCursorPosition, $_moydym3jlnueclb.name(elem));
+  };
+  var $_5fv0nomjjlnuecrl = {
+    getEnd: getEnd,
+    isEnd: isEnd,
+    isStart: isStart,
+    isCursorPosition: isCursorPosition
+  };
+
+  var first$3 = function (element) {
+    return $_957pbwm8jlnueclx.descendant(element, $_5fv0nomjjlnuecrl.isCursorPosition);
+  };
+  var last$2 = function (element) {
+    return descendantRtl(element, $_5fv0nomjjlnuecrl.isCursorPosition);
+  };
+  var descendantRtl = function (scope, predicate) {
+    var descend = function (element) {
+      var children = $_cvabpuljjlnuecgz.children(element);
+      for (var i = children.length - 1; i >= 0; i--) {
+        var child = children[i];
+        if (predicate(child))
+          return Option.some(child);
+        var res = descend(child);
+        if (res.isSome())
+          return res;
+      }
+      return Option.none();
+    };
+    return descend(scope);
+  };
+  var $_6ikghvmijlnuecr8 = {
+    first: first$3,
+    last: last$2
+  };
+
+  var cell$1 = function () {
+    var td = Element$$1.fromTag('td');
+    $_881al2mdjlnuecoa.append(td, Element$$1.fromTag('br'));
+    return td;
+  };
+  var replace = function (cell, tag, attrs) {
+    var replica = $_e4aet6mhjlnuecr3.copy(cell, tag);
+    each$1(attrs, function (v, k) {
+      if (v === null)
+        $_6f9wwmm2jlnueckv.remove(replica, k);
+      else
+        $_6f9wwmm2jlnueckv.set(replica, k, v);
+    });
+    return replica;
+  };
+  var pasteReplace = function (cellContent) {
+    return cellContent;
+  };
+  var newRow = function (doc) {
+    return function () {
+      return Element$$1.fromTag('tr', doc.dom());
+    };
+  };
+  var cloneFormats = function (oldCell, newCell, formats) {
+    var first = $_6ikghvmijlnuecr8.first(oldCell);
+    return first.map(function (firstText) {
+      var formatSelector = formats.join(',');
+      var parents = $_49wdgem4jlnuecle.ancestors(firstText, formatSelector, function (element) {
+        return $_45sffllljlnuecht.eq(element, oldCell);
+      });
+      return foldr(parents, function (last$$1, parent) {
+        var clonedFormat = $_e4aet6mhjlnuecr3.shallow(parent);
+        $_6f9wwmm2jlnueckv.remove(clonedFormat, 'contenteditable');
+        $_881al2mdjlnuecoa.append(last$$1, clonedFormat);
+        return clonedFormat;
+      }, newCell);
+    }).getOr(newCell);
+  };
+  var cellOperations = function (mutate, doc, formatsToClone) {
+    var newCell = function (prev) {
+      var doc = $_cvabpuljjlnuecgz.owner(prev.element());
+      var td = Element$$1.fromTag($_moydym3jlnueclb.name(prev.element()), doc.dom());
+      var formats = formatsToClone.getOr([
+        'strong',
+        'em',
+        'b',
+        'i',
+        'span',
+        'font',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'p',
+        'div'
+      ]);
+      var lastNode = formats.length > 0 ? cloneFormats(prev.element(), td, formats) : td;
+      $_881al2mdjlnuecoa.append(lastNode, Element$$1.fromTag('br'));
+      $_77s8gzmbjlnuecni.copy(prev.element(), td);
+      $_77s8gzmbjlnuecni.remove(td, 'height');
+      if (prev.colspan() !== 1)
+        $_77s8gzmbjlnuecni.remove(prev.element(), 'width');
+      mutate(prev.element(), td);
+      return td;
+    };
+    return {
+      row: newRow(doc),
+      cell: newCell,
+      replace: replace,
+      gap: cell$1
+    };
+  };
+  var paste = function (doc) {
+    return {
+      row: newRow(doc),
+      cell: cell$1,
+      replace: pasteReplace,
+      gap: cell$1
+    };
+  };
+  var $_3ceu0wmgjlnuecot = {
+    cellOperations: cellOperations,
+    paste: paste
+  };
+
+  var fromHtml$1 = function (html, scope) {
+    var doc = scope || document;
+    var div = doc.createElement('div');
+    div.innerHTML = html;
+    return $_cvabpuljjlnuecgz.children(Element$$1.fromDom(div));
+  };
+  var fromTags = function (tags, scope) {
+    return map(tags, function (x) {
+      return Element$$1.fromTag(x, scope);
+    });
+  };
+  var fromText$1 = function (texts, scope) {
+    return map(texts, function (x) {
+      return Element$$1.fromText(x, scope);
+    });
+  };
+  var fromDom$1 = function (nodes) {
+    return map(nodes, Element$$1.fromDom);
+  };
+  var $_b783cqmmjlnuecsk = {
+    fromHtml: fromHtml$1,
+    fromTags: fromTags,
+    fromText: fromText$1,
+    fromDom: fromDom$1
+  };
+
+  var TagBoundaries = [
+    'body',
+    'p',
+    'div',
+    'article',
+    'aside',
+    'figcaption',
+    'figure',
+    'footer',
+    'header',
+    'nav',
+    'section',
+    'ol',
+    'ul',
+    'li',
+    'table',
+    'thead',
+    'tbody',
+    'tfoot',
+    'caption',
+    'tr',
+    'td',
+    'th',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'blockquote',
+    'pre',
+    'address'
+  ];
+
+  function DomUniverse () {
+    var clone = function (element) {
+      return Element$$1.fromDom(element.dom().cloneNode(false));
+    };
+    var isBoundary = function (element) {
+      if (!$_moydym3jlnueclb.isElement(element))
+        return false;
+      if ($_moydym3jlnueclb.name(element) === 'body')
+        return true;
+      return contains(TagBoundaries, $_moydym3jlnueclb.name(element));
+    };
+    var isEmptyTag = function (element) {
+      if (!$_moydym3jlnueclb.isElement(element))
+        return false;
+      return contains([
+        'br',
+        'img',
+        'hr',
+        'input'
+      ], $_moydym3jlnueclb.name(element));
+    };
+    var comparePosition = function (element, other) {
+      return element.dom().compareDocumentPosition(other.dom());
+    };
+    var copyAttributesTo = function (source, destination) {
+      var as = $_6f9wwmm2jlnueckv.clone(source);
+      $_6f9wwmm2jlnueckv.setAll(destination, as);
+    };
+    return {
+      up: constant({
+        selector: $_17q5jxm7jlnueclv.ancestor,
+        closest: $_17q5jxm7jlnueclv.closest,
+        predicate: $_957pbwm8jlnueclx.ancestor,
+        all: $_cvabpuljjlnuecgz.parents
+      }),
+      down: constant({
+        selector: $_49wdgem4jlnuecle.descendants,
+        predicate: $_24x44vm5jlnueclg.descendants
+      }),
+      styles: constant({
+        get: $_77s8gzmbjlnuecni.get,
+        getRaw: $_77s8gzmbjlnuecni.getRaw,
+        set: $_77s8gzmbjlnuecni.set,
+        remove: $_77s8gzmbjlnuecni.remove
+      }),
+      attrs: constant({
+        get: $_6f9wwmm2jlnueckv.get,
+        set: $_6f9wwmm2jlnueckv.set,
+        remove: $_6f9wwmm2jlnueckv.remove,
+        copyTo: copyAttributesTo
+      }),
+      insert: constant({
+        before: $_881al2mdjlnuecoa.before,
+        after: $_881al2mdjlnuecoa.after,
+        afterAll: $_78znkumfjlnuecoj.after,
+        append: $_881al2mdjlnuecoa.append,
+        appendAll: $_78znkumfjlnuecoj.append,
+        prepend: $_881al2mdjlnuecoa.prepend,
+        wrap: $_881al2mdjlnuecoa.wrap
+      }),
+      remove: constant({
+        unwrap: $_dzcomomejlnuecod.unwrap,
+        remove: $_dzcomomejlnuecod.remove
+      }),
+      create: constant({
+        nu: Element$$1.fromTag,
+        clone: clone,
+        text: Element$$1.fromText
+      }),
+      query: constant({
+        comparePosition: comparePosition,
+        prevSibling: $_cvabpuljjlnuecgz.prevSibling,
+        nextSibling: $_cvabpuljjlnuecgz.nextSibling
+      }),
+      property: constant({
+        children: $_cvabpuljjlnuecgz.children,
+        name: $_moydym3jlnueclb.name,
+        parent: $_cvabpuljjlnuecgz.parent,
+        isText: $_moydym3jlnueclb.isText,
+        isComment: $_moydym3jlnueclb.isComment,
+        isElement: $_moydym3jlnueclb.isElement,
+        getText: $_u2vdgmkjlnuecrz.get,
+        setText: $_u2vdgmkjlnuecrz.set,
+        isBoundary: isBoundary,
+        isEmptyTag: isEmptyTag
+      }),
+      eq: $_45sffllljlnuecht.eq,
+      is: $_45sffllljlnuecht.is
+    };
+  }
+
+  var leftRight = Immutable('left', 'right');
+  var bisect = function (universe, parent, child) {
+    var children = universe.property().children(parent);
+    var index = findIndex(children, curry(universe.eq, child));
+    return index.map(function (ind) {
+      return {
+        before: constant(children.slice(0, ind)),
+        after: constant(children.slice(ind + 1))
+      };
+    });
+  };
+  var breakToRight = function (universe, parent, child) {
+    return bisect(universe, parent, child).map(function (parts) {
+      var second = universe.create().clone(parent);
+      universe.insert().appendAll(second, parts.after());
+      universe.insert().after(parent, second);
+      return leftRight(parent, second);
+    });
+  };
+  var breakToLeft = function (universe, parent, child) {
+    return bisect(universe, parent, child).map(function (parts) {
+      var prior = universe.create().clone(parent);
+      universe.insert().appendAll(prior, parts.before().concat([child]));
+      universe.insert().appendAll(parent, parts.after());
+      universe.insert().before(parent, prior);
+      return leftRight(prior, parent);
+    });
+  };
+  var breakPath = function (universe, item, isTop, breaker) {
+    var result = Immutable('first', 'second', 'splits');
+    var next = function (child, group, splits) {
+      var fallback = result(child, Option.none(), splits);
+      if (isTop(child))
+        return result(child, group, splits);
+      else {
+        return universe.property().parent(child).bind(function (parent) {
+          return breaker(universe, parent, child).map(function (breakage) {
+            var extra = [{
+                first: breakage.left,
+                second: breakage.right
+              }];
+            var nextChild = isTop(parent) ? parent : breakage.left();
+            return next(nextChild, Option.some(breakage.right()), splits.concat(extra));
+          }).getOr(fallback);
+        });
+      }
+    };
+    return next(item, Option.none(), []);
+  };
+  var $_bj3bzcmvjlnued10 = {
+    breakToLeft: breakToLeft,
+    breakToRight: breakToRight,
+    breakPath: breakPath
+  };
+
+  var all$3 = function (universe, look, elements, f) {
+    var head$$1 = elements[0];
+    var tail = elements.slice(1);
+    return f(universe, look, head$$1, tail);
+  };
+  var oneAll = function (universe, look, elements) {
+    return elements.length > 0 ? all$3(universe, look, elements, unsafeOne) : Option.none();
+  };
+  var unsafeOne = function (universe, look, head$$1, tail) {
+    var start = look(universe, head$$1);
+    return foldr(tail, function (b, a) {
+      var current = look(universe, a);
+      return commonElement(universe, b, current);
+    }, start);
+  };
+  var commonElement = function (universe, start, end) {
+    return start.bind(function (s) {
+      return end.filter(curry(universe.eq, s));
+    });
+  };
+  var $_cco7mwmwjlnued1x = { oneAll: oneAll };
+
+  var eq$1 = function (universe, item) {
+    return curry(universe.eq, item);
+  };
+  var unsafeSubset = function (universe, common, ps1, ps2) {
+    var children = universe.property().children(common);
+    if (universe.eq(common, ps1[0]))
+      return Option.some([ps1[0]]);
+    if (universe.eq(common, ps2[0]))
+      return Option.some([ps2[0]]);
+    var finder = function (ps) {
+      var topDown = reverse(ps);
+      var index = findIndex(topDown, eq$1(universe, common)).getOr(-1);
+      var item = index < topDown.length - 1 ? topDown[index + 1] : topDown[index];
+      return findIndex(children, eq$1(universe, item));
+    };
+    var startIndex = finder(ps1);
+    var endIndex = finder(ps2);
+    return startIndex.bind(function (sIndex) {
+      return endIndex.map(function (eIndex) {
+        var first = Math.min(sIndex, eIndex);
+        var last$$1 = Math.max(sIndex, eIndex);
+        return children.slice(first, last$$1 + 1);
+      });
+    });
+  };
+  var ancestors$2 = function (universe, start, end, _isRoot) {
+    var isRoot = _isRoot !== undefined ? _isRoot : constant(false);
+    var ps1 = [start].concat(universe.up().all(start));
+    var ps2 = [end].concat(universe.up().all(end));
+    var prune = function (path) {
+      var index = findIndex(path, isRoot);
+      return index.fold(function () {
+        return path;
+      }, function (ind) {
+        return path.slice(0, ind + 1);
+      });
+    };
+    var pruned1 = prune(ps1);
+    var pruned2 = prune(ps2);
+    var shared = find(pruned1, function (x) {
+      return exists(pruned2, eq$1(universe, x));
+    });
+    return {
+      firstpath: constant(pruned1),
+      secondpath: constant(pruned2),
+      shared: constant(shared)
+    };
+  };
+  var subset = function (universe, start, end) {
+    var ancs = ancestors$2(universe, start, end);
+    return ancs.shared().bind(function (shared) {
+      return unsafeSubset(universe, shared, ancs.firstpath(), ancs.secondpath());
+    });
+  };
+  var $_565b2gmxjlnued2k = {
+    subset: subset,
+    ancestors: ancestors$2
+  };
+
+  var sharedOne = function (universe, look, elements) {
+    return $_cco7mwmwjlnued1x.oneAll(universe, look, elements);
+  };
+  var subset$1 = function (universe, start, finish) {
+    return $_565b2gmxjlnued2k.subset(universe, start, finish);
+  };
+  var ancestors$3 = function (universe, start, finish, _isRoot) {
+    return $_565b2gmxjlnued2k.ancestors(universe, start, finish, _isRoot);
+  };
+  var breakToLeft$1 = function (universe, parent, child) {
+    return $_bj3bzcmvjlnued10.breakToLeft(universe, parent, child);
+  };
+  var breakToRight$1 = function (universe, parent, child) {
+    return $_bj3bzcmvjlnued10.breakToRight(universe, parent, child);
+  };
+  var breakPath$1 = function (universe, child, isTop, breaker) {
+    return $_bj3bzcmvjlnued10.breakPath(universe, child, isTop, breaker);
+  };
+  var $_61cxe1mujlnued0x = {
+    sharedOne: sharedOne,
+    subset: subset$1,
+    ancestors: ancestors$3,
+    breakToLeft: breakToLeft$1,
+    breakToRight: breakToRight$1,
+    breakPath: breakPath$1
+  };
+
+  var universe = DomUniverse();
+  var sharedOne$1 = function (look, elements) {
+    return $_61cxe1mujlnued0x.sharedOne(universe, function (universe, element) {
+      return look(element);
+    }, elements);
+  };
+  var subset$2 = function (start, finish) {
+    return $_61cxe1mujlnued0x.subset(universe, start, finish);
+  };
+  var ancestors$4 = function (start, finish, _isRoot) {
+    return $_61cxe1mujlnued0x.ancestors(universe, start, finish, _isRoot);
+  };
+  var breakToLeft$2 = function (parent, child) {
+    return $_61cxe1mujlnued0x.breakToLeft(universe, parent, child);
+  };
+  var breakToRight$2 = function (parent, child) {
+    return $_61cxe1mujlnued0x.breakToRight(universe, parent, child);
+  };
+  var breakPath$2 = function (child, isTop, breaker) {
+    return $_61cxe1mujlnued0x.breakPath(universe, child, isTop, function (u, p, c) {
+      return breaker(p, c);
+    });
+  };
+  var $_8zmlphmrjlnuecwu = {
+    sharedOne: sharedOne$1,
+    subset: subset$2,
+    ancestors: ancestors$4,
+    breakToLeft: breakToLeft$2,
+    breakToRight: breakToRight$2,
+    breakPath: breakPath$2
+  };
+
+  var inSelection = function (bounds, detail) {
+    var leftEdge = detail.column();
+    var rightEdge = detail.column() + detail.colspan() - 1;
+    var topEdge = detail.row();
+    var bottomEdge = detail.row() + detail.rowspan() - 1;
+    return leftEdge <= bounds.finishCol() && rightEdge >= bounds.startCol() && (topEdge <= bounds.finishRow() && bottomEdge >= bounds.startRow());
+  };
+  var isWithin = function (bounds, detail) {
+    return detail.column() >= bounds.startCol() && detail.column() + detail.colspan() - 1 <= bounds.finishCol() && detail.row() >= bounds.startRow() && detail.row() + detail.rowspan() - 1 <= bounds.finishRow();
+  };
+  var isRectangular = function (warehouse, bounds) {
+    var isRect = true;
+    var detailIsWithin = curry(isWithin, bounds);
+    for (var i = bounds.startRow(); i <= bounds.finishRow(); i++) {
+      for (var j = bounds.startCol(); j <= bounds.finishCol(); j++) {
+        isRect = isRect && $_5pxk82majlnuecn1.getAt(warehouse, i, j).exists(detailIsWithin);
+      }
+    }
+    return isRect ? Option.some(bounds) : Option.none();
+  };
+  var $_3f6mmwn0jlnued3t = {
+    inSelection: inSelection,
+    isWithin: isWithin,
+    isRectangular: isRectangular
+  };
+
+  var getBounds = function (detailA, detailB) {
+    return $_63m7jdlcjlnuecdk.bounds(Math.min(detailA.row(), detailB.row()), Math.min(detailA.column(), detailB.column()), Math.max(detailA.row() + detailA.rowspan() - 1, detailB.row() + detailB.rowspan() - 1), Math.max(detailA.column() + detailA.colspan() - 1, detailB.column() + detailB.colspan() - 1));
+  };
+  var getAnyBox = function (warehouse, startCell, finishCell) {
+    var startCoords = $_5pxk82majlnuecn1.findItem(warehouse, startCell, $_45sffllljlnuecht.eq);
+    var finishCoords = $_5pxk82majlnuecn1.findItem(warehouse, finishCell, $_45sffllljlnuecht.eq);
+    return startCoords.bind(function (sc) {
+      return finishCoords.map(function (fc) {
+        return getBounds(sc, fc);
+      });
+    });
+  };
+  var getBox = function (warehouse, startCell, finishCell) {
+    return getAnyBox(warehouse, startCell, finishCell).bind(function (bounds) {
+      return $_3f6mmwn0jlnued3t.isRectangular(warehouse, bounds);
+    });
+  };
+  var $_csv445n1jlnued45 = {
+    getAnyBox: getAnyBox,
+    getBox: getBox
+  };
+
+  var moveBy = function (warehouse, cell, row, column) {
+    return $_5pxk82majlnuecn1.findItem(warehouse, cell, $_45sffllljlnuecht.eq).bind(function (detail) {
+      var startRow = row > 0 ? detail.row() + detail.rowspan() - 1 : detail.row();
+      var startCol = column > 0 ? detail.column() + detail.colspan() - 1 : detail.column();
+      var dest = $_5pxk82majlnuecn1.getAt(warehouse, startRow + row, startCol + column);
+      return dest.map(function (d) {
+        return d.element();
+      });
+    });
+  };
+  var intercepts = function (warehouse, start, finish) {
+    return $_csv445n1jlnued45.getAnyBox(warehouse, start, finish).map(function (bounds) {
+      var inside = $_5pxk82majlnuecn1.filterItems(warehouse, curry($_3f6mmwn0jlnued3t.inSelection, bounds));
+      return map(inside, function (detail) {
+        return detail.element();
+      });
+    });
+  };
+  var parentCell = function (warehouse, innerCell) {
+    var isContainedBy = function (c1, c2) {
+      return $_45sffllljlnuecht.contains(c2, c1);
+    };
+    return $_5pxk82majlnuecn1.findItem(warehouse, innerCell, isContainedBy).bind(function (detail) {
+      return detail.element();
+    });
+  };
+  var $_6nk10smzjlnued3d = {
+    moveBy: moveBy,
+    intercepts: intercepts,
+    parentCell: parentCell
+  };
+
+  var moveBy$1 = function (cell, deltaRow, deltaColumn) {
+    return $_enoas1ldjlnuecdr.table(cell).bind(function (table) {
+      var warehouse = getWarehouse(table);
+      return $_6nk10smzjlnued3d.moveBy(warehouse, cell, deltaRow, deltaColumn);
+    });
+  };
+  var intercepts$1 = function (table, first, last) {
+    var warehouse = getWarehouse(table);
+    return $_6nk10smzjlnued3d.intercepts(warehouse, first, last);
+  };
+  var nestedIntercepts = function (table, first, firstTable, last, lastTable) {
+    var warehouse = getWarehouse(table);
+    var startCell = $_45sffllljlnuecht.eq(table, firstTable) ? first : $_6nk10smzjlnued3d.parentCell(warehouse, first);
+    var lastCell = $_45sffllljlnuecht.eq(table, lastTable) ? last : $_6nk10smzjlnued3d.parentCell(warehouse, last);
+    return $_6nk10smzjlnued3d.intercepts(warehouse, startCell, lastCell);
+  };
+  var getBox$1 = function (table, first, last) {
+    var warehouse = getWarehouse(table);
+    return $_csv445n1jlnued45.getBox(warehouse, first, last);
+  };
+  var getWarehouse = function (table) {
+    var list = $_24qbqwlbjlnueccz.fromTable(table);
+    return $_5pxk82majlnuecn1.generate(list);
+  };
+  var $_4jsmj9myjlnued35 = {
+    moveBy: moveBy$1,
+    intercepts: intercepts$1,
+    nestedIntercepts: nestedIntercepts,
+    getBox: getBox$1
+  };
+
+  var lookupTable = function (container, isRoot) {
+    return $_17q5jxm7jlnueclv.ancestor(container, 'table');
+  };
+  var identified = MixedBag([
+    'boxes',
+    'start',
+    'finish'
+  ], []);
+  var identify = function (start, finish, isRoot) {
+    var getIsRoot = function (rootTable) {
+      return function (element) {
+        return isRoot(element) || $_45sffllljlnuecht.eq(element, rootTable);
+      };
+    };
+    if ($_45sffllljlnuecht.eq(start, finish)) {
+      return Option.some(identified({
+        boxes: Option.some([start]),
+        start: start,
+        finish: finish
+      }));
+    } else {
+      return lookupTable(start, isRoot).bind(function (startTable) {
+        return lookupTable(finish, isRoot).bind(function (finishTable) {
+          if ($_45sffllljlnuecht.eq(startTable, finishTable)) {
+            return Option.some(identified({
+              boxes: $_4jsmj9myjlnued35.intercepts(startTable, start, finish),
+              start: start,
+              finish: finish
+            }));
+          } else if ($_45sffllljlnuecht.contains(startTable, finishTable)) {
+            var ancestorCells = $_49wdgem4jlnuecle.ancestors(finish, 'td,th', getIsRoot(startTable));
+            var finishCell = ancestorCells.length > 0 ? ancestorCells[ancestorCells.length - 1] : finish;
+            return Option.some(identified({
+              boxes: $_4jsmj9myjlnued35.nestedIntercepts(startTable, start, startTable, finish, finishTable),
+              start: start,
+              finish: finishCell
+            }));
+          } else if ($_45sffllljlnuecht.contains(finishTable, startTable)) {
+            var ancestorCells = $_49wdgem4jlnuecle.ancestors(start, 'td,th', getIsRoot(finishTable));
+            var startCell = ancestorCells.length > 0 ? ancestorCells[ancestorCells.length - 1] : start;
+            return Option.some(identified({
+              boxes: $_4jsmj9myjlnued35.nestedIntercepts(finishTable, start, startTable, finish, finishTable),
+              start: start,
+              finish: startCell
+            }));
+          } else {
+            return $_8zmlphmrjlnuecwu.ancestors(start, finish).shared().bind(function (lca) {
+              return $_17q5jxm7jlnueclv.closest(lca, 'table', isRoot).bind(function (lcaTable) {
+                var finishAncestorCells = $_49wdgem4jlnuecle.ancestors(finish, 'td,th', getIsRoot(lcaTable));
+                var finishCell = finishAncestorCells.length > 0 ? finishAncestorCells[finishAncestorCells.length - 1] : finish;
+                var startAncestorCells = $_49wdgem4jlnuecle.ancestors(start, 'td,th', getIsRoot(lcaTable));
+                var startCell = startAncestorCells.length > 0 ? startAncestorCells[startAncestorCells.length - 1] : start;
+                return Option.some(identified({
+                  boxes: $_4jsmj9myjlnued35.nestedIntercepts(lcaTable, start, startTable, finish, finishTable),
+                  start: startCell,
+                  finish: finishCell
+                }));
+              });
+            });
+          }
+        });
+      });
+    }
+  };
+  var retrieve = function (container, selector) {
+    var sels = $_49wdgem4jlnuecle.descendants(container, selector);
+    return sels.length > 0 ? Option.some(sels) : Option.none();
+  };
+  var getLast = function (boxes, lastSelectedSelector) {
+    return find(boxes, function (box) {
+      return $_fjyr6olfjlnuecfn.is(box, lastSelectedSelector);
+    });
+  };
+  var getEdges = function (container, firstSelectedSelector, lastSelectedSelector) {
+    return $_17q5jxm7jlnueclv.descendant(container, firstSelectedSelector).bind(function (first) {
+      return $_17q5jxm7jlnueclv.descendant(container, lastSelectedSelector).bind(function (last$$1) {
+        return $_8zmlphmrjlnuecwu.sharedOne(lookupTable, [
+          first,
+          last$$1
+        ]).map(function (tbl) {
+          return {
+            first: constant(first),
+            last: constant(last$$1),
+            table: constant(tbl)
+          };
+        });
+      });
+    });
+  };
+  var expandTo = function (finish, firstSelectedSelector) {
+    return $_17q5jxm7jlnueclv.ancestor(finish, 'table').bind(function (table) {
+      return $_17q5jxm7jlnueclv.descendant(table, firstSelectedSelector).bind(function (start) {
+        return identify(start, finish).bind(function (identified) {
+          return identified.boxes().map(function (boxes) {
+            return {
+              boxes: constant(boxes),
+              start: constant(identified.start()),
+              finish: constant(identified.finish())
+            };
+          });
+        });
+      });
+    });
+  };
+  var shiftSelection = function (boxes, deltaRow, deltaColumn, firstSelectedSelector, lastSelectedSelector) {
+    return getLast(boxes, lastSelectedSelector).bind(function (last$$1) {
+      return $_4jsmj9myjlnued35.moveBy(last$$1, deltaRow, deltaColumn).bind(function (finish) {
+        return expandTo(finish, firstSelectedSelector);
+      });
+    });
+  };
+  var $_5p9cdemqjlnuecva = {
+    identify: identify,
+    retrieve: retrieve,
+    shiftSelection: shiftSelection,
+    getEdges: getEdges
+  };
+
+  var retrieve$1 = function (container, selector) {
+    return $_5p9cdemqjlnuecva.retrieve(container, selector);
+  };
+  var retrieveBox = function (container, firstSelectedSelector, lastSelectedSelector) {
+    return $_5p9cdemqjlnuecva.getEdges(container, firstSelectedSelector, lastSelectedSelector).bind(function (edges) {
+      var isRoot = function (ancestor) {
+        return $_45sffllljlnuecht.eq(container, ancestor);
+      };
+      var firstAncestor = $_17q5jxm7jlnueclv.ancestor(edges.first(), 'thead,tfoot,tbody,table', isRoot);
+      var lastAncestor = $_17q5jxm7jlnueclv.ancestor(edges.last(), 'thead,tfoot,tbody,table', isRoot);
+      return firstAncestor.bind(function (fA) {
+        return lastAncestor.bind(function (lA) {
+          return $_45sffllljlnuecht.eq(fA, lA) ? $_4jsmj9myjlnued35.getBox(edges.table(), edges.first(), edges.last()) : Option.none();
+        });
+      });
+    });
+  };
+  var $_f28l5pmpjlnuecuo = {
+    retrieve: retrieve$1,
+    retrieveBox: retrieveBox
+  };
+
+  var selected = 'data-mce-selected';
+  var selectedSelector = 'td[' + selected + '],th[' + selected + ']';
+  var attributeSelector = '[' + selected + ']';
+  var firstSelected = 'data-mce-first-selected';
+  var firstSelectedSelector = 'td[' + firstSelected + '],th[' + firstSelected + ']';
+  var lastSelected = 'data-mce-last-selected';
+  var lastSelectedSelector = 'td[' + lastSelected + '],th[' + lastSelected + ']';
+  var $_g4qriwn2jlnued4e = {
+    selected: constant(selected),
+    selectedSelector: constant(selectedSelector),
+    attributeSelector: constant(attributeSelector),
+    firstSelected: constant(firstSelected),
+    firstSelectedSelector: constant(firstSelectedSelector),
+    lastSelected: constant(lastSelected),
+    lastSelectedSelector: constant(lastSelectedSelector)
+  };
+
+  var generate$1 = function (cases) {
+    if (!isArray(cases)) {
+      throw new Error('cases must be an array');
+    }
+    if (cases.length === 0) {
+      throw new Error('there must be at least one case');
+    }
+    var constructors = [];
+    var adt = {};
+    each(cases, function (acase, count) {
+      var keys$$1 = keys(acase);
+      if (keys$$1.length !== 1) {
+        throw new Error('one and only one name per case');
+      }
+      var key = keys$$1[0];
+      var value = acase[key];
+      if (adt[key] !== undefined) {
+        throw new Error('duplicate key detected:' + key);
+      } else if (key === 'cata') {
+        throw new Error('cannot have a case named cata (sorry)');
+      } else if (!isArray(value)) {
+        throw new Error('case arguments must be an array');
+      }
+      constructors.push(key);
+      adt[key] = function () {
+        var argLength = arguments.length;
+        if (argLength !== value.length) {
+          throw new Error('Wrong number of arguments to case ' + key + '. Expected ' + value.length + ' (' + value + '), got ' + argLength);
+        }
+        var args = new Array(argLength);
+        for (var i = 0; i < args.length; i++)
+          args[i] = arguments[i];
+        var match = function (branches) {
+          var branchKeys = keys(branches);
+          if (constructors.length !== branchKeys.length) {
+            throw new Error('Wrong number of arguments to match. Expected: ' + constructors.join(',') + '\nActual: ' + branchKeys.join(','));
+          }
+          var allReqd = forall(constructors, function (reqKey) {
+            return contains(branchKeys, reqKey);
+          });
+          if (!allReqd)
+            throw new Error('Not all branches were specified when using match. Specified: ' + branchKeys.join(', ') + '\nRequired: ' + constructors.join(', '));
+          return branches[key].apply(null, args);
+        };
+        return {
+          fold: function () {
+            if (arguments.length !== cases.length) {
+              throw new Error('Wrong number of arguments to fold. Expected ' + cases.length + ', got ' + arguments.length);
+            }
+            var target = arguments[count];
+            return target.apply(null, args);
+          },
+          match: match,
+          log: function (label) {
+            console.log(label, {
+              constructors: constructors,
+              constructor: key,
+              params: args
+            });
+          }
+        };
+      };
+    });
+    return adt;
+  };
+  var Adt = { generate: generate$1 };
+
+  var type$1 = Adt.generate([
+    { none: [] },
+    { multiple: ['elements'] },
+    { single: ['selection'] }
+  ]);
+  var cata = function (subject, onNone, onMultiple, onSingle) {
+    return subject.fold(onNone, onMultiple, onSingle);
+  };
+  var $_a0ivnyn3jlnued4k = {
+    cata: cata,
+    none: type$1.none,
+    multiple: type$1.multiple,
+    single: type$1.single
+  };
+
+  var selection = function (cell, selections) {
+    return $_a0ivnyn3jlnued4k.cata(selections.get(), constant([]), identity, constant([cell]));
+  };
+  var unmergable = function (cell, selections) {
+    var hasSpan = function (elem) {
+      return $_6f9wwmm2jlnueckv.has(elem, 'rowspan') && parseInt($_6f9wwmm2jlnueckv.get(elem, 'rowspan'), 10) > 1 || $_6f9wwmm2jlnueckv.has(elem, 'colspan') && parseInt($_6f9wwmm2jlnueckv.get(elem, 'colspan'), 10) > 1;
+    };
+    var candidates = selection(cell, selections);
+    return candidates.length > 0 && forall(candidates, hasSpan) ? Option.some(candidates) : Option.none();
+  };
+  var mergable = function (table, selections) {
+    return $_a0ivnyn3jlnued4k.cata(selections.get(), Option.none, function (cells, _env) {
+      if (cells.length === 0) {
+        return Option.none();
+      }
+      return $_f28l5pmpjlnuecuo.retrieveBox(table, $_g4qriwn2jlnued4e.firstSelectedSelector(), $_g4qriwn2jlnued4e.lastSelectedSelector()).bind(function (bounds) {
+        return cells.length > 1 ? Option.some({
+          bounds: constant(bounds),
+          cells: constant(cells)
+        }) : Option.none();
+      });
+    }, Option.none);
+  };
+  var $_79ct0xmojlnuectk = {
+    mergable: mergable,
+    unmergable: unmergable,
+    selection: selection
+  };
+
+  var noMenu = function (cell) {
+    return {
+      element: constant(cell),
+      mergable: Option.none,
+      unmergable: Option.none,
+      selection: constant([cell])
+    };
+  };
+  var forMenu = function (selections, table, cell) {
+    return {
+      element: constant(cell),
+      mergable: constant($_79ct0xmojlnuectk.mergable(table, selections)),
+      unmergable: constant($_79ct0xmojlnuectk.unmergable(cell, selections)),
+      selection: constant($_79ct0xmojlnuectk.selection(cell, selections))
+    };
+  };
+  var notCell$1 = function (element) {
+    return noMenu(element);
+  };
+  var paste$1 = Immutable('element', 'clipboard', 'generators');
+  var pasteRows = function (selections, table, cell, clipboard, generators) {
+    return {
+      element: constant(cell),
+      mergable: Option.none,
+      unmergable: Option.none,
+      selection: constant($_79ct0xmojlnuectk.selection(cell, selections)),
+      clipboard: constant(clipboard),
+      generators: constant(generators)
+    };
+  };
+  var $_5l7hzjmnjlnuect0 = {
+    noMenu: noMenu,
+    forMenu: forMenu,
+    notCell: notCell$1,
+    paste: paste$1,
+    pasteRows: pasteRows
+  };
+
+  var extractSelected = function (cells) {
+    return $_enoas1ldjlnuecdr.table(cells[0]).map($_e4aet6mhjlnuecr3.deep).map(function (replica) {
+      return [$_99iegnl5jlnuecau.extract(replica, $_g4qriwn2jlnued4e.attributeSelector())];
+    });
+  };
+  var serializeElement = function (editor, elm) {
+    return editor.selection.serializer.serialize(elm.dom(), {});
+  };
+  var registerEvents = function (editor, selections, actions, cellSelection) {
+    editor.on('BeforeGetContent', function (e) {
+      var multiCellContext = function (cells) {
+        e.preventDefault();
+        extractSelected(cells).each(function (elements) {
+          e.content = map(elements, function (elm) {
+            return serializeElement(editor, elm);
+          }).join('');
+        });
+      };
+      if (e.selection === true) {
+        $_a0ivnyn3jlnued4k.cata(selections.get(), noop, multiCellContext, noop);
+      }
+    });
+    editor.on('BeforeSetContent', function (e) {
+      if (e.selection === true && e.paste === true) {
+        var cellOpt = Option.from(editor.dom.getParent(editor.selection.getStart(), 'th,td'));
+        cellOpt.each(function (domCell) {
+          var cell = Element$$1.fromDom(domCell);
+          var table = $_enoas1ldjlnuecdr.table(cell);
+          table.bind(function (table) {
+            var elements = filter($_b783cqmmjlnuecsk.fromHtml(e.content), function (content) {
+              return $_moydym3jlnueclb.name(content) !== 'meta';
+            });
+            if (elements.length === 1 && $_moydym3jlnueclb.name(elements[0]) === 'table') {
+              e.preventDefault();
+              var doc = Element$$1.fromDom(editor.getDoc());
+              var generators = $_3ceu0wmgjlnuecot.paste(doc);
+              var targets = $_5l7hzjmnjlnuect0.paste(cell, elements[0], generators);
+              actions.pasteCells(table, targets).each(function (rng) {
+                editor.selection.setRng(rng);
+                editor.focus();
+                cellSelection.clear(table);
+              });
+            }
+          });
+        });
+      }
+    });
+  };
+  var $_6nf7e5l0jlnuec89 = { registerEvents: registerEvents };
+
+  function Dimension (name, getOffset) {
+    var set = function (element, h) {
+      if (!isNumber(h) && !h.match(/^[0-9]+$/))
+        throw name + '.set accepts only positive integer values. Value was ' + h;
+      var dom = element.dom();
+      if ($_gbqrzgmcjlnueco7.isSupported(dom))
+        dom.style[name] = h + 'px';
+    };
+    var get = function (element) {
+      var r = getOffset(element);
+      if (r <= 0 || r === null) {
+        var css = $_77s8gzmbjlnuecni.get(element, name);
+        return parseFloat(css) || 0;
+      }
+      return r;
+    };
+    var getOuter = get;
+    var aggregate = function (element, properties) {
+      return foldl(properties, function (acc, property) {
+        var val = $_77s8gzmbjlnuecni.get(element, property);
+        var value = val === undefined ? 0 : parseInt(val, 10);
+        return isNaN(value) ? acc : acc + value;
+      }, 0);
+    };
+    var max = function (element, value, properties) {
+      var cumulativeInclusions = aggregate(element, properties);
+      var absoluteMax = value > cumulativeInclusions ? value - cumulativeInclusions : 0;
+      return absoluteMax;
+    };
+    return {
+      set: set,
+      get: get,
+      getOuter: getOuter,
+      aggregate: aggregate,
+      max: max
+    };
+  }
+
+  var api$1 = Dimension('height', function (element) {
+    var dom = element.dom();
+    return $_fq9qoxm6jlnuecln.inBody(element) ? dom.getBoundingClientRect().height : dom.offsetHeight;
+  });
+  var set$3 = function (element, h) {
+    api$1.set(element, h);
+  };
+  var get$3 = function (element) {
+    return api$1.get(element);
+  };
+  var getOuter = function (element) {
+    return api$1.getOuter(element);
+  };
+  var setMax = function (element, value) {
+    var inclusions = [
+      'margin-top',
+      'border-top-width',
+      'padding-top',
+      'padding-bottom',
+      'border-bottom-width',
+      'margin-bottom'
+    ];
+    var absMax = api$1.max(element, value, inclusions);
+    $_77s8gzmbjlnuecni.set(element, 'max-height', absMax + 'px');
+  };
+  var $_9pna37n9jlnued82 = {
+    set: set$3,
+    get: get$3,
+    getOuter: getOuter,
+    setMax: setMax
+  };
+
+  var api$2 = Dimension('width', function (element) {
+    return element.dom().offsetWidth;
+  });
+  var set$4 = function (element, h) {
+    api$2.set(element, h);
+  };
+  var get$4 = function (element) {
+    return api$2.get(element);
+  };
+  var getOuter$1 = function (element) {
+    return api$2.getOuter(element);
+  };
+  var setMax$1 = function (element, value) {
+    var inclusions = [
+      'margin-left',
+      'border-left-width',
+      'padding-left',
+      'padding-right',
+      'border-right-width',
+      'margin-right'
+    ];
+    var absMax = api$2.max(element, value, inclusions);
+    $_77s8gzmbjlnuecni.set(element, 'max-width', absMax + 'px');
+  };
+  var $_7js1oqnbjlnued8g = {
+    set: set$4,
+    get: get$4,
+    getOuter: getOuter$1,
+    setMax: setMax$1
+  };
+
+  var platform = $_gdzrivlqjlnueciv.detect();
+  var needManualCalc = function () {
+    return platform.browser.isIE() || platform.browser.isEdge();
+  };
+  var toNumber = function (px, fallback) {
+    var num = parseFloat(px);
+    return isNaN(num) ? fallback : num;
+  };
+  var getProp = function (elm, name, fallback) {
+    return toNumber($_77s8gzmbjlnuecni.get(elm, name), fallback);
+  };
+  var getCalculatedHeight = function (cell) {
+    var paddingTop = getProp(cell, 'padding-top', 0);
+    var paddingBottom = getProp(cell, 'padding-bottom', 0);
+    var borderTop = getProp(cell, 'border-top-width', 0);
+    var borderBottom = getProp(cell, 'border-bottom-width', 0);
+    var height = cell.dom().getBoundingClientRect().height;
+    var boxSizing = $_77s8gzmbjlnuecni.get(cell, 'box-sizing');
+    var borders = borderTop + borderBottom;
+    return boxSizing === 'border-box' ? height : height - paddingTop - paddingBottom - borders;
+  };
+  var getWidth = function (cell) {
+    return getProp(cell, 'width', $_7js1oqnbjlnued8g.get(cell));
+  };
+  var getHeight = function (cell) {
+    return needManualCalc() ? getCalculatedHeight(cell) : getProp(cell, 'height', $_9pna37n9jlnued82.get(cell));
+  };
+  var $_8j5zv3n8jlnued7d = {
+    getWidth: getWidth,
+    getHeight: getHeight
+  };
+
+  var genericSizeRegex = /(\d+(\.\d+)?)(\w|%)*/;
+  var percentageBasedSizeRegex = /(\d+(\.\d+)?)%/;
+  var pixelBasedSizeRegex = /(\d+(\.\d+)?)px|em/;
+  var setPixelWidth = function (cell, amount) {
+    $_77s8gzmbjlnuecni.set(cell, 'width', amount + 'px');
+  };
+  var setPercentageWidth = function (cell, amount) {
+    $_77s8gzmbjlnuecni.set(cell, 'width', amount + '%');
+  };
+  var setHeight = function (cell, amount) {
+    $_77s8gzmbjlnuecni.set(cell, 'height', amount + 'px');
+  };
+  var getHeightValue = function (cell) {
+    return $_77s8gzmbjlnuecni.getRaw(cell, 'height').getOrThunk(function () {
+      return $_8j5zv3n8jlnued7d.getHeight(cell) + 'px';
+    });
+  };
+  var convert = function (cell, number, getter, setter) {
+    var newSize = $_enoas1ldjlnuecdr.table(cell).map(function (table) {
+      var total = getter(table);
+      return Math.floor(number / 100 * total);
+    }).getOr(number);
+    setter(cell, newSize);
+    return newSize;
+  };
+  var normalizePixelSize = function (value, cell, getter, setter) {
+    var number = parseInt(value, 10);
+    return endsWith(value, '%') && $_moydym3jlnueclb.name(cell) !== 'table' ? convert(cell, number, getter, setter) : number;
+  };
+  var getTotalHeight = function (cell) {
+    var value = getHeightValue(cell);
+    if (!value)
+      return $_9pna37n9jlnued82.get(cell);
+    return normalizePixelSize(value, cell, $_9pna37n9jlnued82.get, setHeight);
+  };
+  var get$5 = function (cell, type, f) {
+    var v = f(cell);
+    var span = getSpan(cell, type);
+    return v / span;
+  };
+  var getSpan = function (cell, type) {
+    return $_6f9wwmm2jlnueckv.has(cell, type) ? parseInt($_6f9wwmm2jlnueckv.get(cell, type), 10) : 1;
+  };
+  var getRawWidth = function (element) {
+    var cssWidth = $_77s8gzmbjlnuecni.getRaw(element, 'width');
+    return cssWidth.fold(function () {
+      return Option.from($_6f9wwmm2jlnueckv.get(element, 'width'));
+    }, function (width) {
+      return Option.some(width);
+    });
+  };
+  var normalizePercentageWidth = function (cellWidth, tableSize) {
+    return cellWidth / tableSize.pixelWidth() * 100;
+  };
+  var choosePercentageSize = function (element, width, tableSize) {
+    if (percentageBasedSizeRegex.test(width)) {
+      var percentMatch = percentageBasedSizeRegex.exec(width);
+      return parseFloat(percentMatch[1]);
+    } else {
+      var intWidth = $_7js1oqnbjlnued8g.get(element);
+      return normalizePercentageWidth(intWidth, tableSize);
+    }
+  };
+  var getPercentageWidth = function (cell, tableSize) {
+    var width = getRawWidth(cell);
+    return width.fold(function () {
+      var intWidth = $_7js1oqnbjlnued8g.get(cell);
+      return normalizePercentageWidth(intWidth, tableSize);
+    }, function (width) {
+      return choosePercentageSize(cell, width, tableSize);
+    });
+  };
+  var normalizePixelWidth = function (cellWidth, tableSize) {
+    return cellWidth / 100 * tableSize.pixelWidth();
+  };
+  var choosePixelSize = function (element, width, tableSize) {
+    if (pixelBasedSizeRegex.test(width)) {
+      var pixelMatch = pixelBasedSizeRegex.exec(width);
+      return parseInt(pixelMatch[1], 10);
+    } else if (percentageBasedSizeRegex.test(width)) {
+      var percentMatch = percentageBasedSizeRegex.exec(width);
+      var floatWidth = parseFloat(percentMatch[1]);
+      return normalizePixelWidth(floatWidth, tableSize);
+    } else {
+      return $_7js1oqnbjlnued8g.get(element);
+    }
+  };
+  var getPixelWidth = function (cell, tableSize) {
+    var width = getRawWidth(cell);
+    return width.fold(function () {
+      return $_7js1oqnbjlnued8g.get(cell);
+    }, function (width) {
+      return choosePixelSize(cell, width, tableSize);
+    });
+  };
+  var getHeight$1 = function (cell) {
+    return get$5(cell, 'rowspan', getTotalHeight);
+  };
+  var getGenericWidth = function (cell) {
+    var width = getRawWidth(cell);
+    return width.bind(function (width) {
+      if (genericSizeRegex.test(width)) {
+        var match = genericSizeRegex.exec(width);
+        return Option.some({
+          width: constant(match[1]),
+          unit: constant(match[3])
+        });
+      } else {
+        return Option.none();
+      }
+    });
+  };
+  var setGenericWidth = function (cell, amount, unit) {
+    $_77s8gzmbjlnuecni.set(cell, 'width', amount + unit);
+  };
+  var $_4ew883n7jlnued63 = {
+    percentageBasedSizeRegex: constant(percentageBasedSizeRegex),
+    pixelBasedSizeRegex: constant(pixelBasedSizeRegex),
+    setPixelWidth: setPixelWidth,
+    setPercentageWidth: setPercentageWidth,
+    setHeight: setHeight,
+    getPixelWidth: getPixelWidth,
+    getPercentageWidth: getPercentageWidth,
+    getGenericWidth: getGenericWidth,
+    setGenericWidth: setGenericWidth,
+    getHeight: getHeight$1,
+    getRawWidth: getRawWidth
+  };
+
+  var halve = function (main, other) {
+    var width = $_4ew883n7jlnued63.getGenericWidth(main);
+    width.each(function (width) {
+      var newWidth = width.width() / 2;
+      $_4ew883n7jlnued63.setGenericWidth(main, newWidth, width.unit());
+      $_4ew883n7jlnued63.setGenericWidth(other, newWidth, width.unit());
+    });
+  };
+  var $_1be5zvn6jlnued60 = { halve: halve };
+
+  var attached = function (element, scope) {
+    var doc = scope || Element$$1.fromDom(document.documentElement);
+    return $_957pbwm8jlnueclx.ancestor(element, curry($_45sffllljlnuecht.eq, doc)).isSome();
+  };
+  var windowOf = function (element) {
+    var dom = element.dom();
+    if (dom === dom.window && element instanceof Window)
+      return element;
+    return $_moydym3jlnueclb.isDocument(element) ? dom.defaultView || dom.parentWindow : null;
+  };
+  var $_79tb2bngjlnued9l = {
+    attached: attached,
+    windowOf: windowOf
+  };
+
+  var r = function (left, top) {
+    var translate = function (x, y) {
+      return r(left + x, top + y);
+    };
+    return {
+      left: constant(left),
+      top: constant(top),
+      translate: translate
+    };
+  };
+  var Position = r;
+
+  var boxPosition = function (dom) {
+    var box = dom.getBoundingClientRect();
+    return Position(box.left, box.top);
+  };
+  var firstDefinedOrZero = function (a, b) {
+    return a !== undefined ? a : b !== undefined ? b : 0;
+  };
+  var absolute = function (element) {
+    var doc = element.dom().ownerDocument;
+    var body = doc.body;
+    var win = $_79tb2bngjlnued9l.windowOf(Element$$1.fromDom(doc));
+    var html = doc.documentElement;
+    var scrollTop = firstDefinedOrZero(win.pageYOffset, html.scrollTop);
+    var scrollLeft = firstDefinedOrZero(win.pageXOffset, html.scrollLeft);
+    var clientTop = firstDefinedOrZero(html.clientTop, body.clientTop);
+    var clientLeft = firstDefinedOrZero(html.clientLeft, body.clientLeft);
+    return viewport(element).translate(scrollLeft - clientLeft, scrollTop - clientTop);
+  };
+  var relative = function (element) {
+    var dom = element.dom();
+    return Position(dom.offsetLeft, dom.offsetTop);
+  };
+  var viewport = function (element) {
+    var dom = element.dom();
+    var doc = dom.ownerDocument;
+    var body = doc.body;
+    var html = Element$$1.fromDom(doc.documentElement);
+    if (body === dom)
+      return Position(body.offsetLeft, body.offsetTop);
+    if (!$_79tb2bngjlnued9l.attached(element, html))
+      return Position(0, 0);
+    return boxPosition(dom);
+  };
+  var $_2eshhonfjlnued9i = {
+    absolute: absolute,
+    relative: relative,
+    viewport: viewport
+  };
+
+  var rowInfo = Immutable('row', 'y');
+  var colInfo = Immutable('col', 'x');
+  var rtlEdge = function (cell) {
+    var pos = $_2eshhonfjlnued9i.absolute(cell);
+    return pos.left() + $_7js1oqnbjlnued8g.getOuter(cell);
+  };
+  var ltrEdge = function (cell) {
+    return $_2eshhonfjlnued9i.absolute(cell).left();
+  };
+  var getLeftEdge = function (index, cell) {
+    return colInfo(index, ltrEdge(cell));
+  };
+  var getRightEdge = function (index, cell) {
+    return colInfo(index, rtlEdge(cell));
+  };
+  var getTop = function (cell) {
+    return $_2eshhonfjlnued9i.absolute(cell).top();
+  };
+  var getTopEdge = function (index, cell) {
+    return rowInfo(index, getTop(cell));
+  };
+  var getBottomEdge = function (index, cell) {
+    return rowInfo(index, getTop(cell) + $_9pna37n9jlnued82.getOuter(cell));
+  };
+  var findPositions = function (getInnerEdge, getOuterEdge, array) {
+    if (array.length === 0)
+      return [];
+    var lines = map(array.slice(1), function (cellOption, index) {
+      return cellOption.map(function (cell) {
+        return getInnerEdge(index, cell);
+      });
+    });
+    var lastLine = array[array.length - 1].map(function (cell) {
+      return getOuterEdge(array.length - 1, cell);
+    });
+    return lines.concat([lastLine]);
+  };
+  var negate = function (step, _table) {
+    return -step;
+  };
+  var height = {
+    delta: identity,
+    positions: curry(findPositions, getTopEdge, getBottomEdge),
+    edge: getTop
+  };
+  var ltr = {
+    delta: identity,
+    edge: ltrEdge,
+    positions: curry(findPositions, getLeftEdge, getRightEdge)
+  };
+  var rtl = {
+    delta: negate,
+    edge: rtlEdge,
+    positions: curry(findPositions, getRightEdge, getLeftEdge)
+  };
+  var $_1kcsfhnejlnued8m = {
+    height: height,
+    rtl: rtl,
+    ltr: ltr
+  };
+
+  var $_8dmwbndjlnued8l = {
+    ltr: $_1kcsfhnejlnued8m.ltr,
+    rtl: $_1kcsfhnejlnued8m.rtl
+  };
+
+  function TableDirection (directionAt) {
+    var auto = function (table) {
+      return directionAt(table).isRtl() ? $_8dmwbndjlnued8l.rtl : $_8dmwbndjlnued8l.ltr;
+    };
+    var delta = function (amount, table) {
+      return auto(table).delta(amount, table);
+    };
+    var positions = function (cols, table) {
+      return auto(table).positions(cols, table);
+    };
+    var edge = function (cell) {
+      return auto(cell).edge(cell);
+    };
+    return {
+      delta: delta,
+      edge: edge,
+      positions: positions
+    };
+  }
+
+  var getGridSize = function (table) {
+    var input = $_24qbqwlbjlnueccz.fromTable(table);
+    var warehouse = $_5pxk82majlnuecn1.generate(input);
+    return warehouse.grid();
+  };
+  var $_9k0bpsnijlnueda1 = { getGridSize: getGridSize };
+
+  var Cell = function (initial) {
+    var value = initial;
+    var get = function () {
+      return value;
+    };
+    var set = function (v) {
+      value = v;
+    };
+    var clone = function () {
+      return Cell(get());
+    };
+    return {
+      get: get,
+      set: set,
+      clone: clone
+    };
+  };
+
+  var base = function (handleUnsupported, required) {
+    return baseWith(handleUnsupported, required, {
+      validate: isFunction,
+      label: 'function'
+    });
+  };
+  var baseWith = function (handleUnsupported, required, pred) {
+    if (required.length === 0)
+      throw new Error('You must specify at least one required field.');
+    validateStrArr('required', required);
+    checkDupes(required);
+    return function (obj) {
+      var keys$$1 = keys(obj);
+      var allReqd = forall(required, function (req) {
+        return contains(keys$$1, req);
+      });
+      if (!allReqd)
+        reqMessage(required, keys$$1);
+      handleUnsupported(required, keys$$1);
+      var invalidKeys = filter(required, function (key) {
+        return !pred.validate(obj[key], key);
+      });
+      if (invalidKeys.length > 0)
+        invalidTypeMessage(invalidKeys, pred.label);
+      return obj;
+    };
+  };
+  var handleExact = function (required, keys$$1) {
+    var unsupported = filter(keys$$1, function (key) {
+      return !contains(required, key);
+    });
+    if (unsupported.length > 0)
+      unsuppMessage(unsupported);
+  };
+  var exactly = function (required) {
+    return base(handleExact, required);
+  };
+
+  var elementToData = function (element) {
+    var colspan = $_6f9wwmm2jlnueckv.has(element, 'colspan') ? parseInt($_6f9wwmm2jlnueckv.get(element, 'colspan'), 10) : 1;
+    var rowspan = $_6f9wwmm2jlnueckv.has(element, 'rowspan') ? parseInt($_6f9wwmm2jlnueckv.get(element, 'rowspan'), 10) : 1;
+    return {
+      element: constant(element),
+      colspan: constant(colspan),
+      rowspan: constant(rowspan)
+    };
+  };
+  var modification = function (generators, _toData) {
+    contract(generators);
+    var position = Cell(Option.none());
+    var toData = _toData !== undefined ? _toData : elementToData;
+    var nu = function (data) {
+      return generators.cell(data);
+    };
+    var nuFrom = function (element) {
+      var data = toData(element);
+      return nu(data);
+    };
+    var add = function (element) {
+      var replacement = nuFrom(element);
+      if (position.get().isNone())
+        position.set(Option.some(replacement));
+      recent = Option.some({
+        item: element,
+        replacement: replacement
+      });
+      return replacement;
+    };
+    var recent = Option.none();
+    var getOrInit = function (element, comparator) {
+      return recent.fold(function () {
+        return add(element);
+      }, function (p) {
+        return comparator(element, p.item) ? p.replacement : add(element);
+      });
+    };
+    return {
+      getOrInit: getOrInit,
+      cursor: position.get
+    };
+  };
+  var transform = function (scope, tag) {
+    return function (generators) {
+      var position = Cell(Option.none());
+      contract(generators);
+      var list = [];
+      var find$$1 = function (element, comparator) {
+        return find(list, function (x) {
+          return comparator(x.item, element);
+        });
+      };
+      var makeNew = function (element) {
+        var cell = generators.replace(element, tag, { scope: scope });
+        list.push({
+          item: element,
+          sub: cell
+        });
+        if (position.get().isNone())
+          position.set(Option.some(cell));
+        return cell;
+      };
+      var replaceOrInit = function (element, comparator) {
+        return find$$1(element, comparator).fold(function () {
+          return makeNew(element);
+        }, function (p) {
+          return comparator(element, p.item) ? p.sub : makeNew(element);
+        });
+      };
+      return {
+        replaceOrInit: replaceOrInit,
+        cursor: position.get
+      };
+    };
+  };
+  var merging = function (generators) {
+    contract(generators);
+    var position = Cell(Option.none());
+    var combine = function (cell) {
+      if (position.get().isNone())
+        position.set(Option.some(cell));
+      return function () {
+        var raw = generators.cell({
+          element: constant(cell),
+          colspan: constant(1),
+          rowspan: constant(1)
+        });
+        $_77s8gzmbjlnuecni.remove(raw, 'width');
+        $_77s8gzmbjlnuecni.remove(cell, 'width');
+        return raw;
+      };
+    };
+    return {
+      combine: combine,
+      cursor: position.get
+    };
+  };
+  var contract = exactly([
+    'cell',
+    'row',
+    'replace',
+    'gap'
+  ]);
+  var $_8hdm50nkjlnuedb2 = {
+    modification: modification,
+    transform: transform,
+    merging: merging
+  };
+
+  var blockList = [
+    'body',
+    'p',
+    'div',
+    'article',
+    'aside',
+    'figcaption',
+    'figure',
+    'footer',
+    'header',
+    'nav',
+    'section',
+    'ol',
+    'ul',
+    'table',
+    'thead',
+    'tfoot',
+    'tbody',
+    'caption',
+    'tr',
+    'td',
+    'th',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'blockquote',
+    'pre',
+    'address'
+  ];
+  var isList = function (universe, item) {
+    var tagName = universe.property().name(item);
+    return contains([
+      'ol',
+      'ul'
+    ], tagName);
+  };
+  var isBlock = function (universe, item) {
+    var tagName = universe.property().name(item);
+    return contains(blockList, tagName);
+  };
+  var isFormatting = function (universe, item) {
+    var tagName = universe.property().name(item);
+    return contains([
+      'address',
+      'pre',
+      'p',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6'
+    ], tagName);
+  };
+  var isHeading = function (universe, item) {
+    var tagName = universe.property().name(item);
+    return contains([
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6'
+    ], tagName);
+  };
+  var isContainer = function (universe, item) {
+    return contains([
+      'div',
+      'li',
+      'td',
+      'th',
+      'blockquote',
+      'body',
+      'caption'
+    ], universe.property().name(item));
+  };
+  var isEmptyTag = function (universe, item) {
+    return contains([
+      'br',
+      'img',
+      'hr',
+      'input'
+    ], universe.property().name(item));
+  };
+  var isFrame = function (universe, item) {
+    return universe.property().name(item) === 'iframe';
+  };
+  var isInline = function (universe, item) {
+    return !(isBlock(universe, item) || isEmptyTag(universe, item)) && universe.property().name(item) !== 'li';
+  };
+  var $_5e0qonpjlnuedee = {
+    isBlock: isBlock,
+    isList: isList,
+    isFormatting: isFormatting,
+    isHeading: isHeading,
+    isContainer: isContainer,
+    isEmptyTag: isEmptyTag,
+    isFrame: isFrame,
+    isInline: isInline
+  };
+
+  var universe$1 = DomUniverse();
+  var isBlock$1 = function (element) {
+    return $_5e0qonpjlnuedee.isBlock(universe$1, element);
+  };
+  var isList$1 = function (element) {
+    return $_5e0qonpjlnuedee.isList(universe$1, element);
+  };
+  var isFormatting$1 = function (element) {
+    return $_5e0qonpjlnuedee.isFormatting(universe$1, element);
+  };
+  var isHeading$1 = function (element) {
+    return $_5e0qonpjlnuedee.isHeading(universe$1, element);
+  };
+  var isContainer$1 = function (element) {
+    return $_5e0qonpjlnuedee.isContainer(universe$1, element);
+  };
+  var isEmptyTag$1 = function (element) {
+    return $_5e0qonpjlnuedee.isEmptyTag(universe$1, element);
+  };
+  var isFrame$1 = function (element) {
+    return $_5e0qonpjlnuedee.isFrame(universe$1, element);
+  };
+  var isInline$1 = function (element) {
+    return $_5e0qonpjlnuedee.isInline(universe$1, element);
+  };
+  var $_ck29ginojlnuede6 = {
+    isBlock: isBlock$1,
+    isList: isList$1,
+    isFormatting: isFormatting$1,
+    isHeading: isHeading$1,
+    isContainer: isContainer$1,
+    isEmptyTag: isEmptyTag$1,
+    isFrame: isFrame$1,
+    isInline: isInline$1
+  };
+
+  var merge = function (cells) {
+    var isBr = function (el) {
+      return $_moydym3jlnueclb.name(el) === 'br';
+    };
+    var advancedBr = function (children) {
+      return forall(children, function (c) {
+        return isBr(c) || $_moydym3jlnueclb.isText(c) && $_u2vdgmkjlnuecrz.get(c).trim().length === 0;
+      });
+    };
+    var isListItem = function (el) {
+      return $_moydym3jlnueclb.name(el) === 'li' || $_957pbwm8jlnueclx.ancestor(el, $_ck29ginojlnuede6.isList).isSome();
+    };
+    var siblingIsBlock = function (el) {
+      return $_cvabpuljjlnuecgz.nextSibling(el).map(function (rightSibling) {
+        if ($_ck29ginojlnuede6.isBlock(rightSibling))
+          return true;
+        if ($_ck29ginojlnuede6.isEmptyTag(rightSibling)) {
+          return $_moydym3jlnueclb.name(rightSibling) === 'img' ? false : true;
+        }
+      }).getOr(false);
+    };
+    var markCell = function (cell) {
+      return $_6ikghvmijlnuecr8.last(cell).bind(function (rightEdge) {
+        var rightSiblingIsBlock = siblingIsBlock(rightEdge);
+        return $_cvabpuljjlnuecgz.parent(rightEdge).map(function (parent) {
+          return rightSiblingIsBlock === true || isListItem(parent) || isBr(rightEdge) || $_ck29ginojlnuede6.isBlock(parent) && !$_45sffllljlnuecht.eq(cell, parent) ? [] : [Element$$1.fromTag('br')];
+        });
+      }).getOr([]);
+    };
+    var markContent = function () {
+      var content = bind(cells, function (cell) {
+        var children = $_cvabpuljjlnuecgz.children(cell);
+        return advancedBr(children) ? [] : children.concat(markCell(cell));
+      });
+      return content.length === 0 ? [Element$$1.fromTag('br')] : content;
+    };
+    var contents = markContent();
+    $_dzcomomejlnuecod.empty(cells[0]);
+    $_78znkumfjlnuecoj.append(cells[0], contents);
+  };
+  var $_30p4vnnnjlnuedcc = { merge: merge };
+
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
+  var shallow$1 = function (old, nu) {
+    return nu;
+  };
+  var baseMerge = function (merger) {
+    return function () {
+      var objects = new Array(arguments.length);
+      for (var i = 0; i < objects.length; i++)
+        objects[i] = arguments[i];
+      if (objects.length === 0)
+        throw new Error('Can\'t merge zero objects');
+      var ret = {};
+      for (var j = 0; j < objects.length; j++) {
+        var curObject = objects[j];
+        for (var key in curObject)
+          if (hasOwnProperty.call(curObject, key)) {
+            ret[key] = merger(ret[key], curObject[key]);
+          }
+      }
+      return ret;
+    };
+  };
+
+  var merge$1 = baseMerge(shallow$1);
+
+  var cat = function (arr) {
+    var r = [];
+    var push = function (x) {
+      r.push(x);
+    };
+    for (var i = 0; i < arr.length; i++) {
+      arr[i].each(push);
+    }
+    return r;
+  };
+  var findMap = function (arr, f) {
+    for (var i = 0; i < arr.length; i++) {
+      var r = f(arr[i], i);
+      if (r.isSome()) {
+        return r;
+      }
+    }
+    return Option.none();
+  };
+
+  var addCell = function (gridRow, index, cell) {
+    var cells = gridRow.cells();
+    var before = cells.slice(0, index);
+    var after = cells.slice(index);
+    var newCells = before.concat([cell]).concat(after);
+    return setCells(gridRow, newCells);
+  };
+  var mutateCell = function (gridRow, index, cell) {
+    var cells = gridRow.cells();
+    cells[index] = cell;
+  };
+  var setCells = function (gridRow, cells) {
+    return $_63m7jdlcjlnuecdk.rowcells(cells, gridRow.section());
+  };
+  var mapCells = function (gridRow, f) {
+    var cells = gridRow.cells();
+    var r = map(cells, f);
+    return $_63m7jdlcjlnuecdk.rowcells(r, gridRow.section());
+  };
+  var getCell = function (gridRow, index) {
+    return gridRow.cells()[index];
+  };
+  var getCellElement = function (gridRow, index) {
+    return getCell(gridRow, index).element();
+  };
+  var cellLength = function (gridRow) {
+    return gridRow.cells().length;
+  };
+  var $_1xar3fnvjlnuedgo = {
+    addCell: addCell,
+    setCells: setCells,
+    mutateCell: mutateCell,
+    getCell: getCell,
+    getCellElement: getCellElement,
+    mapCells: mapCells,
+    cellLength: cellLength
+  };
+
+  var getColumn = function (grid, index) {
+    return map(grid, function (row) {
+      return $_1xar3fnvjlnuedgo.getCell(row, index);
+    });
+  };
+  var getRow = function (grid, index) {
+    return grid[index];
+  };
+  var findDiff = function (xs, comp) {
+    if (xs.length === 0)
+      return 0;
+    var first = xs[0];
+    var index = findIndex(xs, function (x) {
+      return !comp(first.element(), x.element());
+    });
+    return index.fold(function () {
+      return xs.length;
+    }, function (ind) {
+      return ind;
+    });
+  };
+  var subgrid = function (grid, row, column, comparator) {
+    var restOfRow = getRow(grid, row).cells().slice(column);
+    var endColIndex = findDiff(restOfRow, comparator);
+    var restOfColumn = getColumn(grid, column).slice(row);
+    var endRowIndex = findDiff(restOfColumn, comparator);
+    return {
+      colspan: constant(endColIndex),
+      rowspan: constant(endRowIndex)
+    };
+  };
+  var $_74mqwonujlnuedg4 = { subgrid: subgrid };
+
+  var toDetails = function (grid, comparator) {
+    var seen = map(grid, function (row, ri) {
+      return map(row.cells(), function (col, ci) {
+        return false;
+      });
+    });
+    var updateSeen = function (ri, ci, rowspan, colspan) {
+      for (var r = ri; r < ri + rowspan; r++) {
+        for (var c = ci; c < ci + colspan; c++) {
+          seen[r][c] = true;
+        }
+      }
+    };
+    return map(grid, function (row, ri) {
+      var details = bind(row.cells(), function (cell, ci) {
+        if (seen[ri][ci] === false) {
+          var result = $_74mqwonujlnuedg4.subgrid(grid, ri, ci, comparator);
+          updateSeen(ri, ci, result.rowspan(), result.colspan());
+          return [$_63m7jdlcjlnuecdk.detailnew(cell.element(), result.rowspan(), result.colspan(), cell.isNew())];
+        } else {
+          return [];
+        }
+      });
+      return $_63m7jdlcjlnuecdk.rowdetails(details, row.section());
+    });
+  };
+  var toGrid = function (warehouse, generators, isNew) {
+    var grid = [];
+    for (var i = 0; i < warehouse.grid().rows(); i++) {
+      var rowCells = [];
+      for (var j = 0; j < warehouse.grid().columns(); j++) {
+        var element = $_5pxk82majlnuecn1.getAt(warehouse, i, j).map(function (item) {
+          return $_63m7jdlcjlnuecdk.elementnew(item.element(), isNew);
+        }).getOrThunk(function () {
+          return $_63m7jdlcjlnuecdk.elementnew(generators.gap(), true);
+        });
+        rowCells.push(element);
+      }
+      var row = $_63m7jdlcjlnuecdk.rowcells(rowCells, warehouse.all()[i].section());
+      grid.push(row);
+    }
+    return grid;
+  };
+  var $_d3wg0nntjlnuedfw = {
+    toDetails: toDetails,
+    toGrid: toGrid
+  };
+
+  var setIfNot = function (element, property, value, ignore) {
+    if (value === ignore)
+      $_6f9wwmm2jlnueckv.remove(element, property);
+    else
+      $_6f9wwmm2jlnueckv.set(element, property, value);
+  };
+  var render = function (table, grid) {
+    var newRows = [];
+    var newCells = [];
+    var renderSection = function (gridSection, sectionName) {
+      var section = $_17q5jxm7jlnueclv.child(table, sectionName).getOrThunk(function () {
+        var tb = Element$$1.fromTag(sectionName, $_cvabpuljjlnuecgz.owner(table).dom());
+        $_881al2mdjlnuecoa.append(table, tb);
+        return tb;
+      });
+      $_dzcomomejlnuecod.empty(section);
+      var rows = map(gridSection, function (row) {
+        if (row.isNew()) {
+          newRows.push(row.element());
+        }
+        var tr = row.element();
+        $_dzcomomejlnuecod.empty(tr);
+        each(row.cells(), function (cell) {
+          if (cell.isNew()) {
+            newCells.push(cell.element());
+          }
+          setIfNot(cell.element(), 'colspan', cell.colspan(), 1);
+          setIfNot(cell.element(), 'rowspan', cell.rowspan(), 1);
+          $_881al2mdjlnuecoa.append(tr, cell.element());
+        });
+        return tr;
+      });
+      $_78znkumfjlnuecoj.append(section, rows);
+    };
+    var removeSection = function (sectionName) {
+      $_17q5jxm7jlnueclv.child(table, sectionName).each($_dzcomomejlnuecod.remove);
+    };
+    var renderOrRemoveSection = function (gridSection, sectionName) {
+      if (gridSection.length > 0) {
+        renderSection(gridSection, sectionName);
+      } else {
+        removeSection(sectionName);
+      }
+    };
+    var headSection = [];
+    var bodySection = [];
+    var footSection = [];
+    each(grid, function (row) {
+      switch (row.section()) {
+      case 'thead':
+        headSection.push(row);
+        break;
+      case 'tbody':
+        bodySection.push(row);
+        break;
+      case 'tfoot':
+        footSection.push(row);
+        break;
+      }
+    });
+    renderOrRemoveSection(headSection, 'thead');
+    renderOrRemoveSection(bodySection, 'tbody');
+    renderOrRemoveSection(footSection, 'tfoot');
+    return {
+      newRows: constant(newRows),
+      newCells: constant(newCells)
+    };
+  };
+  var copy$2 = function (grid) {
+    var rows = map(grid, function (row) {
+      var tr = $_e4aet6mhjlnuecr3.shallow(row.element());
+      each(row.cells(), function (cell) {
+        var clonedCell = $_e4aet6mhjlnuecr3.deep(cell.element());
+        setIfNot(clonedCell, 'colspan', cell.colspan(), 1);
+        setIfNot(clonedCell, 'rowspan', cell.rowspan(), 1);
+        $_881al2mdjlnuecoa.append(tr, clonedCell);
+      });
+      return tr;
+    });
+    return rows;
+  };
+  var $_az7jq9nwjlnuedgz = {
+    render: render,
+    copy: copy$2
+  };
+
+  var repeat = function (repititions, f) {
+    var r = [];
+    for (var i = 0; i < repititions; i++) {
+      r.push(f(i));
+    }
+    return r;
+  };
+  var range$1 = function (start, end) {
+    var r = [];
+    for (var i = start; i < end; i++) {
+      r.push(i);
+    }
+    return r;
+  };
+  var unique = function (xs, comparator) {
+    var result = [];
+    each(xs, function (x, i) {
+      if (i < xs.length - 1 && !comparator(x, xs[i + 1])) {
+        result.push(x);
+      } else if (i === xs.length - 1) {
+        result.push(x);
+      }
+    });
+    return result;
+  };
+  var deduce = function (xs, index) {
+    if (index < 0 || index >= xs.length - 1)
+      return Option.none();
+    var current = xs[index].fold(function () {
+      var rest = reverse(xs.slice(0, index));
+      return findMap(rest, function (a, i) {
+        return a.map(function (aa) {
+          return {
+            value: aa,
+            delta: i + 1
+          };
+        });
+      });
+    }, function (c) {
+      return Option.some({
+        value: c,
+        delta: 0
+      });
+    });
+    var next = xs[index + 1].fold(function () {
+      var rest = xs.slice(index + 1);
+      return findMap(rest, function (a, i) {
+        return a.map(function (aa) {
+          return {
+            value: aa,
+            delta: i + 1
+          };
+        });
+      });
+    }, function (n) {
+      return Option.some({
+        value: n,
+        delta: 1
+      });
+    });
+    return current.bind(function (c) {
+      return next.map(function (n) {
+        var extras = n.delta + c.delta;
+        return Math.abs(n.value - c.value) / extras;
+      });
+    });
+  };
+  var $_bzj6wfnzjlnuedl0 = {
+    repeat: repeat,
+    range: range$1,
+    unique: unique,
+    deduce: deduce
+  };
+
+  var columns = function (warehouse) {
+    var grid = warehouse.grid();
+    var cols = $_bzj6wfnzjlnuedl0.range(0, grid.columns());
+    var rows = $_bzj6wfnzjlnuedl0.range(0, grid.rows());
+    return map(cols, function (col) {
+      var getBlock = function () {
+        return bind(rows, function (r) {
+          return $_5pxk82majlnuecn1.getAt(warehouse, r, col).filter(function (detail) {
+            return detail.column() === col;
+          }).fold(constant([]), function (detail) {
+            return [detail];
+          });
+        });
+      };
+      var isSingle = function (detail) {
+        return detail.colspan() === 1;
+      };
+      var getFallback = function () {
+        return $_5pxk82majlnuecn1.getAt(warehouse, 0, col);
+      };
+      return decide(getBlock, isSingle, getFallback);
+    });
+  };
+  var decide = function (getBlock, isSingle, getFallback) {
+    var inBlock = getBlock();
+    var singleInBlock = find(inBlock, isSingle);
+    var detailOption = singleInBlock.orThunk(function () {
+      return Option.from(inBlock[0]).orThunk(getFallback);
+    });
+    return detailOption.map(function (detail) {
+      return detail.element();
+    });
+  };
+  var rows$1 = function (warehouse) {
+    var grid = warehouse.grid();
+    var rows = $_bzj6wfnzjlnuedl0.range(0, grid.rows());
+    var cols = $_bzj6wfnzjlnuedl0.range(0, grid.columns());
+    return map(rows, function (row) {
+      var getBlock = function () {
+        return bind(cols, function (c) {
+          return $_5pxk82majlnuecn1.getAt(warehouse, row, c).filter(function (detail) {
+            return detail.row() === row;
+          }).fold(constant([]), function (detail) {
+            return [detail];
+          });
+        });
+      };
+      var isSingle = function (detail) {
+        return detail.rowspan() === 1;
+      };
+      var getFallback = function () {
+        return $_5pxk82majlnuecn1.getAt(warehouse, row, 0);
+      };
+      return decide(getBlock, isSingle, getFallback);
+    });
+  };
+  var $_7uhuynnyjlnuedkg = {
+    columns: columns,
+    rows: rows$1
+  };
+
+  var col = function (column, x, y, w, h) {
+    var blocker = Element$$1.fromTag('div');
+    $_77s8gzmbjlnuecni.setAll(blocker, {
+      position: 'absolute',
+      left: x - w / 2 + 'px',
+      top: y + 'px',
+      height: h + 'px',
+      width: w + 'px'
+    });
+    $_6f9wwmm2jlnueckv.setAll(blocker, {
+      'data-column': column,
+      'role': 'presentation'
+    });
+    return blocker;
+  };
+  var row$1 = function (row, x, y, w, h) {
+    var blocker = Element$$1.fromTag('div');
+    $_77s8gzmbjlnuecni.setAll(blocker, {
+      position: 'absolute',
+      left: x + 'px',
+      top: y - h / 2 + 'px',
+      height: h + 'px',
+      width: w + 'px'
+    });
+    $_6f9wwmm2jlnueckv.setAll(blocker, {
+      'data-row': row,
+      'role': 'presentation'
+    });
+    return blocker;
+  };
+  var $_e985o9o0jlnuedlk = {
+    col: col,
+    row: row$1
+  };
+
+  var css = function (namespace) {
+    var dashNamespace = namespace.replace(/\./g, '-');
+    var resolve = function (str) {
+      return dashNamespace + '-' + str;
+    };
+    return { resolve: resolve };
+  };
+
+  var styles = css('ephox-snooker');
+  var $_6zkeoao1jlnuedm2 = { resolve: styles.resolve };
+
+  function Toggler (turnOff, turnOn, initial) {
+    var active = initial || false;
+    var on = function () {
+      turnOn();
+      active = true;
+    };
+    var off = function () {
+      turnOff();
+      active = false;
+    };
+    var toggle = function () {
+      var f = active ? off : on;
+      f();
+    };
+    var isOn = function () {
+      return active;
+    };
+    return {
+      on: on,
+      off: off,
+      toggle: toggle,
+      isOn: isOn
+    };
+  }
+
+  var read = function (element, attr) {
+    var value = $_6f9wwmm2jlnueckv.get(element, attr);
+    return value === undefined || value === '' ? [] : value.split(' ');
+  };
+  var add = function (element, attr, id) {
+    var old = read(element, attr);
+    var nu = old.concat([id]);
+    $_6f9wwmm2jlnueckv.set(element, attr, nu.join(' '));
+    return true;
+  };
+  var remove$3 = function (element, attr, id) {
+    var nu = filter(read(element, attr), function (v) {
+      return v !== id;
+    });
+    if (nu.length > 0)
+      $_6f9wwmm2jlnueckv.set(element, attr, nu.join(' '));
+    else
+      $_6f9wwmm2jlnueckv.remove(element, attr);
+    return false;
+  };
+  var $_9cls41o6jlnuedmp = {
+    read: read,
+    add: add,
+    remove: remove$3
+  };
+
+  var supports = function (element) {
+    return element.dom().classList !== undefined;
+  };
+  var get$6 = function (element) {
+    return $_9cls41o6jlnuedmp.read(element, 'class');
+  };
+  var add$1 = function (element, clazz) {
+    return $_9cls41o6jlnuedmp.add(element, 'class', clazz);
+  };
+  var remove$4 = function (element, clazz) {
+    return $_9cls41o6jlnuedmp.remove(element, 'class', clazz);
+  };
+  var toggle = function (element, clazz) {
+    if (contains(get$6(element), clazz)) {
+      return remove$4(element, clazz);
+    } else {
+      return add$1(element, clazz);
+    }
+  };
+  var $_7wfj60o5jlnuedmh = {
+    get: get$6,
+    add: add$1,
+    remove: remove$4,
+    toggle: toggle,
+    supports: supports
+  };
+
+  var add$2 = function (element, clazz) {
+    if ($_7wfj60o5jlnuedmh.supports(element))
+      element.dom().classList.add(clazz);
+    else
+      $_7wfj60o5jlnuedmh.add(element, clazz);
+  };
+  var cleanClass = function (element) {
+    var classList = $_7wfj60o5jlnuedmh.supports(element) ? element.dom().classList : $_7wfj60o5jlnuedmh.get(element);
+    if (classList.length === 0) {
+      $_6f9wwmm2jlnueckv.remove(element, 'class');
+    }
+  };
+  var remove$5 = function (element, clazz) {
+    if ($_7wfj60o5jlnuedmh.supports(element)) {
+      var classList = element.dom().classList;
+      classList.remove(clazz);
+    } else
+      $_7wfj60o5jlnuedmh.remove(element, clazz);
+    cleanClass(element);
+  };
+  var toggle$1 = function (element, clazz) {
+    return $_7wfj60o5jlnuedmh.supports(element) ? element.dom().classList.toggle(clazz) : $_7wfj60o5jlnuedmh.toggle(element, clazz);
+  };
+  var toggler = function (element, clazz) {
+    var hasClasslist = $_7wfj60o5jlnuedmh.supports(element);
+    var classList = element.dom().classList;
+    var off = function () {
+      if (hasClasslist)
+        classList.remove(clazz);
+      else
+        $_7wfj60o5jlnuedmh.remove(element, clazz);
+    };
+    var on = function () {
+      if (hasClasslist)
+        classList.add(clazz);
+      else
+        $_7wfj60o5jlnuedmh.add(element, clazz);
+    };
+    return Toggler(off, on, has$1(element, clazz));
+  };
+  var has$1 = function (element, clazz) {
+    return $_7wfj60o5jlnuedmh.supports(element) && element.dom().classList.contains(clazz);
+  };
+  var $_42k0o5o3jlnuedmc = {
+    add: add$2,
+    remove: remove$5,
+    toggle: toggle$1,
+    toggler: toggler,
+    has: has$1
+  };
+
+  var resizeBar = $_6zkeoao1jlnuedm2.resolve('resizer-bar');
+  var resizeRowBar = $_6zkeoao1jlnuedm2.resolve('resizer-rows');
+  var resizeColBar = $_6zkeoao1jlnuedm2.resolve('resizer-cols');
+  var BAR_THICKNESS = 7;
+  var clear = function (wire) {
+    var previous = $_49wdgem4jlnuecle.descendants(wire.parent(), '.' + resizeBar);
+    each(previous, $_dzcomomejlnuecod.remove);
+  };
+  var drawBar = function (wire, positions, create) {
+    var origin = wire.origin();
+    each(positions, function (cpOption, i) {
+      cpOption.each(function (cp) {
+        var bar = create(origin, cp);
+        $_42k0o5o3jlnuedmc.add(bar, resizeBar);
+        $_881al2mdjlnuecoa.append(wire.parent(), bar);
+      });
+    });
+  };
+  var refreshCol = function (wire, colPositions, position, tableHeight) {
+    drawBar(wire, colPositions, function (origin, cp) {
+      var colBar = $_e985o9o0jlnuedlk.col(cp.col(), cp.x() - origin.left(), position.top() - origin.top(), BAR_THICKNESS, tableHeight);
+      $_42k0o5o3jlnuedmc.add(colBar, resizeColBar);
+      return colBar;
+    });
+  };
+  var refreshRow = function (wire, rowPositions, position, tableWidth) {
+    drawBar(wire, rowPositions, function (origin, cp) {
+      var rowBar = $_e985o9o0jlnuedlk.row(cp.row(), position.left() - origin.left(), cp.y() - origin.top(), tableWidth, BAR_THICKNESS);
+      $_42k0o5o3jlnuedmc.add(rowBar, resizeRowBar);
+      return rowBar;
+    });
+  };
+  var refreshGrid = function (wire, table, rows, cols, hdirection, vdirection) {
+    var position = $_2eshhonfjlnued9i.absolute(table);
+    var rowPositions = rows.length > 0 ? hdirection.positions(rows, table) : [];
+    refreshRow(wire, rowPositions, position, $_7js1oqnbjlnued8g.getOuter(table));
+    var colPositions = cols.length > 0 ? vdirection.positions(cols, table) : [];
+    refreshCol(wire, colPositions, position, $_9pna37n9jlnued82.getOuter(table));
+  };
+  var refresh = function (wire, table, hdirection, vdirection) {
+    clear(wire);
+    var list = $_24qbqwlbjlnueccz.fromTable(table);
+    var warehouse = $_5pxk82majlnuecn1.generate(list);
+    var rows = $_7uhuynnyjlnuedkg.rows(warehouse);
+    var cols = $_7uhuynnyjlnuedkg.columns(warehouse);
+    refreshGrid(wire, table, rows, cols, hdirection, vdirection);
+  };
+  var each$2 = function (wire, f) {
+    var bars = $_49wdgem4jlnuecle.descendants(wire.parent(), '.' + resizeBar);
+    each(bars, f);
+  };
+  var hide = function (wire) {
+    each$2(wire, function (bar) {
+      $_77s8gzmbjlnuecni.set(bar, 'display', 'none');
+    });
+  };
+  var show = function (wire) {
+    each$2(wire, function (bar) {
+      $_77s8gzmbjlnuecni.set(bar, 'display', 'block');
+    });
+  };
+  var isRowBar = function (element) {
+    return $_42k0o5o3jlnuedmc.has(element, resizeRowBar);
+  };
+  var isColBar = function (element) {
+    return $_42k0o5o3jlnuedmc.has(element, resizeColBar);
+  };
+  var $_92z6clnxjlnuediv = {
+    refresh: refresh,
+    hide: hide,
+    show: show,
+    destroy: clear,
+    isRowBar: isRowBar,
+    isColBar: isColBar
+  };
+
+  var fromWarehouse = function (warehouse, generators) {
+    return $_d3wg0nntjlnuedfw.toGrid(warehouse, generators, false);
+  };
+  var deriveRows = function (rendered, generators) {
+    var findRow = function (details) {
+      var rowOfCells = findMap(details, function (detail) {
+        return $_cvabpuljjlnuecgz.parent(detail.element()).map(function (row) {
+          var isNew = $_cvabpuljjlnuecgz.parent(row).isNone();
+          return $_63m7jdlcjlnuecdk.elementnew(row, isNew);
+        });
+      });
+      return rowOfCells.getOrThunk(function () {
+        return $_63m7jdlcjlnuecdk.elementnew(generators.row(), true);
+      });
+    };
+    return map(rendered, function (details) {
+      var row = findRow(details.details());
+      return $_63m7jdlcjlnuecdk.rowdatanew(row.element(), details.details(), details.section(), row.isNew());
+    });
+  };
+  var toDetailList = function (grid, generators) {
+    var rendered = $_d3wg0nntjlnuedfw.toDetails(grid, $_45sffllljlnuecht.eq);
+    return deriveRows(rendered, generators);
+  };
+  var findInWarehouse = function (warehouse, element) {
+    var all = flatten(map(warehouse.all(), function (r) {
+      return r.cells();
+    }));
+    return find(all, function (e) {
+      return $_45sffllljlnuecht.eq(element, e.element());
+    });
+  };
+  var run = function (operation, extract, adjustment, postAction, genWrappers) {
+    return function (wire, table, target, generators, direction) {
+      var input = $_24qbqwlbjlnueccz.fromTable(table);
+      var warehouse = $_5pxk82majlnuecn1.generate(input);
+      var output = extract(warehouse, target).map(function (info) {
+        var model = fromWarehouse(warehouse, generators);
+        var result = operation(model, info, $_45sffllljlnuecht.eq, genWrappers(generators));
+        var grid = toDetailList(result.grid(), generators);
+        return {
+          grid: constant(grid),
+          cursor: result.cursor
+        };
+      });
+      return output.fold(function () {
+        return Option.none();
+      }, function (out) {
+        var newElements = $_az7jq9nwjlnuedgz.render(table, out.grid());
+        adjustment(table, out.grid(), direction);
+        postAction(table);
+        $_92z6clnxjlnuediv.refresh(wire, table, $_1kcsfhnejlnued8m.height, direction);
+        return Option.some({
+          cursor: out.cursor,
+          newRows: newElements.newRows,
+          newCells: newElements.newCells
+        });
+      });
+    };
+  };
+  var onCell = function (warehouse, target) {
+    return $_enoas1ldjlnuecdr.cell(target.element()).bind(function (cell) {
+      return findInWarehouse(warehouse, cell);
+    });
+  };
+  var onPaste = function (warehouse, target) {
+    return $_enoas1ldjlnuecdr.cell(target.element()).bind(function (cell) {
+      return findInWarehouse(warehouse, cell).map(function (details) {
+        return merge$1(details, {
+          generators: target.generators,
+          clipboard: target.clipboard
+        });
+      });
+    });
+  };
+  var onPasteRows = function (warehouse, target) {
+    var details = map(target.selection(), function (cell) {
+      return $_enoas1ldjlnuecdr.cell(cell).bind(function (lc) {
+        return findInWarehouse(warehouse, lc);
+      });
+    });
+    var cells = cat(details);
+    return cells.length > 0 ? Option.some(merge$1({ cells: cells }, {
+      generators: target.generators,
+      clipboard: target.clipboard
+    })) : Option.none();
+  };
+  var onMergable = function (warehouse, target) {
+    return target.mergable();
+  };
+  var onUnmergable = function (warehouse, target) {
+    return target.unmergable();
+  };
+  var onCells = function (warehouse, target) {
+    var details = map(target.selection(), function (cell) {
+      return $_enoas1ldjlnuecdr.cell(cell).bind(function (lc) {
+        return findInWarehouse(warehouse, lc);
+      });
+    });
+    var cells = cat(details);
+    return cells.length > 0 ? Option.some(cells) : Option.none();
+  };
+  var $_8hyi9jnqjlnuedeo = {
+    run: run,
+    toDetailList: toDetailList,
+    onCell: onCell,
+    onCells: onCells,
+    onPaste: onPaste,
+    onPasteRows: onPasteRows,
+    onMergable: onMergable,
+    onUnmergable: onUnmergable
+  };
+
+  var value$1 = function (o) {
+    var is = function (v) {
+      return o === v;
+    };
+    var or = function (opt) {
+      return value$1(o);
+    };
+    var orThunk = function (f) {
+      return value$1(o);
+    };
+    var map = function (f) {
+      return value$1(f(o));
+    };
+    var each = function (f) {
+      f(o);
+    };
+    var bind = function (f) {
+      return f(o);
+    };
+    var fold = function (_, onValue) {
+      return onValue(o);
+    };
+    var exists = function (f) {
+      return f(o);
+    };
+    var forall = function (f) {
+      return f(o);
+    };
+    var toOption = function () {
+      return Option.some(o);
+    };
+    return {
+      is: is,
+      isValue: always,
+      isError: never,
+      getOr: constant(o),
+      getOrThunk: constant(o),
+      getOrDie: constant(o),
+      or: or,
+      orThunk: orThunk,
+      fold: fold,
+      map: map,
+      each: each,
+      bind: bind,
+      exists: exists,
+      forall: forall,
+      toOption: toOption
+    };
+  };
+  var error = function (message) {
+    var getOrThunk = function (f) {
+      return f();
+    };
+    var getOrDie = function () {
+      return die(String(message))();
+    };
+    var or = function (opt) {
+      return opt;
+    };
+    var orThunk = function (f) {
+      return f();
+    };
+    var map = function (f) {
+      return error(message);
+    };
+    var bind = function (f) {
+      return error(message);
+    };
+    var fold = function (onError, _) {
+      return onError(message);
+    };
+    return {
+      is: never,
+      isValue: never,
+      isError: always,
+      getOr: identity,
+      getOrThunk: getOrThunk,
+      getOrDie: getOrDie,
+      or: or,
+      orThunk: orThunk,
+      fold: fold,
+      map: map,
+      each: noop,
+      bind: bind,
+      exists: never,
+      forall: always,
+      toOption: Option.none
+    };
+  };
+  var Result = {
+    value: value$1,
+    error: error
+  };
+
+  var measure = function (startAddress, gridA, gridB) {
+    if (startAddress.row() >= gridA.length || startAddress.column() > $_1xar3fnvjlnuedgo.cellLength(gridA[0]))
+      return Result.error('invalid start address out of table bounds, row: ' + startAddress.row() + ', column: ' + startAddress.column());
+    var rowRemainder = gridA.slice(startAddress.row());
+    var colRemainder = rowRemainder[0].cells().slice(startAddress.column());
+    var colRequired = $_1xar3fnvjlnuedgo.cellLength(gridB[0]);
+    var rowRequired = gridB.length;
+    return Result.value({
+      rowDelta: constant(rowRemainder.length - rowRequired),
+      colDelta: constant(colRemainder.length - colRequired)
+    });
+  };
+  var measureWidth = function (gridA, gridB) {
+    var colLengthA = $_1xar3fnvjlnuedgo.cellLength(gridA[0]);
+    var colLengthB = $_1xar3fnvjlnuedgo.cellLength(gridB[0]);
+    return {
+      rowDelta: constant(0),
+      colDelta: constant(colLengthA - colLengthB)
+    };
+  };
+  var fill = function (cells, generator) {
+    return map(cells, function () {
+      return $_63m7jdlcjlnuecdk.elementnew(generator.cell(), true);
+    });
+  };
+  var rowFill = function (grid, amount, generator) {
+    return grid.concat($_bzj6wfnzjlnuedl0.repeat(amount, function (_row) {
+      return $_1xar3fnvjlnuedgo.setCells(grid[grid.length - 1], fill(grid[grid.length - 1].cells(), generator));
+    }));
+  };
+  var colFill = function (grid, amount, generator) {
+    return map(grid, function (row) {
+      return $_1xar3fnvjlnuedgo.setCells(row, row.cells().concat(fill($_bzj6wfnzjlnuedl0.range(0, amount), generator)));
+    });
+  };
+  var tailor = function (gridA, delta, generator) {
+    var fillCols = delta.colDelta() < 0 ? colFill : identity;
+    var fillRows = delta.rowDelta() < 0 ? rowFill : identity;
+    var modifiedCols = fillCols(gridA, Math.abs(delta.colDelta()), generator);
+    var tailoredGrid = fillRows(modifiedCols, Math.abs(delta.rowDelta()), generator);
+    return tailoredGrid;
+  };
+  var $_941y6ho8jlnuedn8 = {
+    measure: measure,
+    measureWidth: measureWidth,
+    tailor: tailor
+  };
+
+  var merge$2 = function (grid, bounds, comparator, substitution) {
+    if (grid.length === 0)
+      return grid;
+    for (var i = bounds.startRow(); i <= bounds.finishRow(); i++) {
+      for (var j = bounds.startCol(); j <= bounds.finishCol(); j++) {
+        $_1xar3fnvjlnuedgo.mutateCell(grid[i], j, $_63m7jdlcjlnuecdk.elementnew(substitution(), false));
+      }
+    }
+    return grid;
+  };
+  var unmerge = function (grid, target, comparator, substitution) {
+    var first = true;
+    for (var i = 0; i < grid.length; i++) {
+      for (var j = 0; j < $_1xar3fnvjlnuedgo.cellLength(grid[0]); j++) {
+        var current = $_1xar3fnvjlnuedgo.getCellElement(grid[i], j);
+        var isToReplace = comparator(current, target);
+        if (isToReplace === true && first === false) {
+          $_1xar3fnvjlnuedgo.mutateCell(grid[i], j, $_63m7jdlcjlnuecdk.elementnew(substitution(), true));
+        } else if (isToReplace === true) {
+          first = false;
+        }
+      }
+    }
+    return grid;
+  };
+  var uniqueCells = function (row, comparator) {
+    return foldl(row, function (rest, cell) {
+      return exists(rest, function (currentCell) {
+        return comparator(currentCell.element(), cell.element());
+      }) ? rest : rest.concat([cell]);
+    }, []);
+  };
+  var splitRows = function (grid, index, comparator, substitution) {
+    if (index > 0 && index < grid.length) {
+      var rowPrevCells = grid[index - 1].cells();
+      var cells = uniqueCells(rowPrevCells, comparator);
+      each(cells, function (cell) {
+        var replacement = Option.none();
+        for (var i = index; i < grid.length; i++) {
+          for (var j = 0; j < $_1xar3fnvjlnuedgo.cellLength(grid[0]); j++) {
+            var current = grid[i].cells()[j];
+            var isToReplace = comparator(current.element(), cell.element());
+            if (isToReplace) {
+              if (replacement.isNone()) {
+                replacement = Option.some(substitution());
+              }
+              replacement.each(function (sub) {
+                $_1xar3fnvjlnuedgo.mutateCell(grid[i], j, $_63m7jdlcjlnuecdk.elementnew(sub, true));
+              });
+            }
+          }
+        }
+      });
+    }
+    return grid;
+  };
+  var $_6lxp1joajlnuedny = {
+    merge: merge$2,
+    unmerge: unmerge,
+    splitRows: splitRows
+  };
+
+  var isSpanning = function (grid, row, col, comparator) {
+    var candidate = $_1xar3fnvjlnuedgo.getCell(grid[row], col);
+    var matching = curry(comparator, candidate.element());
+    var currentRow = grid[row];
+    return grid.length > 1 && $_1xar3fnvjlnuedgo.cellLength(currentRow) > 1 && (col > 0 && matching($_1xar3fnvjlnuedgo.getCellElement(currentRow, col - 1)) || col < currentRow.length - 1 && matching($_1xar3fnvjlnuedgo.getCellElement(currentRow, col + 1)) || row > 0 && matching($_1xar3fnvjlnuedgo.getCellElement(grid[row - 1], col)) || row < grid.length - 1 && matching($_1xar3fnvjlnuedgo.getCellElement(grid[row + 1], col)));
+  };
+  var mergeTables = function (startAddress, gridA, gridB, generator, comparator) {
+    var startRow = startAddress.row();
+    var startCol = startAddress.column();
+    var mergeHeight = gridB.length;
+    var mergeWidth = $_1xar3fnvjlnuedgo.cellLength(gridB[0]);
+    var endRow = startRow + mergeHeight;
+    var endCol = startCol + mergeWidth;
+    for (var r = startRow; r < endRow; r++) {
+      for (var c = startCol; c < endCol; c++) {
+        if (isSpanning(gridA, r, c, comparator)) {
+          $_6lxp1joajlnuedny.unmerge(gridA, $_1xar3fnvjlnuedgo.getCellElement(gridA[r], c), comparator, generator.cell);
+        }
+        var newCell = $_1xar3fnvjlnuedgo.getCellElement(gridB[r - startRow], c - startCol);
+        var replacement = generator.replace(newCell);
+        $_1xar3fnvjlnuedgo.mutateCell(gridA[r], c, $_63m7jdlcjlnuecdk.elementnew(replacement, true));
+      }
+    }
+    return gridA;
+  };
+  var merge$3 = function (startAddress, gridA, gridB, generator, comparator) {
+    var result = $_941y6ho8jlnuedn8.measure(startAddress, gridA, gridB);
+    return result.map(function (delta) {
+      var fittedGrid = $_941y6ho8jlnuedn8.tailor(gridA, delta, generator);
+      return mergeTables(startAddress, fittedGrid, gridB, generator, comparator);
+    });
+  };
+  var insert = function (index, gridA, gridB, generator, comparator) {
+    $_6lxp1joajlnuedny.splitRows(gridA, index, comparator, generator.cell);
+    var delta = $_941y6ho8jlnuedn8.measureWidth(gridB, gridA);
+    var fittedNewGrid = $_941y6ho8jlnuedn8.tailor(gridB, delta, generator);
+    var secondDelta = $_941y6ho8jlnuedn8.measureWidth(gridA, fittedNewGrid);
+    var fittedOldGrid = $_941y6ho8jlnuedn8.tailor(gridA, secondDelta, generator);
+    return fittedOldGrid.slice(0, index).concat(fittedNewGrid).concat(fittedOldGrid.slice(index, fittedOldGrid.length));
+  };
+  var $_1dbow3o7jlnuedmz = {
+    merge: merge$3,
+    insert: insert
+  };
+
+  var insertRowAt = function (grid, index, example, comparator, substitution) {
+    var before = grid.slice(0, index);
+    var after = grid.slice(index);
+    var between = $_1xar3fnvjlnuedgo.mapCells(grid[example], function (ex, c) {
+      var withinSpan = index > 0 && index < grid.length && comparator($_1xar3fnvjlnuedgo.getCellElement(grid[index - 1], c), $_1xar3fnvjlnuedgo.getCellElement(grid[index], c));
+      var ret = withinSpan ? $_1xar3fnvjlnuedgo.getCell(grid[index], c) : $_63m7jdlcjlnuecdk.elementnew(substitution(ex.element(), comparator), true);
+      return ret;
+    });
+    return before.concat([between]).concat(after);
+  };
+  var insertColumnAt = function (grid, index, example, comparator, substitution) {
+    return map(grid, function (row) {
+      var withinSpan = index > 0 && index < $_1xar3fnvjlnuedgo.cellLength(row) && comparator($_1xar3fnvjlnuedgo.getCellElement(row, index - 1), $_1xar3fnvjlnuedgo.getCellElement(row, index));
+      var sub = withinSpan ? $_1xar3fnvjlnuedgo.getCell(row, index) : $_63m7jdlcjlnuecdk.elementnew(substitution($_1xar3fnvjlnuedgo.getCellElement(row, example), comparator), true);
+      return $_1xar3fnvjlnuedgo.addCell(row, index, sub);
+    });
+  };
+  var splitCellIntoColumns = function (grid, exampleRow, exampleCol, comparator, substitution) {
+    var index = exampleCol + 1;
+    return map(grid, function (row, i) {
+      var isTargetCell = i === exampleRow;
+      var sub = isTargetCell ? $_63m7jdlcjlnuecdk.elementnew(substitution($_1xar3fnvjlnuedgo.getCellElement(row, exampleCol), comparator), true) : $_1xar3fnvjlnuedgo.getCell(row, exampleCol);
+      return $_1xar3fnvjlnuedgo.addCell(row, index, sub);
+    });
+  };
+  var splitCellIntoRows = function (grid, exampleRow, exampleCol, comparator, substitution) {
+    var index = exampleRow + 1;
+    var before = grid.slice(0, index);
+    var after = grid.slice(index);
+    var between = $_1xar3fnvjlnuedgo.mapCells(grid[exampleRow], function (ex, i) {
+      var isTargetCell = i === exampleCol;
+      return isTargetCell ? $_63m7jdlcjlnuecdk.elementnew(substitution(ex.element(), comparator), true) : ex;
+    });
+    return before.concat([between]).concat(after);
+  };
+  var deleteColumnsAt = function (grid, start, finish) {
+    var rows = map(grid, function (row) {
+      var cells = row.cells().slice(0, start).concat(row.cells().slice(finish + 1));
+      return $_63m7jdlcjlnuecdk.rowcells(cells, row.section());
+    });
+    return filter(rows, function (row) {
+      return row.cells().length > 0;
+    });
+  };
+  var deleteRowsAt = function (grid, start, finish) {
+    return grid.slice(0, start).concat(grid.slice(finish + 1));
+  };
+  var $_dwo5idobjlnuedoc = {
+    insertRowAt: insertRowAt,
+    insertColumnAt: insertColumnAt,
+    splitCellIntoColumns: splitCellIntoColumns,
+    splitCellIntoRows: splitCellIntoRows,
+    deleteRowsAt: deleteRowsAt,
+    deleteColumnsAt: deleteColumnsAt
+  };
+
+  var replaceIn = function (grid, targets, comparator, substitution) {
+    var isTarget = function (cell) {
+      return exists(targets, function (target) {
+        return comparator(cell.element(), target.element());
+      });
+    };
+    return map(grid, function (row) {
+      return $_1xar3fnvjlnuedgo.mapCells(row, function (cell) {
+        return isTarget(cell) ? $_63m7jdlcjlnuecdk.elementnew(substitution(cell.element(), comparator), true) : cell;
+      });
+    });
+  };
+  var notStartRow = function (grid, rowIndex, colIndex, comparator) {
+    return $_1xar3fnvjlnuedgo.getCellElement(grid[rowIndex], colIndex) !== undefined && (rowIndex > 0 && comparator($_1xar3fnvjlnuedgo.getCellElement(grid[rowIndex - 1], colIndex), $_1xar3fnvjlnuedgo.getCellElement(grid[rowIndex], colIndex)));
+  };
+  var notStartColumn = function (row, index, comparator) {
+    return index > 0 && comparator($_1xar3fnvjlnuedgo.getCellElement(row, index - 1), $_1xar3fnvjlnuedgo.getCellElement(row, index));
+  };
+  var replaceColumn = function (grid, index, comparator, substitution) {
+    var targets = bind(grid, function (row, i) {
+      var alreadyAdded = notStartRow(grid, i, index, comparator) || notStartColumn(row, index, comparator);
+      return alreadyAdded ? [] : [$_1xar3fnvjlnuedgo.getCell(row, index)];
+    });
+    return replaceIn(grid, targets, comparator, substitution);
+  };
+  var replaceRow = function (grid, index, comparator, substitution) {
+    var targetRow = grid[index];
+    var targets = bind(targetRow.cells(), function (item, i) {
+      var alreadyAdded = notStartRow(grid, index, i, comparator) || notStartColumn(targetRow, i, comparator);
+      return alreadyAdded ? [] : [item];
+    });
+    return replaceIn(grid, targets, comparator, substitution);
+  };
+  var $_ex92i8ocjlnuedol = {
+    replaceColumn: replaceColumn,
+    replaceRow: replaceRow
+  };
+
+  var none$1 = function () {
+    return folder(function (n, o, l, m, r) {
+      return n();
+    });
+  };
+  var only = function (index) {
+    return folder(function (n, o, l, m, r) {
+      return o(index);
+    });
+  };
+  var left = function (index, next) {
+    return folder(function (n, o, l, m, r) {
+      return l(index, next);
+    });
+  };
+  var middle = function (prev, index, next) {
+    return folder(function (n, o, l, m, r) {
+      return m(prev, index, next);
+    });
+  };
+  var right = function (prev, index) {
+    return folder(function (n, o, l, m, r) {
+      return r(prev, index);
+    });
+  };
+  var folder = function (fold) {
+    return { fold: fold };
+  };
+  var $_66fgbxofjlnuedpg = {
+    none: none$1,
+    only: only,
+    left: left,
+    middle: middle,
+    right: right
+  };
+
+  var neighbours$1 = function (input, index) {
+    if (input.length === 0)
+      return $_66fgbxofjlnuedpg.none();
+    if (input.length === 1)
+      return $_66fgbxofjlnuedpg.only(0);
+    if (index === 0)
+      return $_66fgbxofjlnuedpg.left(0, 1);
+    if (index === input.length - 1)
+      return $_66fgbxofjlnuedpg.right(index - 1, index);
+    if (index > 0 && index < input.length - 1)
+      return $_66fgbxofjlnuedpg.middle(index - 1, index, index + 1);
+    return $_66fgbxofjlnuedpg.none();
+  };
+  var determine = function (input, column, step, tableSize) {
+    var result = input.slice(0);
+    var context = neighbours$1(input, column);
+    var zero = function (array) {
+      return map(array, constant(0));
+    };
+    var onNone = constant(zero(result));
+    var onOnly = function (index) {
+      return tableSize.singleColumnWidth(result[index], step);
+    };
+    var onChange = function (index, next) {
+      if (step >= 0) {
+        var newNext = Math.max(tableSize.minCellWidth(), result[next] - step);
+        return zero(result.slice(0, index)).concat([
+          step,
+          newNext - result[next]
+        ]).concat(zero(result.slice(next + 1)));
+      } else {
+        var newThis = Math.max(tableSize.minCellWidth(), result[index] + step);
+        var diffx = result[index] - newThis;
+        return zero(result.slice(0, index)).concat([
+          newThis - result[index],
+          diffx
+        ]).concat(zero(result.slice(next + 1)));
+      }
+    };
+    var onLeft = onChange;
+    var onMiddle = function (prev, index, next) {
+      return onChange(index, next);
+    };
+    var onRight = function (prev, index) {
+      if (step >= 0) {
+        return zero(result.slice(0, index)).concat([step]);
+      } else {
+        var size = Math.max(tableSize.minCellWidth(), result[index] + step);
+        return zero(result.slice(0, index)).concat([size - result[index]]);
+      }
+    };
+    return context.fold(onNone, onOnly, onLeft, onMiddle, onRight);
+  };
+  var $_csbe6foejlnuedp2 = { determine: determine };
+
+  var getSpan$1 = function (cell, type) {
+    return $_6f9wwmm2jlnueckv.has(cell, type) && parseInt($_6f9wwmm2jlnueckv.get(cell, type), 10) > 1;
+  };
+  var hasColspan = function (cell) {
+    return getSpan$1(cell, 'colspan');
+  };
+  var hasRowspan = function (cell) {
+    return getSpan$1(cell, 'rowspan');
+  };
+  var getInt = function (element, property) {
+    return parseInt($_77s8gzmbjlnuecni.get(element, property), 10);
+  };
+  var $_7ucs72ohjlnuedq4 = {
+    hasColspan: hasColspan,
+    hasRowspan: hasRowspan,
+    minWidth: constant(10),
+    minHeight: constant(10),
+    getInt: getInt
+  };
+
+  var getRaw$1 = function (cell, property, getter) {
+    return $_77s8gzmbjlnuecni.getRaw(cell, property).fold(function () {
+      return getter(cell) + 'px';
+    }, function (raw) {
+      return raw;
+    });
+  };
+  var getRawW = function (cell) {
+    return getRaw$1(cell, 'width', $_4ew883n7jlnued63.getPixelWidth);
+  };
+  var getRawH = function (cell) {
+    return getRaw$1(cell, 'height', $_4ew883n7jlnued63.getHeight);
+  };
+  var getWidthFrom = function (warehouse, direction, getWidth, fallback, tableSize) {
+    var columns = $_7uhuynnyjlnuedkg.columns(warehouse);
+    var backups = map(columns, function (cellOption) {
+      return cellOption.map(direction.edge);
+    });
+    return map(columns, function (cellOption, c) {
+      var columnCell = cellOption.filter(not($_7ucs72ohjlnuedq4.hasColspan));
+      return columnCell.fold(function () {
+        var deduced = $_bzj6wfnzjlnuedl0.deduce(backups, c);
+        return fallback(deduced);
+      }, function (cell) {
+        return getWidth(cell, tableSize);
+      });
+    });
+  };
+  var getDeduced = function (deduced) {
+    return deduced.map(function (d) {
+      return d + 'px';
+    }).getOr('');
+  };
+  var getRawWidths = function (warehouse, direction) {
+    return getWidthFrom(warehouse, direction, getRawW, getDeduced);
+  };
+  var getPercentageWidths = function (warehouse, direction, tableSize) {
+    return getWidthFrom(warehouse, direction, $_4ew883n7jlnued63.getPercentageWidth, function (deduced) {
+      return deduced.fold(function () {
+        return tableSize.minCellWidth();
+      }, function (cellWidth) {
+        return cellWidth / tableSize.pixelWidth() * 100;
+      });
+    }, tableSize);
+  };
+  var getPixelWidths = function (warehouse, direction, tableSize) {
+    return getWidthFrom(warehouse, direction, $_4ew883n7jlnued63.getPixelWidth, function (deduced) {
+      return deduced.getOrThunk(tableSize.minCellWidth);
+    }, tableSize);
+  };
+  var getHeightFrom = function (warehouse, direction, getHeight, fallback) {
+    var rows = $_7uhuynnyjlnuedkg.rows(warehouse);
+    var backups = map(rows, function (cellOption) {
+      return cellOption.map(direction.edge);
+    });
+    return map(rows, function (cellOption, c) {
+      var rowCell = cellOption.filter(not($_7ucs72ohjlnuedq4.hasRowspan));
+      return rowCell.fold(function () {
+        var deduced = $_bzj6wfnzjlnuedl0.deduce(backups, c);
+        return fallback(deduced);
+      }, function (cell) {
+        return getHeight(cell);
+      });
+    });
+  };
+  var getPixelHeights = function (warehouse, direction) {
+    return getHeightFrom(warehouse, direction, $_4ew883n7jlnued63.getHeight, function (deduced) {
+      return deduced.getOrThunk($_7ucs72ohjlnuedq4.minHeight);
+    });
+  };
+  var getRawHeights = function (warehouse, direction) {
+    return getHeightFrom(warehouse, direction, getRawH, getDeduced);
+  };
+  var $_7z5l4rogjlnuedpj = {
+    getRawWidths: getRawWidths,
+    getPixelWidths: getPixelWidths,
+    getPercentageWidths: getPercentageWidths,
+    getPixelHeights: getPixelHeights,
+    getRawHeights: getRawHeights
+  };
+
+  var total = function (start, end, measures) {
+    var r = 0;
+    for (var i = start; i < end; i++) {
+      r += measures[i] !== undefined ? measures[i] : 0;
+    }
+    return r;
+  };
+  var recalculateWidth = function (warehouse, widths) {
+    var all = $_5pxk82majlnuecn1.justCells(warehouse);
+    return map(all, function (cell) {
+      var width = total(cell.column(), cell.column() + cell.colspan(), widths);
+      return {
+        element: cell.element,
+        width: constant(width),
+        colspan: cell.colspan
+      };
+    });
+  };
+  var recalculateHeight = function (warehouse, heights) {
+    var all = $_5pxk82majlnuecn1.justCells(warehouse);
+    return map(all, function (cell) {
+      var height = total(cell.row(), cell.row() + cell.rowspan(), heights);
+      return {
+        element: cell.element,
+        height: constant(height),
+        rowspan: cell.rowspan
+      };
+    });
+  };
+  var matchRowHeight = function (warehouse, heights) {
+    return map(warehouse.all(), function (row, i) {
+      return {
+        element: row.element,
+        height: constant(heights[i])
+      };
+    });
+  };
+  var $_505q69oijlnuedqy = {
+    recalculateWidth: recalculateWidth,
+    recalculateHeight: recalculateHeight,
+    matchRowHeight: matchRowHeight
+  };
+
+  var percentageSize = function (width, element) {
+    var floatWidth = parseFloat(width);
+    var pixelWidth = $_7js1oqnbjlnued8g.get(element);
+    var getCellDelta = function (delta) {
+      return delta / pixelWidth * 100;
+    };
+    var singleColumnWidth = function (width, _delta) {
+      return [100 - width];
+    };
+    var minCellWidth = function () {
+      return $_7ucs72ohjlnuedq4.minWidth() / pixelWidth * 100;
+    };
+    var setTableWidth = function (table, _newWidths, delta) {
+      var total = floatWidth + delta;
+      $_4ew883n7jlnued63.setPercentageWidth(table, total);
+    };
+    return {
+      width: constant(floatWidth),
+      pixelWidth: constant(pixelWidth),
+      getWidths: $_7z5l4rogjlnuedpj.getPercentageWidths,
+      getCellDelta: getCellDelta,
+      singleColumnWidth: singleColumnWidth,
+      minCellWidth: minCellWidth,
+      setElementWidth: $_4ew883n7jlnued63.setPercentageWidth,
+      setTableWidth: setTableWidth
+    };
+  };
+  var pixelSize = function (width) {
+    var intWidth = parseInt(width, 10);
+    var getCellDelta = identity;
+    var singleColumnWidth = function (width, delta) {
+      var newNext = Math.max($_7ucs72ohjlnuedq4.minWidth(), width + delta);
+      return [newNext - width];
+    };
+    var setTableWidth = function (table, newWidths, _delta) {
+      var total = foldr(newWidths, function (b, a) {
+        return b + a;
+      }, 0);
+      $_4ew883n7jlnued63.setPixelWidth(table, total);
+    };
+    return {
+      width: constant(intWidth),
+      pixelWidth: constant(intWidth),
+      getWidths: $_7z5l4rogjlnuedpj.getPixelWidths,
+      getCellDelta: getCellDelta,
+      singleColumnWidth: singleColumnWidth,
+      minCellWidth: $_7ucs72ohjlnuedq4.minWidth,
+      setElementWidth: $_4ew883n7jlnued63.setPixelWidth,
+      setTableWidth: setTableWidth
+    };
+  };
+  var chooseSize = function (element, width) {
+    if ($_4ew883n7jlnued63.percentageBasedSizeRegex().test(width)) {
+      var percentMatch = $_4ew883n7jlnued63.percentageBasedSizeRegex().exec(width);
+      return percentageSize(percentMatch[1], element);
+    } else if ($_4ew883n7jlnued63.pixelBasedSizeRegex().test(width)) {
+      var pixelMatch = $_4ew883n7jlnued63.pixelBasedSizeRegex().exec(width);
+      return pixelSize(pixelMatch[1]);
+    } else {
+      var fallbackWidth = $_7js1oqnbjlnued8g.get(element);
+      return pixelSize(fallbackWidth);
+    }
+  };
+  var getTableSize = function (element) {
+    var width = $_4ew883n7jlnued63.getRawWidth(element);
+    return width.fold(function () {
+      var fallbackWidth = $_7js1oqnbjlnued8g.get(element);
+      return pixelSize(fallbackWidth);
+    }, function (width) {
+      return chooseSize(element, width);
+    });
+  };
+  var $_a2jw1lojjlnuedrb = { getTableSize: getTableSize };
+
+  var getWarehouse$1 = function (list) {
+    return $_5pxk82majlnuecn1.generate(list);
+  };
+  var sumUp = function (newSize) {
+    return foldr(newSize, function (b, a) {
+      return b + a;
+    }, 0);
+  };
+  var getTableWarehouse = function (table) {
+    var list = $_24qbqwlbjlnueccz.fromTable(table);
+    return getWarehouse$1(list);
+  };
+  var adjustWidth = function (table, delta, index, direction) {
+    var tableSize = $_a2jw1lojjlnuedrb.getTableSize(table);
+    var step = tableSize.getCellDelta(delta);
+    var warehouse = getTableWarehouse(table);
+    var widths = tableSize.getWidths(warehouse, direction, tableSize);
+    var deltas = $_csbe6foejlnuedp2.determine(widths, index, step, tableSize);
+    var newWidths = map(deltas, function (dx, i) {
+      return dx + widths[i];
+    });
+    var newSizes = $_505q69oijlnuedqy.recalculateWidth(warehouse, newWidths);
+    each(newSizes, function (cell) {
+      tableSize.setElementWidth(cell.element(), cell.width());
+    });
+    if (index === warehouse.grid().columns() - 1) {
+      tableSize.setTableWidth(table, newWidths, step);
+    }
+  };
+  var adjustHeight = function (table, delta, index, direction) {
+    var warehouse = getTableWarehouse(table);
+    var heights = $_7z5l4rogjlnuedpj.getPixelHeights(warehouse, direction);
+    var newHeights = map(heights, function (dy, i) {
+      return index === i ? Math.max(delta + dy, $_7ucs72ohjlnuedq4.minHeight()) : dy;
+    });
+    var newCellSizes = $_505q69oijlnuedqy.recalculateHeight(warehouse, newHeights);
+    var newRowSizes = $_505q69oijlnuedqy.matchRowHeight(warehouse, newHeights);
+    each(newRowSizes, function (row) {
+      $_4ew883n7jlnued63.setHeight(row.element(), row.height());
+    });
+    each(newCellSizes, function (cell) {
+      $_4ew883n7jlnued63.setHeight(cell.element(), cell.height());
+    });
+    var total = sumUp(newHeights);
+    $_4ew883n7jlnued63.setHeight(table, total);
+  };
+  var adjustWidthTo = function (table, list, direction) {
+    var tableSize = $_a2jw1lojjlnuedrb.getTableSize(table);
+    var warehouse = getWarehouse$1(list);
+    var widths = tableSize.getWidths(warehouse, direction, tableSize);
+    var newSizes = $_505q69oijlnuedqy.recalculateWidth(warehouse, widths);
+    each(newSizes, function (cell) {
+      tableSize.setElementWidth(cell.element(), cell.width());
+    });
+    var total = foldr(widths, function (b, a) {
+      return a + b;
+    }, 0);
+    if (newSizes.length > 0) {
+      tableSize.setElementWidth(table, total);
+    }
+  };
+  var $_8ca8z3odjlnuedot = {
+    adjustWidth: adjustWidth,
+    adjustHeight: adjustHeight,
+    adjustWidthTo: adjustWidthTo
+  };
+
+  var prune = function (table) {
+    var cells = $_enoas1ldjlnuecdr.cells(table);
+    if (cells.length === 0)
+      $_dzcomomejlnuecod.remove(table);
+  };
+  var outcome = Immutable('grid', 'cursor');
+  var elementFromGrid = function (grid, row, column) {
+    return findIn(grid, row, column).orThunk(function () {
+      return findIn(grid, 0, 0);
+    });
+  };
+  var findIn = function (grid, row, column) {
+    return Option.from(grid[row]).bind(function (r) {
+      return Option.from(r.cells()[column]).bind(function (c) {
+        return Option.from(c.element());
+      });
+    });
+  };
+  var bundle = function (grid, row, column) {
+    return outcome(grid, findIn(grid, row, column));
+  };
+  var uniqueRows = function (details) {
+    return foldl(details, function (rest, detail) {
+      return exists(rest, function (currentDetail) {
+        return currentDetail.row() === detail.row();
+      }) ? rest : rest.concat([detail]);
+    }, []).sort(function (detailA, detailB) {
+      return detailA.row() - detailB.row();
+    });
+  };
+  var uniqueColumns = function (details) {
+    return foldl(details, function (rest, detail) {
+      return exists(rest, function (currentDetail) {
+        return currentDetail.column() === detail.column();
+      }) ? rest : rest.concat([detail]);
+    }, []).sort(function (detailA, detailB) {
+      return detailA.column() - detailB.column();
+    });
+  };
+  var insertRowBefore = function (grid, detail, comparator, genWrappers) {
+    var example = detail.row();
+    var targetIndex = detail.row();
+    var newGrid = $_dwo5idobjlnuedoc.insertRowAt(grid, targetIndex, example, comparator, genWrappers.getOrInit);
+    return bundle(newGrid, targetIndex, detail.column());
+  };
+  var insertRowsBefore = function (grid, details, comparator, genWrappers) {
+    var example = details[0].row();
+    var targetIndex = details[0].row();
+    var rows = uniqueRows(details);
+    var newGrid = foldl(rows, function (newGrid, _row) {
+      return $_dwo5idobjlnuedoc.insertRowAt(newGrid, targetIndex, example, comparator, genWrappers.getOrInit);
+    }, grid);
+    return bundle(newGrid, targetIndex, details[0].column());
+  };
+  var insertRowAfter = function (grid, detail, comparator, genWrappers) {
+    var example = detail.row();
+    var targetIndex = detail.row() + detail.rowspan();
+    var newGrid = $_dwo5idobjlnuedoc.insertRowAt(grid, targetIndex, example, comparator, genWrappers.getOrInit);
+    return bundle(newGrid, targetIndex, detail.column());
+  };
+  var insertRowsAfter = function (grid, details, comparator, genWrappers) {
+    var rows = uniqueRows(details);
+    var example = rows[rows.length - 1].row();
+    var targetIndex = rows[rows.length - 1].row() + rows[rows.length - 1].rowspan();
+    var newGrid = foldl(rows, function (newGrid, _row) {
+      return $_dwo5idobjlnuedoc.insertRowAt(newGrid, targetIndex, example, comparator, genWrappers.getOrInit);
+    }, grid);
+    return bundle(newGrid, targetIndex, details[0].column());
+  };
+  var insertColumnBefore = function (grid, detail, comparator, genWrappers) {
+    var example = detail.column();
+    var targetIndex = detail.column();
+    var newGrid = $_dwo5idobjlnuedoc.insertColumnAt(grid, targetIndex, example, comparator, genWrappers.getOrInit);
+    return bundle(newGrid, detail.row(), targetIndex);
+  };
+  var insertColumnsBefore = function (grid, details, comparator, genWrappers) {
+    var columns = uniqueColumns(details);
+    var example = columns[0].column();
+    var targetIndex = columns[0].column();
+    var newGrid = foldl(columns, function (newGrid, _row) {
+      return $_dwo5idobjlnuedoc.insertColumnAt(newGrid, targetIndex, example, comparator, genWrappers.getOrInit);
+    }, grid);
+    return bundle(newGrid, details[0].row(), targetIndex);
+  };
+  var insertColumnAfter = function (grid, detail, comparator, genWrappers) {
+    var example = detail.column();
+    var targetIndex = detail.column() + detail.colspan();
+    var newGrid = $_dwo5idobjlnuedoc.insertColumnAt(grid, targetIndex, example, comparator, genWrappers.getOrInit);
+    return bundle(newGrid, detail.row(), targetIndex);
+  };
+  var insertColumnsAfter = function (grid, details, comparator, genWrappers) {
+    var example = details[details.length - 1].column();
+    var targetIndex = details[details.length - 1].column() + details[details.length - 1].colspan();
+    var columns = uniqueColumns(details);
+    var newGrid = foldl(columns, function (newGrid, _row) {
+      return $_dwo5idobjlnuedoc.insertColumnAt(newGrid, targetIndex, example, comparator, genWrappers.getOrInit);
+    }, grid);
+    return bundle(newGrid, details[0].row(), targetIndex);
+  };
+  var makeRowHeader = function (grid, detail, comparator, genWrappers) {
+    var newGrid = $_ex92i8ocjlnuedol.replaceRow(grid, detail.row(), comparator, genWrappers.replaceOrInit);
+    return bundle(newGrid, detail.row(), detail.column());
+  };
+  var makeColumnHeader = function (grid, detail, comparator, genWrappers) {
+    var newGrid = $_ex92i8ocjlnuedol.replaceColumn(grid, detail.column(), comparator, genWrappers.replaceOrInit);
+    return bundle(newGrid, detail.row(), detail.column());
+  };
+  var unmakeRowHeader = function (grid, detail, comparator, genWrappers) {
+    var newGrid = $_ex92i8ocjlnuedol.replaceRow(grid, detail.row(), comparator, genWrappers.replaceOrInit);
+    return bundle(newGrid, detail.row(), detail.column());
+  };
+  var unmakeColumnHeader = function (grid, detail, comparator, genWrappers) {
+    var newGrid = $_ex92i8ocjlnuedol.replaceColumn(grid, detail.column(), comparator, genWrappers.replaceOrInit);
+    return bundle(newGrid, detail.row(), detail.column());
+  };
+  var splitCellIntoColumns$1 = function (grid, detail, comparator, genWrappers) {
+    var newGrid = $_dwo5idobjlnuedoc.splitCellIntoColumns(grid, detail.row(), detail.column(), comparator, genWrappers.getOrInit);
+    return bundle(newGrid, detail.row(), detail.column());
+  };
+  var splitCellIntoRows$1 = function (grid, detail, comparator, genWrappers) {
+    var newGrid = $_dwo5idobjlnuedoc.splitCellIntoRows(grid, detail.row(), detail.column(), comparator, genWrappers.getOrInit);
+    return bundle(newGrid, detail.row(), detail.column());
+  };
+  var eraseColumns = function (grid, details, comparator, _genWrappers) {
+    var columns = uniqueColumns(details);
+    var newGrid = $_dwo5idobjlnuedoc.deleteColumnsAt(grid, columns[0].column(), columns[columns.length - 1].column());
+    var cursor = elementFromGrid(newGrid, details[0].row(), details[0].column());
+    return outcome(newGrid, cursor);
+  };
+  var eraseRows = function (grid, details, comparator, _genWrappers) {
+    var rows = uniqueRows(details);
+    var newGrid = $_dwo5idobjlnuedoc.deleteRowsAt(grid, rows[0].row(), rows[rows.length - 1].row());
+    var cursor = elementFromGrid(newGrid, details[0].row(), details[0].column());
+    return outcome(newGrid, cursor);
+  };
+  var mergeCells = function (grid, mergable, comparator, _genWrappers) {
+    var cells = mergable.cells();
+    $_30p4vnnnjlnuedcc.merge(cells);
+    var newGrid = $_6lxp1joajlnuedny.merge(grid, mergable.bounds(), comparator, constant(cells[0]));
+    return outcome(newGrid, Option.from(cells[0]));
+  };
+  var unmergeCells = function (grid, unmergable, comparator, genWrappers) {
+    var newGrid = foldr(unmergable, function (b, cell) {
+      return $_6lxp1joajlnuedny.unmerge(b, cell, comparator, genWrappers.combine(cell));
+    }, grid);
+    return outcome(newGrid, Option.from(unmergable[0]));
+  };
+  var pasteCells = function (grid, pasteDetails, comparator, genWrappers) {
+    var gridify = function (table, generators) {
+      var list = $_24qbqwlbjlnueccz.fromTable(table);
+      var wh = $_5pxk82majlnuecn1.generate(list);
+      return $_d3wg0nntjlnuedfw.toGrid(wh, generators, true);
+    };
+    var gridB = gridify(pasteDetails.clipboard(), pasteDetails.generators());
+    var startAddress = $_63m7jdlcjlnuecdk.address(pasteDetails.row(), pasteDetails.column());
+    var mergedGrid = $_1dbow3o7jlnuedmz.merge(startAddress, grid, gridB, pasteDetails.generators(), comparator);
+    return mergedGrid.fold(function () {
+      return outcome(grid, Option.some(pasteDetails.element()));
+    }, function (nuGrid) {
+      var cursor = elementFromGrid(nuGrid, pasteDetails.row(), pasteDetails.column());
+      return outcome(nuGrid, cursor);
+    });
+  };
+  var gridifyRows = function (rows, generators, example) {
+    var pasteDetails = $_24qbqwlbjlnueccz.fromPastedRows(rows, example);
+    var wh = $_5pxk82majlnuecn1.generate(pasteDetails);
+    return $_d3wg0nntjlnuedfw.toGrid(wh, generators, true);
+  };
+  var pasteRowsBefore = function (grid, pasteDetails, comparator, genWrappers) {
+    var example = grid[pasteDetails.cells[0].row()];
+    var index = pasteDetails.cells[0].row();
+    var gridB = gridifyRows(pasteDetails.clipboard(), pasteDetails.generators(), example);
+    var mergedGrid = $_1dbow3o7jlnuedmz.insert(index, grid, gridB, pasteDetails.generators(), comparator);
+    var cursor = elementFromGrid(mergedGrid, pasteDetails.cells[0].row(), pasteDetails.cells[0].column());
+    return outcome(mergedGrid, cursor);
+  };
+  var pasteRowsAfter = function (grid, pasteDetails, comparator, genWrappers) {
+    var example = grid[pasteDetails.cells[0].row()];
+    var index = pasteDetails.cells[pasteDetails.cells.length - 1].row() + pasteDetails.cells[pasteDetails.cells.length - 1].rowspan();
+    var gridB = gridifyRows(pasteDetails.clipboard(), pasteDetails.generators(), example);
+    var mergedGrid = $_1dbow3o7jlnuedmz.insert(index, grid, gridB, pasteDetails.generators(), comparator);
+    var cursor = elementFromGrid(mergedGrid, pasteDetails.cells[0].row(), pasteDetails.cells[0].column());
+    return outcome(mergedGrid, cursor);
+  };
+  var resize = $_8ca8z3odjlnuedot.adjustWidthTo;
+  var $_g03hrynjjlnueda4 = {
+    insertRowBefore: $_8hyi9jnqjlnuedeo.run(insertRowBefore, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.modification),
+    insertRowsBefore: $_8hyi9jnqjlnuedeo.run(insertRowsBefore, $_8hyi9jnqjlnuedeo.onCells, noop, noop, $_8hdm50nkjlnuedb2.modification),
+    insertRowAfter: $_8hyi9jnqjlnuedeo.run(insertRowAfter, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.modification),
+    insertRowsAfter: $_8hyi9jnqjlnuedeo.run(insertRowsAfter, $_8hyi9jnqjlnuedeo.onCells, noop, noop, $_8hdm50nkjlnuedb2.modification),
+    insertColumnBefore: $_8hyi9jnqjlnuedeo.run(insertColumnBefore, $_8hyi9jnqjlnuedeo.onCell, resize, noop, $_8hdm50nkjlnuedb2.modification),
+    insertColumnsBefore: $_8hyi9jnqjlnuedeo.run(insertColumnsBefore, $_8hyi9jnqjlnuedeo.onCells, resize, noop, $_8hdm50nkjlnuedb2.modification),
+    insertColumnAfter: $_8hyi9jnqjlnuedeo.run(insertColumnAfter, $_8hyi9jnqjlnuedeo.onCell, resize, noop, $_8hdm50nkjlnuedb2.modification),
+    insertColumnsAfter: $_8hyi9jnqjlnuedeo.run(insertColumnsAfter, $_8hyi9jnqjlnuedeo.onCells, resize, noop, $_8hdm50nkjlnuedb2.modification),
+    splitCellIntoColumns: $_8hyi9jnqjlnuedeo.run(splitCellIntoColumns$1, $_8hyi9jnqjlnuedeo.onCell, resize, noop, $_8hdm50nkjlnuedb2.modification),
+    splitCellIntoRows: $_8hyi9jnqjlnuedeo.run(splitCellIntoRows$1, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.modification),
+    eraseColumns: $_8hyi9jnqjlnuedeo.run(eraseColumns, $_8hyi9jnqjlnuedeo.onCells, resize, prune, $_8hdm50nkjlnuedb2.modification),
+    eraseRows: $_8hyi9jnqjlnuedeo.run(eraseRows, $_8hyi9jnqjlnuedeo.onCells, noop, prune, $_8hdm50nkjlnuedb2.modification),
+    makeColumnHeader: $_8hyi9jnqjlnuedeo.run(makeColumnHeader, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.transform('row', 'th')),
+    unmakeColumnHeader: $_8hyi9jnqjlnuedeo.run(unmakeColumnHeader, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.transform(null, 'td')),
+    makeRowHeader: $_8hyi9jnqjlnuedeo.run(makeRowHeader, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.transform('col', 'th')),
+    unmakeRowHeader: $_8hyi9jnqjlnuedeo.run(unmakeRowHeader, $_8hyi9jnqjlnuedeo.onCell, noop, noop, $_8hdm50nkjlnuedb2.transform(null, 'td')),
+    mergeCells: $_8hyi9jnqjlnuedeo.run(mergeCells, $_8hyi9jnqjlnuedeo.onMergable, noop, noop, $_8hdm50nkjlnuedb2.merging),
+    unmergeCells: $_8hyi9jnqjlnuedeo.run(unmergeCells, $_8hyi9jnqjlnuedeo.onUnmergable, resize, noop, $_8hdm50nkjlnuedb2.merging),
+    pasteCells: $_8hyi9jnqjlnuedeo.run(pasteCells, $_8hyi9jnqjlnuedeo.onPaste, resize, noop, $_8hdm50nkjlnuedb2.modification),
+    pasteRowsBefore: $_8hyi9jnqjlnuedeo.run(pasteRowsBefore, $_8hyi9jnqjlnuedeo.onPasteRows, noop, noop, $_8hdm50nkjlnuedb2.modification),
+    pasteRowsAfter: $_8hyi9jnqjlnuedeo.run(pasteRowsAfter, $_8hyi9jnqjlnuedeo.onPasteRows, noop, noop, $_8hdm50nkjlnuedb2.modification)
+  };
+
+  var getBody$1 = function (editor) {
+    return Element$$1.fromDom(editor.getBody());
+  };
+  var getPixelWidth$1 = function (elm) {
+    return elm.getBoundingClientRect().width;
+  };
+  var getPixelHeight = function (elm) {
+    return elm.getBoundingClientRect().height;
+  };
+  var getIsRoot = function (editor) {
+    return function (element) {
+      return $_45sffllljlnuecht.eq(element, getBody$1(editor));
+    };
+  };
+  var removePxSuffix = function (size) {
+    return size ? size.replace(/px$/, '') : '';
+  };
+  var addSizeSuffix = function (size) {
+    if (/^[0-9]+$/.test(size)) {
+      size += 'px';
+    }
+    return size;
+  };
+  var removeDataStyle = function (table) {
+    var dataStyleCells = $_49wdgem4jlnuecle.descendants(table, 'td[data-mce-style],th[data-mce-style]');
+    $_6f9wwmm2jlnueckv.remove(table, 'data-mce-style');
+    each(dataStyleCells, function (cell) {
+      $_6f9wwmm2jlnueckv.remove(cell, 'data-mce-style');
+    });
+  };
+
+  var onDirection = function (isLtr, isRtl) {
+    return function (element) {
+      return getDirection(element) === 'rtl' ? isRtl : isLtr;
+    };
+  };
+  var getDirection = function (element) {
+    return $_77s8gzmbjlnuecni.get(element, 'direction') === 'rtl' ? 'rtl' : 'ltr';
+  };
+  var $_axw0pzomjlnuedso = {
+    onDirection: onDirection,
+    getDirection: getDirection
+  };
+
+  var ltr$1 = { isRtl: constant(false) };
+  var rtl$1 = { isRtl: constant(true) };
+  var directionAt = function (element) {
+    var dir = $_axw0pzomjlnuedso.getDirection(element);
+    return dir === 'rtl' ? rtl$1 : ltr$1;
+  };
+  var $_gg0vwtoljlnuedse = { directionAt: directionAt };
+
+  var defaultTableToolbar = [
+    'tableprops',
+    'tabledelete',
+    '|',
+    'tableinsertrowbefore',
+    'tableinsertrowafter',
+    'tabledeleterow',
+    '|',
+    'tableinsertcolbefore',
+    'tableinsertcolafter',
+    'tabledeletecol'
+  ];
+  var defaultStyles = {
+    'border-collapse': 'collapse',
+    'width': '100%'
+  };
+  var defaultAttributes = { border: '1' };
+  var getDefaultAttributes = function (editor) {
+    return editor.getParam('table_default_attributes', defaultAttributes, 'object');
+  };
+  var getDefaultStyles = function (editor) {
+    return editor.getParam('table_default_styles', defaultStyles, 'object');
+  };
+  var hasTableResizeBars = function (editor) {
+    return editor.getParam('table_resize_bars', true, 'boolean');
+  };
+  var hasTabNavigation = function (editor) {
+    return editor.getParam('table_tab_navigation', true, 'boolean');
+  };
+  var hasAdvancedCellTab = function (editor) {
+    return editor.getParam('table_cell_advtab', true, 'boolean');
+  };
+  var hasAdvancedRowTab = function (editor) {
+    return editor.getParam('table_row_advtab', true, 'boolean');
+  };
+  var hasAdvancedTableTab = function (editor) {
+    return editor.getParam('table_advtab', true, 'boolean');
+  };
+  var hasAppearanceOptions = function (editor) {
+    return editor.getParam('table_appearance_options', true, 'boolean');
+  };
+  var hasTableGrid = function (editor) {
+    return editor.getParam('table_grid', true, 'boolean');
+  };
+  var shouldStyleWithCss = function (editor) {
+    return editor.getParam('table_style_by_css', false, 'boolean');
+  };
+  var getCellClassList = function (editor) {
+    return editor.getParam('table_cell_class_list', [], 'array');
+  };
+  var getRowClassList = function (editor) {
+    return editor.getParam('table_row_class_list', [], 'array');
+  };
+  var getTableClassList = function (editor) {
+    return editor.getParam('table_class_list', [], 'array');
+  };
+  var getColorPickerCallback = function (editor) {
+    return editor.getParam('color_picker_callback');
+  };
+  var isPixelsForced = function (editor) {
+    return editor.getParam('table_responsive_width') === false;
+  };
+  var getCloneElements = function (editor) {
+    var cloneElements = editor.getParam('table_clone_elements');
+    if (isString(cloneElements)) {
+      return Option.some(cloneElements.split(/[ ,]/));
+    } else if (Array.isArray(cloneElements)) {
+      return Option.some(cloneElements);
+    } else {
+      return Option.none();
+    }
+  };
+  var hasObjectResizing = function (editor) {
+    var objectResizing = editor.getParam('object_resizing', true);
+    return objectResizing === 'table' || objectResizing;
+  };
+  var getToolbar = function (editor) {
+    var toolbar = editor.getParam('table_toolbar', defaultTableToolbar);
+    if (toolbar === '' || toolbar === false) {
+      return [];
+    } else if (isString(toolbar)) {
+      return toolbar.split(/[ ,]/);
+    } else if (isArray(toolbar)) {
+      return toolbar;
+    } else {
+      return [];
+    }
+  };
+
+  var fireNewRow = function (editor, row) {
+    return editor.fire('newrow', { node: row });
+  };
+  var fireNewCell = function (editor, cell) {
+    return editor.fire('newcell', { node: cell });
+  };
+  var fireObjectResizeStart = function (editor, target, width, height) {
+    editor.fire('ObjectResizeStart', {
+      target: target,
+      width: width,
+      height: height
+    });
+  };
+  var fireObjectResized = function (editor, target, width, height) {
+    editor.fire('ObjectResized', {
+      target: target,
+      width: width,
+      height: height
+    });
+  };
+
+  var TableActions = function (editor, lazyWire) {
+    var isTableBody = function (editor) {
+      return $_moydym3jlnueclb.name(getBody$1(editor)) === 'table';
+    };
+    var lastRowGuard = function (table) {
+      var size = $_9k0bpsnijlnueda1.getGridSize(table);
+      return isTableBody(editor) === false || size.rows() > 1;
+    };
+    var lastColumnGuard = function (table) {
+      var size = $_9k0bpsnijlnueda1.getGridSize(table);
+      return isTableBody(editor) === false || size.columns() > 1;
+    };
+    var cloneFormats = getCloneElements(editor);
+    var execute = function (operation, guard, mutate, lazyWire) {
+      return function (table, target) {
+        removeDataStyle(table);
+        var wire = lazyWire();
+        var doc = Element$$1.fromDom(editor.getDoc());
+        var direction = TableDirection($_gg0vwtoljlnuedse.directionAt);
+        var generators = $_3ceu0wmgjlnuecot.cellOperations(mutate, doc, cloneFormats);
+        return guard(table) ? operation(wire, table, target, generators, direction).bind(function (result) {
+          each(result.newRows(), function (row) {
+            fireNewRow(editor, row.dom());
+          });
+          each(result.newCells(), function (cell) {
+            fireNewCell(editor, cell.dom());
+          });
+          return result.cursor().map(function (cell) {
+            var rng = editor.dom.createRng();
+            rng.setStart(cell.dom(), 0);
+            rng.setEnd(cell.dom(), 0);
+            return rng;
+          });
+        }) : Option.none();
+      };
+    };
+    var deleteRow = execute($_g03hrynjjlnueda4.eraseRows, lastRowGuard, noop, lazyWire);
+    var deleteColumn = execute($_g03hrynjjlnueda4.eraseColumns, lastColumnGuard, noop, lazyWire);
+    var insertRowsBefore = execute($_g03hrynjjlnueda4.insertRowsBefore, always, noop, lazyWire);
+    var insertRowsAfter = execute($_g03hrynjjlnueda4.insertRowsAfter, always, noop, lazyWire);
+    var insertColumnsBefore = execute($_g03hrynjjlnueda4.insertColumnsBefore, always, $_1be5zvn6jlnued60.halve, lazyWire);
+    var insertColumnsAfter = execute($_g03hrynjjlnueda4.insertColumnsAfter, always, $_1be5zvn6jlnued60.halve, lazyWire);
+    var mergeCells = execute($_g03hrynjjlnueda4.mergeCells, always, noop, lazyWire);
+    var unmergeCells = execute($_g03hrynjjlnueda4.unmergeCells, always, noop, lazyWire);
+    var pasteRowsBefore = execute($_g03hrynjjlnueda4.pasteRowsBefore, always, noop, lazyWire);
+    var pasteRowsAfter = execute($_g03hrynjjlnueda4.pasteRowsAfter, always, noop, lazyWire);
+    var pasteCells = execute($_g03hrynjjlnueda4.pasteCells, always, noop, lazyWire);
+    return {
+      deleteRow: deleteRow,
+      deleteColumn: deleteColumn,
+      insertRowsBefore: insertRowsBefore,
+      insertRowsAfter: insertRowsAfter,
+      insertColumnsBefore: insertColumnsBefore,
+      insertColumnsAfter: insertColumnsAfter,
+      mergeCells: mergeCells,
+      unmergeCells: unmergeCells,
+      pasteRowsBefore: pasteRowsBefore,
+      pasteRowsAfter: pasteRowsAfter,
+      pasteCells: pasteCells
+    };
+  };
+
+  var copyRows = function (table, target, generators) {
+    var list = $_24qbqwlbjlnueccz.fromTable(table);
+    var house = $_5pxk82majlnuecn1.generate(list);
+    var details = $_8hyi9jnqjlnuedeo.onCells(house, target);
+    return details.map(function (selectedCells) {
+      var grid = $_d3wg0nntjlnuedfw.toGrid(house, generators, false);
+      var slicedGrid = grid.slice(selectedCells[0].row(), selectedCells[selectedCells.length - 1].row() + selectedCells[selectedCells.length - 1].rowspan());
+      var slicedDetails = $_8hyi9jnqjlnuedeo.toDetailList(slicedGrid, generators);
+      return $_az7jq9nwjlnuedgz.copy(slicedDetails);
+    });
+  };
+  var $_5sr009oqjlnuedul = { copyRows: copyRows };
+
+  var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+  var getTDTHOverallStyle = function (dom, elm, name) {
+    var cells = dom.select('td,th', elm);
+    var firstChildStyle;
+    var checkChildren = function (firstChildStyle, elms) {
+      for (var i = 0; i < elms.length; i++) {
+        var currentStyle = dom.getStyle(elms[i], name);
+        if (typeof firstChildStyle === 'undefined') {
+          firstChildStyle = currentStyle;
+        }
+        if (firstChildStyle !== currentStyle) {
+          return '';
+        }
+      }
+      return firstChildStyle;
+    };
+    firstChildStyle = checkChildren(firstChildStyle, cells);
+    return firstChildStyle;
+  };
+  var applyAlign = function (editor, elm, name) {
+    if (name) {
+      editor.formatter.apply('align' + name, {}, elm);
+    }
+  };
+  var applyVAlign = function (editor, elm, name) {
+    if (name) {
+      editor.formatter.apply('valign' + name, {}, elm);
+    }
+  };
+  var unApplyAlign = function (editor, elm) {
+    global$1.each('left center right'.split(' '), function (name) {
+      editor.formatter.remove('align' + name, {}, elm);
+    });
+  };
+  var unApplyVAlign = function (editor, elm) {
+    global$1.each('top middle bottom'.split(' '), function (name) {
+      editor.formatter.remove('valign' + name, {}, elm);
+    });
+  };
+  var $_9qwu0cotjlnueduz = {
+    applyAlign: applyAlign,
+    applyVAlign: applyVAlign,
+    unApplyAlign: unApplyAlign,
+    unApplyVAlign: unApplyVAlign,
+    getTDTHOverallStyle: getTDTHOverallStyle
+  };
+
+  var buildListItems = function (inputList, itemCallback, startItems) {
+    var appendItems = function (values, output) {
+      output = output || [];
+      global$1.each(values, function (item) {
+        var menuItem = { text: item.text || item.title };
+        if (item.menu) {
+          menuItem.menu = appendItems(item.menu);
+        } else {
+          menuItem.value = item.value;
+          if (itemCallback) {
+            itemCallback(menuItem);
+          }
+        }
+        output.push(menuItem);
+      });
+      return output;
+    };
+    return appendItems(inputList, startItems || []);
+  };
+  function styleFieldHasFocus(e) {
+    return e.control.rootControl.find('#style')[0].getEl().isEqualNode(document.activeElement);
+  }
+  var syncAdvancedStyleFields = function (editor, evt) {
+    if (styleFieldHasFocus(evt)) {
+      updateAdvancedFields(editor, evt);
+    } else {
+      updateStyleField(editor, evt);
+    }
+  };
+  var updateStyleField = function (editor, evt) {
+    var dom = editor.dom;
+    var rootControl = evt.control.rootControl;
+    var data = rootControl.toJSON();
+    var css = dom.parseStyle(data.style);
+    css['border-style'] = data.borderStyle;
+    css['border-color'] = data.borderColor;
+    css['background-color'] = data.backgroundColor;
+    css.width = data.width ? addSizeSuffix(data.width) : '';
+    css.height = data.height ? addSizeSuffix(data.height) : '';
+    rootControl.find('#style').value(dom.serializeStyle(dom.parseStyle(dom.serializeStyle(css))));
+  };
+  var updateAdvancedFields = function (editor, evt) {
+    var dom = editor.dom;
+    var rootControl = evt.control.rootControl;
+    var data = rootControl.toJSON();
+    var css = dom.parseStyle(data.style);
+    rootControl.find('#borderStyle').value(css['border-style'] || '');
+    rootControl.find('#borderColor').value(css['border-color'] || '');
+    rootControl.find('#backgroundColor').value(css['background-color'] || '');
+    rootControl.find('#width').value(css.width || '');
+    rootControl.find('#height').value(css.height || '');
+  };
+  var extractAdvancedStyles = function (dom, elm) {
+    var css = dom.parseStyle(dom.getAttrib(elm, 'style'));
+    var data = {};
+    if (css['border-style']) {
+      data.borderStyle = css['border-style'];
+    }
+    if (css['border-color']) {
+      data.borderColor = css['border-color'];
+    }
+    if (css['background-color']) {
+      data.backgroundColor = css['background-color'];
+    }
+    data.style = dom.serializeStyle(css);
+    return data;
+  };
+  var createStyleForm = function (editor) {
+    var createColorPickAction = function () {
+      var colorPickerCallback = getColorPickerCallback(editor);
+      if (colorPickerCallback) {
+        return function (evt) {
+          return colorPickerCallback.call(editor, function (value) {
+            evt.control.value(value).fire('change');
+          }, evt.control.value());
+        };
+      }
+    };
+    return {
+      title: 'Advanced',
+      type: 'form',
+      defaults: { onchange: curry(updateStyleField, editor) },
+      items: [
+        {
+          label: 'Style',
+          name: 'style',
+          type: 'textbox',
+          onchange: curry(updateAdvancedFields, editor)
+        },
+        {
+          type: 'form',
+          padding: 0,
+          formItemDefaults: {
+            layout: 'grid',
+            alignH: [
+              'start',
+              'right'
+            ]
+          },
+          defaults: { size: 7 },
+          items: [
+            {
+              label: 'Border style',
+              type: 'listbox',
+              name: 'borderStyle',
+              width: 90,
+              onselect: curry(updateStyleField, editor),
+              values: [
+                {
+                  text: 'Select...',
+                  value: ''
+                },
+                {
+                  text: 'Solid',
+                  value: 'solid'
+                },
+                {
+                  text: 'Dotted',
+                  value: 'dotted'
+                },
+                {
+                  text: 'Dashed',
+                  value: 'dashed'
+                },
+                {
+                  text: 'Double',
+                  value: 'double'
+                },
+                {
+                  text: 'Groove',
+                  value: 'groove'
+                },
+                {
+                  text: 'Ridge',
+                  value: 'ridge'
+                },
+                {
+                  text: 'Inset',
+                  value: 'inset'
+                },
+                {
+                  text: 'Outset',
+                  value: 'outset'
+                },
+                {
+                  text: 'None',
+                  value: 'none'
+                },
+                {
+                  text: 'Hidden',
+                  value: 'hidden'
+                }
+              ]
+            },
+            {
+              label: 'Border color',
+              type: 'colorbox',
+              name: 'borderColor',
+              onaction: createColorPickAction()
+            },
+            {
+              label: 'Background color',
+              type: 'colorbox',
+              name: 'backgroundColor',
+              onaction: createColorPickAction()
+            }
+          ]
+        }
+      ]
+    };
+  };
+  var $_26p68qoujlnuedv2 = {
+    createStyleForm: createStyleForm,
+    buildListItems: buildListItems,
+    updateStyleField: updateStyleField,
+    extractAdvancedStyles: extractAdvancedStyles,
+    updateAdvancedFields: updateAdvancedFields,
+    syncAdvancedStyleFields: syncAdvancedStyleFields
+  };
+
+  var updateStyles = function (elm, cssText) {
+    delete elm.dataset.mceStyle;
+    elm.style.cssText += ';' + cssText;
+  };
+  var extractDataFromElement = function (editor, elm) {
+    var dom = editor.dom;
+    var data = {
+      width: dom.getStyle(elm, 'width') || dom.getAttrib(elm, 'width'),
+      height: dom.getStyle(elm, 'height') || dom.getAttrib(elm, 'height'),
+      scope: dom.getAttrib(elm, 'scope'),
+      class: dom.getAttrib(elm, 'class'),
+      type: elm.nodeName.toLowerCase(),
+      style: '',
+      align: '',
+      valign: ''
+    };
+    global$1.each('left center right'.split(' '), function (name) {
+      if (editor.formatter.matchNode(elm, 'align' + name)) {
+        data.align = name;
+      }
+    });
+    global$1.each('top middle bottom'.split(' '), function (name) {
+      if (editor.formatter.matchNode(elm, 'valign' + name)) {
+        data.valign = name;
+      }
+    });
+    if (hasAdvancedCellTab(editor)) {
+      global$1.extend(data, $_26p68qoujlnuedv2.extractAdvancedStyles(dom, elm));
+    }
+    return data;
+  };
+  var onSubmitCellForm = function (editor, cells, evt) {
+    var dom = editor.dom;
+    var data;
+    function setAttrib(elm, name, value) {
+      if (cells.length === 1 || value) {
+        dom.setAttrib(elm, name, value);
+      }
+    }
+    function setStyle(elm, name, value) {
+      if (cells.length === 1 || value) {
+        dom.setStyle(elm, name, value);
+      }
+    }
+    if (hasAdvancedCellTab(editor)) {
+      $_26p68qoujlnuedv2.syncAdvancedStyleFields(editor, evt);
+    }
+    data = evt.control.rootControl.toJSON();
+    editor.undoManager.transact(function () {
+      global$1.each(cells, function (cellElm) {
+        setAttrib(cellElm, 'scope', data.scope);
+        if (cells.length === 1) {
+          setAttrib(cellElm, 'style', data.style);
+        } else {
+          updateStyles(cellElm, data.style);
+        }
+        setAttrib(cellElm, 'class', data.class);
+        setStyle(cellElm, 'width', addSizeSuffix(data.width));
+        setStyle(cellElm, 'height', addSizeSuffix(data.height));
+        if (data.type && cellElm.nodeName.toLowerCase() !== data.type) {
+          cellElm = dom.rename(cellElm, data.type);
+        }
+        if (cells.length === 1) {
+          $_9qwu0cotjlnueduz.unApplyAlign(editor, cellElm);
+          $_9qwu0cotjlnueduz.unApplyVAlign(editor, cellElm);
+        }
+        if (data.align) {
+          $_9qwu0cotjlnueduz.applyAlign(editor, cellElm, data.align);
+        }
+        if (data.valign) {
+          $_9qwu0cotjlnueduz.applyVAlign(editor, cellElm, data.valign);
+        }
+      });
+      editor.focus();
+    });
+  };
+  var open = function (editor) {
+    var cellElm, data, classListCtrl, cells = [];
+    cells = editor.dom.select('td[data-mce-selected],th[data-mce-selected]');
+    cellElm = editor.dom.getParent(editor.selection.getStart(), 'td,th');
+    if (!cells.length && cellElm) {
+      cells.push(cellElm);
+    }
+    cellElm = cellElm || cells[0];
+    if (!cellElm) {
+      return;
+    }
+    if (cells.length > 1) {
+      data = {
+        width: '',
+        height: '',
+        scope: '',
+        class: '',
+        align: '',
+        valign: '',
+        style: '',
+        type: cellElm.nodeName.toLowerCase()
+      };
+    } else {
+      data = extractDataFromElement(editor, cellElm);
+    }
+    if (getCellClassList(editor).length > 0) {
+      classListCtrl = {
+        name: 'class',
+        type: 'listbox',
+        label: 'Class',
+        values: $_26p68qoujlnuedv2.buildListItems(getCellClassList(editor), function (item) {
+          if (item.value) {
+            item.textStyle = function () {
+              return editor.formatter.getCssText({
+                block: 'td',
+                classes: [item.value]
+              });
+            };
+          }
+        })
+      };
+    }
+    var generalCellForm = {
+      type: 'form',
+      layout: 'flex',
+      direction: 'column',
+      labelGapCalc: 'children',
+      padding: 0,
+      items: [
+        {
+          type: 'form',
+          layout: 'grid',
+          columns: 2,
+          labelGapCalc: false,
+          padding: 0,
+          defaults: {
+            type: 'textbox',
+            maxWidth: 50
+          },
+          items: [
+            {
+              label: 'Width',
+              name: 'width',
+              onchange: curry($_26p68qoujlnuedv2.updateStyleField, editor)
+            },
+            {
+              label: 'Height',
+              name: 'height',
+              onchange: curry($_26p68qoujlnuedv2.updateStyleField, editor)
+            },
+            {
+              label: 'Cell type',
+              name: 'type',
+              type: 'listbox',
+              text: 'None',
+              minWidth: 90,
+              maxWidth: null,
+              values: [
+                {
+                  text: 'Cell',
+                  value: 'td'
+                },
+                {
+                  text: 'Header cell',
+                  value: 'th'
+                }
+              ]
+            },
+            {
+              label: 'Scope',
+              name: 'scope',
+              type: 'listbox',
+              text: 'None',
+              minWidth: 90,
+              maxWidth: null,
+              values: [
+                {
+                  text: 'None',
+                  value: ''
+                },
+                {
+                  text: 'Row',
+                  value: 'row'
+                },
+                {
+                  text: 'Column',
+                  value: 'col'
+                },
+                {
+                  text: 'Row group',
+                  value: 'rowgroup'
+                },
+                {
+                  text: 'Column group',
+                  value: 'colgroup'
+                }
+              ]
+            },
+            {
+              label: 'H Align',
+              name: 'align',
+              type: 'listbox',
+              text: 'None',
+              minWidth: 90,
+              maxWidth: null,
+              values: [
+                {
+                  text: 'None',
+                  value: ''
+                },
+                {
+                  text: 'Left',
+                  value: 'left'
+                },
+                {
+                  text: 'Center',
+                  value: 'center'
+                },
+                {
+                  text: 'Right',
+                  value: 'right'
+                }
+              ]
+            },
+            {
+              label: 'V Align',
+              name: 'valign',
+              type: 'listbox',
+              text: 'None',
+              minWidth: 90,
+              maxWidth: null,
+              values: [
+                {
+                  text: 'None',
+                  value: ''
+                },
+                {
+                  text: 'Top',
+                  value: 'top'
+                },
+                {
+                  text: 'Middle',
+                  value: 'middle'
+                },
+                {
+                  text: 'Bottom',
+                  value: 'bottom'
+                }
+              ]
+            }
+          ]
+        },
+        classListCtrl
+      ]
+    };
+    if (hasAdvancedCellTab(editor)) {
+      editor.windowManager.open({
+        title: 'Cell properties',
+        bodyType: 'tabpanel',
+        data: data,
+        body: [
+          {
+            title: 'General',
+            type: 'form',
+            items: generalCellForm
+          },
+          $_26p68qoujlnuedv2.createStyleForm(editor)
+        ],
+        onsubmit: curry(onSubmitCellForm, editor, cells)
+      });
+    } else {
+      editor.windowManager.open({
+        title: 'Cell properties',
+        data: data,
+        body: generalCellForm,
+        onsubmit: curry(onSubmitCellForm, editor, cells)
+      });
+    }
+  };
+  var $_467cheosjlnuedup = { open: open };
+
+  var extractDataFromElement$1 = function (editor, elm) {
+    var dom = editor.dom;
+    var data = {
+      height: dom.getStyle(elm, 'height') || dom.getAttrib(elm, 'height'),
+      scope: dom.getAttrib(elm, 'scope'),
+      class: dom.getAttrib(elm, 'class'),
+      align: '',
+      style: '',
+      type: elm.parentNode.nodeName.toLowerCase()
+    };
+    global$1.each('left center right'.split(' '), function (name) {
+      if (editor.formatter.matchNode(elm, 'align' + name)) {
+        data.align = name;
+      }
+    });
+    if (hasAdvancedRowTab(editor)) {
+      global$1.extend(data, $_26p68qoujlnuedv2.extractAdvancedStyles(dom, elm));
+    }
+    return data;
+  };
+  var switchRowType = function (dom, rowElm, toType) {
+    var tableElm = dom.getParent(rowElm, 'table');
+    var oldParentElm = rowElm.parentNode;
+    var parentElm = dom.select(toType, tableElm)[0];
+    if (!parentElm) {
+      parentElm = dom.create(toType);
+      if (tableElm.firstChild) {
+        if (tableElm.firstChild.nodeName === 'CAPTION') {
+          dom.insertAfter(parentElm, tableElm.firstChild);
+        } else {
+          tableElm.insertBefore(parentElm, tableElm.firstChild);
+        }
+      } else {
+        tableElm.appendChild(parentElm);
+      }
+    }
+    parentElm.appendChild(rowElm);
+    if (!oldParentElm.hasChildNodes()) {
+      dom.remove(oldParentElm);
+    }
+  };
+  function onSubmitRowForm(editor, rows, oldData, evt) {
+    var dom = editor.dom;
+    function setAttrib(elm, name, value) {
+      if (rows.length === 1 || value) {
+        dom.setAttrib(elm, name, value);
+      }
+    }
+    function setStyle(elm, name, value) {
+      if (rows.length === 1 || value) {
+        dom.setStyle(elm, name, value);
+      }
+    }
+    if (hasAdvancedRowTab(editor)) {
+      $_26p68qoujlnuedv2.syncAdvancedStyleFields(editor, evt);
+    }
+    var data = evt.control.rootControl.toJSON();
+    editor.undoManager.transact(function () {
+      global$1.each(rows, function (rowElm) {
+        setAttrib(rowElm, 'scope', data.scope);
+        setAttrib(rowElm, 'style', data.style);
+        setAttrib(rowElm, 'class', data.class);
+        setStyle(rowElm, 'height', addSizeSuffix(data.height));
+        if (data.type !== rowElm.parentNode.nodeName.toLowerCase()) {
+          switchRowType(editor.dom, rowElm, data.type);
+        }
+        if (data.align !== oldData.align) {
+          $_9qwu0cotjlnueduz.unApplyAlign(editor, rowElm);
+          $_9qwu0cotjlnueduz.applyAlign(editor, rowElm, data.align);
+        }
+      });
+      editor.focus();
+    });
+  }
+  var open$1 = function (editor) {
+    var dom = editor.dom;
+    var tableElm, cellElm, rowElm, classListCtrl, data;
+    var rows = [];
+    var generalRowForm;
+    tableElm = dom.getParent(editor.selection.getStart(), 'table');
+    cellElm = dom.getParent(editor.selection.getStart(), 'td,th');
+    global$1.each(tableElm.rows, function (row) {
+      global$1.each(row.cells, function (cell) {
+        if (dom.getAttrib(cell, 'data-mce-selected') || cell === cellElm) {
+          rows.push(row);
+          return false;
+        }
+      });
+    });
+    rowElm = rows[0];
+    if (!rowElm) {
+      return;
+    }
+    if (rows.length > 1) {
+      data = {
+        height: '',
+        scope: '',
+        style: '',
+        class: '',
+        align: '',
+        type: rowElm.parentNode.nodeName.toLowerCase()
+      };
+    } else {
+      data = extractDataFromElement$1(editor, rowElm);
+    }
+    if (getRowClassList(editor).length > 0) {
+      classListCtrl = {
+        name: 'class',
+        type: 'listbox',
+        label: 'Class',
+        values: $_26p68qoujlnuedv2.buildListItems(getRowClassList(editor), function (item) {
+          if (item.value) {
+            item.textStyle = function () {
+              return editor.formatter.getCssText({
+                block: 'tr',
+                classes: [item.value]
+              });
+            };
+          }
+        })
+      };
+    }
+    generalRowForm = {
+      type: 'form',
+      columns: 2,
+      padding: 0,
+      defaults: { type: 'textbox' },
+      items: [
+        {
+          type: 'listbox',
+          name: 'type',
+          label: 'Row type',
+          text: 'Header',
+          maxWidth: null,
+          values: [
+            {
+              text: 'Header',
+              value: 'thead'
+            },
+            {
+              text: 'Body',
+              value: 'tbody'
+            },
+            {
+              text: 'Footer',
+              value: 'tfoot'
+            }
+          ]
+        },
+        {
+          type: 'listbox',
+          name: 'align',
+          label: 'Alignment',
+          text: 'None',
+          maxWidth: null,
+          values: [
+            {
+              text: 'None',
+              value: ''
+            },
+            {
+              text: 'Left',
+              value: 'left'
+            },
+            {
+              text: 'Center',
+              value: 'center'
+            },
+            {
+              text: 'Right',
+              value: 'right'
+            }
+          ]
+        },
+        {
+          label: 'Height',
+          name: 'height'
+        },
+        classListCtrl
+      ]
+    };
+    if (hasAdvancedRowTab(editor)) {
+      editor.windowManager.open({
+        title: 'Row properties',
+        data: data,
+        bodyType: 'tabpanel',
+        body: [
+          {
+            title: 'General',
+            type: 'form',
+            items: generalRowForm
+          },
+          $_26p68qoujlnuedv2.createStyleForm(editor)
+        ],
+        onsubmit: curry(onSubmitRowForm, editor, rows, data)
+      });
+    } else {
+      editor.windowManager.open({
+        title: 'Row properties',
+        data: data,
+        body: generalRowForm,
+        onsubmit: curry(onSubmitRowForm, editor, rows, data)
+      });
+    }
+  };
+  var $_6etd2povjlnuedvg = { open: open$1 };
+
+  var global$2 = tinymce.util.Tools.resolve('tinymce.Env');
+
+  var DefaultRenderOptions = {
+    styles: {
+      'border-collapse': 'collapse',
+      width: '100%'
+    },
+    attributes: { border: '1' },
+    percentages: true
+  };
+  var makeTable = function () {
+    return Element$$1.fromTag('table');
+  };
+  var tableBody = function () {
+    return Element$$1.fromTag('tbody');
+  };
+  var tableRow = function () {
+    return Element$$1.fromTag('tr');
+  };
+  var tableHeaderCell = function () {
+    return Element$$1.fromTag('th');
+  };
+  var tableCell = function () {
+    return Element$$1.fromTag('td');
+  };
+  var render$1 = function (rows, columns, rowHeaders, columnHeaders, renderOpts) {
+    if (renderOpts === void 0) {
+      renderOpts = DefaultRenderOptions;
+    }
+    var table = makeTable();
+    $_77s8gzmbjlnuecni.setAll(table, renderOpts.styles);
+    $_6f9wwmm2jlnueckv.setAll(table, renderOpts.attributes);
+    var tbody = tableBody();
+    $_881al2mdjlnuecoa.append(table, tbody);
+    var trs = [];
+    for (var i = 0; i < rows; i++) {
+      var tr = tableRow();
+      for (var j = 0; j < columns; j++) {
+        var td = i < rowHeaders || j < columnHeaders ? tableHeaderCell() : tableCell();
+        if (j < columnHeaders) {
+          $_6f9wwmm2jlnueckv.set(td, 'scope', 'row');
+        }
+        if (i < rowHeaders) {
+          $_6f9wwmm2jlnueckv.set(td, 'scope', 'col');
+        }
+        $_881al2mdjlnuecoa.append(td, Element$$1.fromTag('br'));
+        if (renderOpts.percentages) {
+          $_77s8gzmbjlnuecni.set(td, 'width', 100 / columns + '%');
+        }
+        $_881al2mdjlnuecoa.append(tr, td);
+      }
+      trs.push(tr);
+    }
+    $_78znkumfjlnuecoj.append(tbody, trs);
+    return table;
+  };
+
+  var get$7 = function (element) {
+    return element.dom().innerHTML;
+  };
+  var set$5 = function (element, content) {
+    var owner = $_cvabpuljjlnuecgz.owner(element);
+    var docDom = owner.dom();
+    var fragment = Element$$1.fromDom(docDom.createDocumentFragment());
+    var contentElements = $_b783cqmmjlnuecsk.fromHtml(content, docDom);
+    $_78znkumfjlnuecoj.append(fragment, contentElements);
+    $_dzcomomejlnuecod.empty(element);
+    $_881al2mdjlnuecoa.append(element, fragment);
+  };
+  var getOuter$2 = function (element) {
+    var container = Element$$1.fromTag('div');
+    var clone = Element$$1.fromDom(element.dom().cloneNode(true));
+    $_881al2mdjlnuecoa.append(container, clone);
+    return get$7(container);
+  };
+  var $_542iz6p1jlnuedxy = {
+    get: get$7,
+    set: set$5,
+    getOuter: getOuter$2
+  };
+
+  var placeCaretInCell = function (editor, cell) {
+    editor.selection.select(cell.dom(), true);
+    editor.selection.collapse(true);
+  };
+  var selectFirstCellInTable = function (editor, tableElm) {
+    $_17q5jxm7jlnueclv.descendant(tableElm, 'td,th').each(curry(placeCaretInCell, editor));
+  };
+  var fireEvents = function (editor, table) {
+    each($_49wdgem4jlnuecle.descendants(table, 'tr'), function (row) {
+      fireNewRow(editor, row.dom());
+      each($_49wdgem4jlnuecle.descendants(row, 'th,td'), function (cell) {
+        fireNewCell(editor, cell.dom());
+      });
+    });
+  };
+  var isPercentage = function (width) {
+    return isString(width) && width.indexOf('%') !== -1;
+  };
+  var insert$1 = function (editor, columns, rows) {
+    var defaultStyles = getDefaultStyles(editor);
+    var options = {
+      styles: defaultStyles,
+      attributes: getDefaultAttributes(editor),
+      percentages: isPercentage(defaultStyles.width) && !isPixelsForced(editor)
+    };
+    var table = render$1(rows, columns, 0, 0, options);
+    $_6f9wwmm2jlnueckv.set(table, 'data-mce-id', '__mce');
+    var html = $_542iz6p1jlnuedxy.getOuter(table);
+    editor.insertContent(html);
+    return $_17q5jxm7jlnueclv.descendant(getBody$1(editor), 'table[data-mce-id="__mce"]').map(function (table) {
+      if (isPixelsForced(editor)) {
+        $_77s8gzmbjlnuecni.set(table, 'width', $_77s8gzmbjlnuecni.get(table, 'width'));
+      }
+      $_6f9wwmm2jlnueckv.remove(table, 'data-mce-id');
+      fireEvents(editor, table);
+      selectFirstCellInTable(editor, table);
+      return table.dom();
+    }).getOr(null);
+  };
+  var $_2amky2oyjlnuedw1 = { insert: insert$1 };
+
+  function styleTDTH(dom, elm, name, value) {
+    if (elm.tagName === 'TD' || elm.tagName === 'TH') {
+      dom.setStyle(elm, name, value);
+    } else {
+      if (elm.children) {
+        for (var i = 0; i < elm.children.length; i++) {
+          styleTDTH(dom, elm.children[i], name, value);
+        }
+      }
+    }
+  }
+  var extractDataFromElement$2 = function (editor, tableElm) {
+    var dom = editor.dom;
+    var data = {
+      width: dom.getStyle(tableElm, 'width') || dom.getAttrib(tableElm, 'width'),
+      height: dom.getStyle(tableElm, 'height') || dom.getAttrib(tableElm, 'height'),
+      cellspacing: dom.getStyle(tableElm, 'border-spacing') || dom.getAttrib(tableElm, 'cellspacing'),
+      cellpadding: dom.getAttrib(tableElm, 'data-mce-cell-padding') || dom.getAttrib(tableElm, 'cellpadding') || $_9qwu0cotjlnueduz.getTDTHOverallStyle(editor.dom, tableElm, 'padding'),
+      border: dom.getAttrib(tableElm, 'data-mce-border') || dom.getAttrib(tableElm, 'border') || $_9qwu0cotjlnueduz.getTDTHOverallStyle(editor.dom, tableElm, 'border'),
+      borderColor: dom.getAttrib(tableElm, 'data-mce-border-color'),
+      caption: !!dom.select('caption', tableElm)[0],
+      class: dom.getAttrib(tableElm, 'class')
+    };
+    global$1.each('left center right'.split(' '), function (name) {
+      if (editor.formatter.matchNode(tableElm, 'align' + name)) {
+        data.align = name;
+      }
+    });
+    if (hasAdvancedTableTab(editor)) {
+      global$1.extend(data, $_26p68qoujlnuedv2.extractAdvancedStyles(dom, tableElm));
+    }
+    return data;
+  };
+  var applyDataToElement = function (editor, tableElm, data) {
+    var dom = editor.dom;
+    var attrs = {};
+    var styles = {};
+    attrs.class = data.class;
+    styles.height = addSizeSuffix(data.height);
+    if (dom.getAttrib(tableElm, 'width') && !shouldStyleWithCss(editor)) {
+      attrs.width = removePxSuffix(data.width);
+    } else {
+      styles.width = addSizeSuffix(data.width);
+    }
+    if (shouldStyleWithCss(editor)) {
+      styles['border-width'] = addSizeSuffix(data.border);
+      styles['border-spacing'] = addSizeSuffix(data.cellspacing);
+      global$1.extend(attrs, {
+        'data-mce-border-color': data.borderColor,
+        'data-mce-cell-padding': data.cellpadding,
+        'data-mce-border': data.border
+      });
+    } else {
+      global$1.extend(attrs, {
+        border: data.border,
+        cellpadding: data.cellpadding,
+        cellspacing: data.cellspacing
+      });
+    }
+    if (shouldStyleWithCss(editor)) {
+      if (tableElm.children) {
+        for (var i = 0; i < tableElm.children.length; i++) {
+          styleTDTH(dom, tableElm.children[i], {
+            'border-width': addSizeSuffix(data.border),
+            'border-color': data.borderColor,
+            'padding': addSizeSuffix(data.cellpadding)
+          });
+        }
+      }
+    }
+    if (data.style) {
+      global$1.extend(styles, dom.parseStyle(data.style));
+    } else {
+      styles = global$1.extend({}, dom.parseStyle(dom.getAttrib(tableElm, 'style')), styles);
+    }
+    attrs.style = dom.serializeStyle(styles);
+    dom.setAttribs(tableElm, attrs);
+  };
+  var onSubmitTableForm = function (editor, tableElm, evt) {
+    var dom = editor.dom;
+    var captionElm;
+    var data;
+    if (hasAdvancedTableTab(editor)) {
+      $_26p68qoujlnuedv2.syncAdvancedStyleFields(editor, evt);
+    }
+    data = evt.control.rootControl.toJSON();
+    if (data.class === false) {
+      delete data.class;
+    }
+    editor.undoManager.transact(function () {
+      if (!tableElm) {
+        tableElm = $_2amky2oyjlnuedw1.insert(editor, data.cols || 1, data.rows || 1);
+      }
+      applyDataToElement(editor, tableElm, data);
+      captionElm = dom.select('caption', tableElm)[0];
+      if (captionElm && !data.caption) {
+        dom.remove(captionElm);
+      }
+      if (!captionElm && data.caption) {
+        captionElm = dom.create('caption');
+        captionElm.innerHTML = !global$2.ie ? '<br data-mce-bogus="1"/>' : '\xA0';
+        tableElm.insertBefore(captionElm, tableElm.firstChild);
+      }
+      $_9qwu0cotjlnueduz.unApplyAlign(editor, tableElm);
+      if (data.align) {
+        $_9qwu0cotjlnueduz.applyAlign(editor, tableElm, data.align);
+      }
+      editor.focus();
+      editor.addVisual();
+    });
+  };
+  var open$2 = function (editor, isProps) {
+    var dom = editor.dom;
+    var tableElm, colsCtrl, rowsCtrl, classListCtrl, data = {}, generalTableForm;
+    if (isProps === true) {
+      tableElm = dom.getParent(editor.selection.getStart(), 'table');
+      if (tableElm) {
+        data = extractDataFromElement$2(editor, tableElm);
+      }
+    } else {
+      colsCtrl = {
+        label: 'Cols',
+        name: 'cols'
+      };
+      rowsCtrl = {
+        label: 'Rows',
+        name: 'rows'
+      };
+    }
+    if (getTableClassList(editor).length > 0) {
+      if (data.class) {
+        data.class = data.class.replace(/\s*mce\-item\-table\s*/g, '');
+      }
+      classListCtrl = {
+        name: 'class',
+        type: 'listbox',
+        label: 'Class',
+        values: $_26p68qoujlnuedv2.buildListItems(getTableClassList(editor), function (item) {
+          if (item.value) {
+            item.textStyle = function () {
+              return editor.formatter.getCssText({
+                block: 'table',
+                classes: [item.value]
+              });
+            };
+          }
+        })
+      };
+    }
+    generalTableForm = {
+      type: 'form',
+      layout: 'flex',
+      direction: 'column',
+      labelGapCalc: 'children',
+      padding: 0,
+      items: [
+        {
+          type: 'form',
+          labelGapCalc: false,
+          padding: 0,
+          layout: 'grid',
+          columns: 2,
+          defaults: {
+            type: 'textbox',
+            maxWidth: 50
+          },
+          items: hasAppearanceOptions(editor) ? [
+            colsCtrl,
+            rowsCtrl,
+            {
+              label: 'Width',
+              name: 'width',
+              onchange: curry($_26p68qoujlnuedv2.updateStyleField, editor)
+            },
+            {
+              label: 'Height',
+              name: 'height',
+              onchange: curry($_26p68qoujlnuedv2.updateStyleField, editor)
+            },
+            {
+              label: 'Cell spacing',
+              name: 'cellspacing'
+            },
+            {
+              label: 'Cell padding',
+              name: 'cellpadding'
+            },
+            {
+              label: 'Border',
+              name: 'border'
+            },
+            {
+              label: 'Caption',
+              name: 'caption',
+              type: 'checkbox'
+            }
+          ] : [
+            colsCtrl,
+            rowsCtrl,
+            {
+              label: 'Width',
+              name: 'width',
+              onchange: curry($_26p68qoujlnuedv2.updateStyleField, editor)
+            },
+            {
+              label: 'Height',
+              name: 'height',
+              onchange: curry($_26p68qoujlnuedv2.updateStyleField, editor)
+            }
+          ]
+        },
+        {
+          label: 'Alignment',
+          name: 'align',
+          type: 'listbox',
+          text: 'None',
+          values: [
+            {
+              text: 'None',
+              value: ''
+            },
+            {
+              text: 'Left',
+              value: 'left'
+            },
+            {
+              text: 'Center',
+              value: 'center'
+            },
+            {
+              text: 'Right',
+              value: 'right'
+            }
+          ]
+        },
+        classListCtrl
+      ]
+    };
+    if (hasAdvancedTableTab(editor)) {
+      editor.windowManager.open({
+        title: 'Table properties',
+        data: data,
+        bodyType: 'tabpanel',
+        body: [
+          {
+            title: 'General',
+            type: 'form',
+            items: generalTableForm
+          },
+          $_26p68qoujlnuedv2.createStyleForm(editor)
+        ],
+        onsubmit: curry(onSubmitTableForm, editor, tableElm)
+      });
+    } else {
+      editor.windowManager.open({
+        title: 'Table properties',
+        data: data,
+        body: generalTableForm,
+        onsubmit: curry(onSubmitTableForm, editor, tableElm)
+      });
+    }
+  };
+  var $_9wcoiowjlnuedvq = { open: open$2 };
+
+  var each$3 = global$1.each;
+  var registerCommands = function (editor, actions, cellSelection, selections, clipboardRows) {
+    var isRoot = getIsRoot(editor);
+    var eraseTable = function () {
+      var cell = Element$$1.fromDom(editor.dom.getParent(editor.selection.getStart(), 'th,td'));
+      var table = $_enoas1ldjlnuecdr.table(cell, isRoot);
+      table.filter(not(isRoot)).each(function (table) {
+        var cursor = Element$$1.fromText('');
+        $_881al2mdjlnuecoa.after(table, cursor);
+        $_dzcomomejlnuecod.remove(table);
+        var rng = editor.dom.createRng();
+        rng.setStart(cursor.dom(), 0);
+        rng.setEnd(cursor.dom(), 0);
+        editor.selection.setRng(rng);
+      });
+    };
+    var getSelectionStartCell = function () {
+      return Element$$1.fromDom(editor.dom.getParent(editor.selection.getStart(), 'th,td'));
+    };
+    var getTableFromCell = function (cell) {
+      return $_enoas1ldjlnuecdr.table(cell, isRoot);
+    };
+    var getSize = function (table) {
+      return {
+        width: getPixelWidth$1(table.dom()),
+        height: getPixelWidth$1(table.dom())
+      };
+    };
+    var resizeChange = function (editor, oldSize, table) {
+      var newSize = getSize(table);
+      if (oldSize.width !== newSize.width || oldSize.height !== newSize.height) {
+        fireObjectResizeStart(editor, table.dom(), oldSize.width, oldSize.height);
+        fireObjectResized(editor, table.dom(), newSize.width, newSize.height);
+      }
+    };
+    var actOnSelection = function (execute) {
+      var cell = getSelectionStartCell();
+      var table = getTableFromCell(cell);
+      table.each(function (table) {
+        var targets = $_5l7hzjmnjlnuect0.forMenu(selections, table, cell);
+        var beforeSize = getSize(table);
+        execute(table, targets).each(function (rng) {
+          resizeChange(editor, beforeSize, table);
+          editor.selection.setRng(rng);
+          editor.focus();
+          cellSelection.clear(table);
+          removeDataStyle(table);
+        });
+      });
+    };
+    var copyRowSelection = function (execute) {
+      var cell = getSelectionStartCell();
+      var table = getTableFromCell(cell);
+      return table.bind(function (table) {
+        var doc = Element$$1.fromDom(editor.getDoc());
+        var targets = $_5l7hzjmnjlnuect0.forMenu(selections, table, cell);
+        var generators = $_3ceu0wmgjlnuecot.cellOperations(noop, doc, Option.none());
+        return $_5sr009oqjlnuedul.copyRows(table, targets, generators);
+      });
+    };
+    var pasteOnSelection = function (execute) {
+      clipboardRows.get().each(function (rows) {
+        var clonedRows = map(rows, function (row) {
+          return $_e4aet6mhjlnuecr3.deep(row);
+        });
+        var cell = getSelectionStartCell();
+        var table = getTableFromCell(cell);
+        table.bind(function (table) {
+          var doc = Element$$1.fromDom(editor.getDoc());
+          var generators = $_3ceu0wmgjlnuecot.paste(doc);
+          var targets = $_5l7hzjmnjlnuect0.pasteRows(selections, table, cell, clonedRows, generators);
+          execute(table, targets).each(function (rng) {
+            editor.selection.setRng(rng);
+            editor.focus();
+            cellSelection.clear(table);
+          });
+        });
+      });
+    };
+    each$3({
+      mceTableSplitCells: function () {
+        actOnSelection(actions.unmergeCells);
+      },
+      mceTableMergeCells: function () {
+        actOnSelection(actions.mergeCells);
+      },
+      mceTableInsertRowBefore: function () {
+        actOnSelection(actions.insertRowsBefore);
+      },
+      mceTableInsertRowAfter: function () {
+        actOnSelection(actions.insertRowsAfter);
+      },
+      mceTableInsertColBefore: function () {
+        actOnSelection(actions.insertColumnsBefore);
+      },
+      mceTableInsertColAfter: function () {
+        actOnSelection(actions.insertColumnsAfter);
+      },
+      mceTableDeleteCol: function () {
+        actOnSelection(actions.deleteColumn);
+      },
+      mceTableDeleteRow: function () {
+        actOnSelection(actions.deleteRow);
+      },
+      mceTableCutRow: function (grid) {
+        clipboardRows.set(copyRowSelection());
+        actOnSelection(actions.deleteRow);
+      },
+      mceTableCopyRow: function (grid) {
+        clipboardRows.set(copyRowSelection());
+      },
+      mceTablePasteRowBefore: function (grid) {
+        pasteOnSelection(actions.pasteRowsBefore);
+      },
+      mceTablePasteRowAfter: function (grid) {
+        pasteOnSelection(actions.pasteRowsAfter);
+      },
+      mceTableDelete: eraseTable
+    }, function (func, name) {
+      editor.addCommand(name, func);
+    });
+    each$3({
+      mceInsertTable: curry($_9wcoiowjlnuedvq.open, editor),
+      mceTableProps: curry($_9wcoiowjlnuedvq.open, editor, true),
+      mceTableRowProps: curry($_6etd2povjlnuedvg.open, editor),
+      mceTableCellProps: curry($_467cheosjlnuedup.open, editor)
+    }, function (func, name) {
+      editor.addCommand(name, function (ui, val) {
+        func(val);
+      });
+    });
+  };
+  var $_6by16opjlnuedt2 = { registerCommands: registerCommands };
+
+  var only$1 = function (element) {
+    var parent = Option.from(element.dom().documentElement).map(Element$$1.fromDom).getOr(element);
+    return {
+      parent: constant(parent),
+      view: constant(element),
+      origin: constant(Position(0, 0))
+    };
+  };
+  var detached = function (editable, chrome) {
+    var origin = curry($_2eshhonfjlnued9i.absolute, chrome);
+    return {
+      parent: constant(chrome),
+      view: constant(editable),
+      origin: origin
+    };
+  };
+  var body$1 = function (editable, chrome) {
+    return {
+      parent: constant(chrome),
+      view: constant(editable),
+      origin: constant(Position(0, 0))
+    };
+  };
+  var $_9fcjbdp3jlnuedyn = {
+    only: only$1,
+    detached: detached,
+    body: body$1
+  };
+
+  function Event (fields) {
+    var struct = Immutable.apply(null, fields);
+    var handlers = [];
+    var bind$$1 = function (handler) {
+      if (handler === undefined) {
+        throw 'Event bind error: undefined handler';
+      }
+      handlers.push(handler);
+    };
+    var unbind = function (handler) {
+      handlers = filter(handlers, function (h) {
+        return h !== handler;
+      });
+    };
+    var trigger = function () {
+      var event = struct.apply(null, arguments);
+      each(handlers, function (handler) {
+        handler(event);
+      });
+    };
+    return {
+      bind: bind$$1,
+      unbind: unbind,
+      trigger: trigger
+    };
+  }
+
+  var create = function (typeDefs) {
+    var registry = map$1(typeDefs, function (event) {
+      return {
+        bind: event.bind,
+        unbind: event.unbind
+      };
+    });
+    var trigger = map$1(typeDefs, function (event) {
+      return event.trigger;
+    });
+    return {
+      registry: registry,
+      trigger: trigger
+    };
+  };
+  var $_2zt52xp6jlnuee06 = { create: create };
+
+  var mode = exactly([
+    'compare',
+    'extract',
+    'mutate',
+    'sink'
+  ]);
+  var sink = exactly([
+    'element',
+    'start',
+    'stop',
+    'destroy'
+  ]);
+  var api$3 = exactly([
+    'forceDrop',
+    'drop',
+    'move',
+    'delayDrop'
+  ]);
+  var $_8foxdzpajlnuee3a = {
+    mode: mode,
+    sink: sink,
+    api: api$3
+  };
+
+  var styles$1 = css('ephox-dragster');
+  var $_6ghijpcjlnuee4c = { resolve: styles$1.resolve };
+
+  function Blocker (options) {
+    var settings = merge$1({ 'layerClass': $_6ghijpcjlnuee4c.resolve('blocker') }, options);
+    var div = Element$$1.fromTag('div');
+    $_6f9wwmm2jlnueckv.set(div, 'role', 'presentation');
+    $_77s8gzmbjlnuecni.setAll(div, {
+      position: 'fixed',
+      left: '0px',
+      top: '0px',
+      width: '100%',
+      height: '100%'
+    });
+    $_42k0o5o3jlnuedmc.add(div, $_6ghijpcjlnuee4c.resolve('blocker'));
+    $_42k0o5o3jlnuedmc.add(div, settings.layerClass);
+    var element = function () {
+      return div;
+    };
+    var destroy = function () {
+      $_dzcomomejlnuecod.remove(div);
+    };
+    return {
+      element: element,
+      destroy: destroy
+    };
+  }
+
+  var mkEvent = function (target, x, y, stop, prevent, kill, raw) {
+    return {
+      'target': constant(target),
+      'x': constant(x),
+      'y': constant(y),
+      'stop': stop,
+      'prevent': prevent,
+      'kill': kill,
+      'raw': constant(raw)
+    };
+  };
+  var handle = function (filter, handler) {
+    return function (rawEvent) {
+      if (!filter(rawEvent))
+        return;
+      var target = Element$$1.fromDom(rawEvent.target);
+      var stop = function () {
+        rawEvent.stopPropagation();
+      };
+      var prevent = function () {
+        rawEvent.preventDefault();
+      };
+      var kill = compose(prevent, stop);
+      var evt = mkEvent(target, rawEvent.clientX, rawEvent.clientY, stop, prevent, kill, rawEvent);
+      handler(evt);
+    };
+  };
+  var binder = function (element, event, filter, handler, useCapture) {
+    var wrapped = handle(filter, handler);
+    element.dom().addEventListener(event, wrapped, useCapture);
+    return { unbind: curry(unbind, element, event, wrapped, useCapture) };
+  };
+  var bind$1 = function (element, event, filter, handler) {
+    return binder(element, event, filter, handler, false);
+  };
+  var capture = function (element, event, filter, handler) {
+    return binder(element, event, filter, handler, true);
+  };
+  var unbind = function (element, event, handler, useCapture) {
+    element.dom().removeEventListener(event, handler, useCapture);
+  };
+  var $_29x2e9pejlnuee4r = {
+    bind: bind$1,
+    capture: capture
+  };
+
+  var filter$1 = constant(true);
+  var bind$2 = function (element, event, handler) {
+    return $_29x2e9pejlnuee4r.bind(element, event, filter$1, handler);
+  };
+  var capture$1 = function (element, event, handler) {
+    return $_29x2e9pejlnuee4r.capture(element, event, filter$1, handler);
+  };
+  var $_7y14yfpdjlnuee4k = {
+    bind: bind$2,
+    capture: capture$1
+  };
+
+  var compare = function (old, nu) {
+    return Position(nu.left() - old.left(), nu.top() - old.top());
+  };
+  var extract$1 = function (event) {
+    return Option.some(Position(event.x(), event.y()));
+  };
+  var mutate$1 = function (mutation, info) {
+    mutation.mutate(info.left(), info.top());
+  };
+  var sink$1 = function (dragApi, settings) {
+    var blocker = Blocker(settings);
+    var mdown = $_7y14yfpdjlnuee4k.bind(blocker.element(), 'mousedown', dragApi.forceDrop);
+    var mup = $_7y14yfpdjlnuee4k.bind(blocker.element(), 'mouseup', dragApi.drop);
+    var mmove = $_7y14yfpdjlnuee4k.bind(blocker.element(), 'mousemove', dragApi.move);
+    var mout = $_7y14yfpdjlnuee4k.bind(blocker.element(), 'mouseout', dragApi.delayDrop);
+    var destroy = function () {
+      blocker.destroy();
+      mup.unbind();
+      mmove.unbind();
+      mout.unbind();
+      mdown.unbind();
+    };
+    var start = function (parent) {
+      $_881al2mdjlnuecoa.append(parent, blocker.element());
+    };
+    var stop = function () {
+      $_dzcomomejlnuecod.remove(blocker.element());
+    };
+    return $_8foxdzpajlnuee3a.sink({
+      element: blocker.element,
+      start: start,
+      stop: stop,
+      destroy: destroy
+    });
+  };
+  var MouseDrag = $_8foxdzpajlnuee3a.mode({
+    compare: compare,
+    extract: extract$1,
+    sink: sink$1,
+    mutate: mutate$1
+  });
+
+  function InDrag () {
+    var previous = Option.none();
+    var reset = function () {
+      previous = Option.none();
+    };
+    var update = function (mode, nu) {
+      var result = previous.map(function (old) {
+        return mode.compare(old, nu);
+      });
+      previous = Option.some(nu);
+      return result;
+    };
+    var onEvent = function (event, mode) {
+      var dataOption = mode.extract(event);
+      dataOption.each(function (data) {
+        var offset = update(mode, data);
+        offset.each(function (d) {
+          events.trigger.move(d);
+        });
+      });
+    };
+    var events = $_2zt52xp6jlnuee06.create({ move: Event(['info']) });
+    return {
+      onEvent: onEvent,
+      reset: reset,
+      events: events.registry
+    };
+  }
+
+  function NoDrag (anchor) {
+    var onEvent = function (event, mode) {
+    };
+    return {
+      onEvent: onEvent,
+      reset: noop
+    };
+  }
+
+  function Movement () {
+    var noDragState = NoDrag();
+    var inDragState = InDrag();
+    var dragState = noDragState;
+    var on = function () {
+      dragState.reset();
+      dragState = inDragState;
+    };
+    var off = function () {
+      dragState.reset();
+      dragState = noDragState;
+    };
+    var onEvent = function (event, mode) {
+      dragState.onEvent(event, mode);
+    };
+    var isOn = function () {
+      return dragState === inDragState;
+    };
+    return {
+      on: on,
+      off: off,
+      isOn: isOn,
+      onEvent: onEvent,
+      events: inDragState.events
+    };
+  }
+
+  var last$3 = function (fn, rate) {
+    var timer = null;
+    var cancel = function () {
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+    var throttle = function () {
+      var args = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+      }
+      if (timer !== null)
+        clearTimeout(timer);
+      timer = setTimeout(function () {
+        fn.apply(null, args);
+        timer = null;
+      }, rate);
+    };
+    return {
+      cancel: cancel,
+      throttle: throttle
+    };
+  };
+
+  var setup = function (mutation, mode, settings) {
+    var active = false;
+    var events = $_2zt52xp6jlnuee06.create({
+      start: Event([]),
+      stop: Event([])
+    });
+    var movement = Movement();
+    var drop = function () {
+      sink.stop();
+      if (movement.isOn()) {
+        movement.off();
+        events.trigger.stop();
+      }
+    };
+    var throttledDrop = last$3(drop, 200);
+    var go = function (parent) {
+      sink.start(parent);
+      movement.on();
+      events.trigger.start();
+    };
+    var mousemove = function (event, ui) {
+      throttledDrop.cancel();
+      movement.onEvent(event, mode);
+    };
+    movement.events.move.bind(function (event) {
+      mode.mutate(mutation, event.info());
+    });
+    var on = function () {
+      active = true;
+    };
+    var off = function () {
+      active = false;
+    };
+    var runIfActive = function (f) {
+      return function () {
+        var args = Array.prototype.slice.call(arguments, 0);
+        if (active) {
+          return f.apply(null, args);
+        }
+      };
+    };
+    var sink = mode.sink($_8foxdzpajlnuee3a.api({
+      forceDrop: drop,
+      drop: runIfActive(drop),
+      move: runIfActive(mousemove),
+      delayDrop: runIfActive(throttledDrop.throttle)
+    }), settings);
+    var destroy = function () {
+      sink.destroy();
+    };
+    return {
+      element: sink.element,
+      go: go,
+      on: on,
+      off: off,
+      destroy: destroy,
+      events: events.registry
+    };
+  };
+  var $_arg566pfjlnuee53 = { setup: setup };
+
+  var transform$1 = function (mutation, options) {
+    var settings = options !== undefined ? options : {};
+    var mode = settings.mode !== undefined ? settings.mode : MouseDrag;
+    return $_arg566pfjlnuee53.setup(mutation, mode, options);
+  };
+  var $_9wnorwp8jlnuee2h = { transform: transform$1 };
+
+  function Mutation () {
+    var events = $_2zt52xp6jlnuee06.create({
+      'drag': Event([
+        'xDelta',
+        'yDelta'
+      ])
+    });
+    var mutate = function (x, y) {
+      events.trigger.drag(x, y);
+    };
+    return {
+      mutate: mutate,
+      events: events.registry
+    };
+  }
+
+  function BarMutation () {
+    var events = $_2zt52xp6jlnuee06.create({
+      drag: Event([
+        'xDelta',
+        'yDelta',
+        'target'
+      ])
+    });
+    var target = Option.none();
+    var delegate = Mutation();
+    delegate.events.drag.bind(function (event) {
+      target.each(function (t) {
+        events.trigger.drag(event.xDelta(), event.yDelta(), t);
+      });
+    });
+    var assign = function (t) {
+      target = Option.some(t);
+    };
+    var get = function () {
+      return target;
+    };
+    return {
+      assign: assign,
+      get: get,
+      mutate: delegate.mutate,
+      events: events.registry
+    };
+  }
+
+  var any = function (selector) {
+    return $_17q5jxm7jlnueclv.first(selector).isSome();
+  };
+  var ancestor$2 = function (scope, selector, isRoot) {
+    return $_17q5jxm7jlnueclv.ancestor(scope, selector, isRoot).isSome();
+  };
+  var sibling$2 = function (scope, selector) {
+    return $_17q5jxm7jlnueclv.sibling(scope, selector).isSome();
+  };
+  var child$3 = function (scope, selector) {
+    return $_17q5jxm7jlnueclv.child(scope, selector).isSome();
+  };
+  var descendant$2 = function (scope, selector) {
+    return $_17q5jxm7jlnueclv.descendant(scope, selector).isSome();
+  };
+  var closest$2 = function (scope, selector, isRoot) {
+    return $_17q5jxm7jlnueclv.closest(scope, selector, isRoot).isSome();
+  };
+  var $_excc9ppmjlnuee7g = {
+    any: any,
+    ancestor: ancestor$2,
+    sibling: sibling$2,
+    child: child$3,
+    descendant: descendant$2,
+    closest: closest$2
+  };
+
+  var resizeBarDragging = $_6zkeoao1jlnuedm2.resolve('resizer-bar-dragging');
+  function BarManager (wire, direction, hdirection) {
+    var mutation = BarMutation();
+    var resizing = $_9wnorwp8jlnuee2h.transform(mutation, {});
+    var hoverTable = Option.none();
+    var getResizer = function (element, type) {
+      return Option.from($_6f9wwmm2jlnueckv.get(element, type));
+    };
+    mutation.events.drag.bind(function (event) {
+      getResizer(event.target(), 'data-row').each(function (_dataRow) {
+        var currentRow = $_7ucs72ohjlnuedq4.getInt(event.target(), 'top');
+        $_77s8gzmbjlnuecni.set(event.target(), 'top', currentRow + event.yDelta() + 'px');
+      });
+      getResizer(event.target(), 'data-column').each(function (_dataCol) {
+        var currentCol = $_7ucs72ohjlnuedq4.getInt(event.target(), 'left');
+        $_77s8gzmbjlnuecni.set(event.target(), 'left', currentCol + event.xDelta() + 'px');
+      });
+    });
+    var getDelta = function (target, direction) {
+      var newX = $_7ucs72ohjlnuedq4.getInt(target, direction);
+      var oldX = parseInt($_6f9wwmm2jlnueckv.get(target, 'data-initial-' + direction), 10);
+      return newX - oldX;
+    };
+    resizing.events.stop.bind(function () {
+      mutation.get().each(function (target) {
+        hoverTable.each(function (table) {
+          getResizer(target, 'data-row').each(function (row) {
+            var delta = getDelta(target, 'top');
+            $_6f9wwmm2jlnueckv.remove(target, 'data-initial-top');
+            events.trigger.adjustHeight(table, delta, parseInt(row, 10));
+          });
+          getResizer(target, 'data-column').each(function (column) {
+            var delta = getDelta(target, 'left');
+            $_6f9wwmm2jlnueckv.remove(target, 'data-initial-left');
+            events.trigger.adjustWidth(table, delta, parseInt(column, 10));
+          });
+          $_92z6clnxjlnuediv.refresh(wire, table, hdirection, direction);
+        });
+      });
+    });
+    var handler = function (target, direction) {
+      events.trigger.startAdjust();
+      mutation.assign(target);
+      $_6f9wwmm2jlnueckv.set(target, 'data-initial-' + direction, parseInt($_77s8gzmbjlnuecni.get(target, direction), 10));
+      $_42k0o5o3jlnuedmc.add(target, resizeBarDragging);
+      $_77s8gzmbjlnuecni.set(target, 'opacity', '0.2');
+      resizing.go(wire.parent());
+    };
+    var mousedown = $_7y14yfpdjlnuee4k.bind(wire.parent(), 'mousedown', function (event) {
+      if ($_92z6clnxjlnuediv.isRowBar(event.target()))
+        handler(event.target(), 'top');
+      if ($_92z6clnxjlnuediv.isColBar(event.target()))
+        handler(event.target(), 'left');
+    });
+    var isRoot = function (e) {
+      return $_45sffllljlnuecht.eq(e, wire.view());
+    };
+    var mouseover = $_7y14yfpdjlnuee4k.bind(wire.view(), 'mouseover', function (event) {
+      if ($_moydym3jlnueclb.name(event.target()) === 'table' || $_excc9ppmjlnuee7g.closest(event.target(), 'table', isRoot)) {
+        hoverTable = $_moydym3jlnueclb.name(event.target()) === 'table' ? Option.some(event.target()) : $_17q5jxm7jlnueclv.ancestor(event.target(), 'table', isRoot);
+        hoverTable.each(function (ht) {
+          $_92z6clnxjlnuediv.refresh(wire, ht, hdirection, direction);
+        });
+      } else if ($_fq9qoxm6jlnuecln.inBody(event.target())) {
+        $_92z6clnxjlnuediv.destroy(wire);
+      }
+    });
+    var destroy = function () {
+      mousedown.unbind();
+      mouseover.unbind();
+      resizing.destroy();
+      $_92z6clnxjlnuediv.destroy(wire);
+    };
+    var refresh = function (tbl) {
+      $_92z6clnxjlnuediv.refresh(wire, tbl, hdirection, direction);
+    };
+    var events = $_2zt52xp6jlnuee06.create({
+      adjustHeight: Event([
+        'table',
+        'delta',
+        'row'
+      ]),
+      adjustWidth: Event([
+        'table',
+        'delta',
+        'column'
+      ]),
+      startAdjust: Event([])
+    });
+    return {
+      destroy: destroy,
+      refresh: refresh,
+      on: resizing.on,
+      off: resizing.off,
+      hideBars: curry($_92z6clnxjlnuediv.hide, wire),
+      showBars: curry($_92z6clnxjlnuediv.show, wire),
+      events: events.registry
+    };
+  }
+
+  function TableResize (wire, vdirection) {
+    var hdirection = $_1kcsfhnejlnued8m.height;
+    var manager = BarManager(wire, vdirection, hdirection);
+    var events = $_2zt52xp6jlnuee06.create({
+      beforeResize: Event(['table']),
+      afterResize: Event(['table']),
+      startDrag: Event([])
+    });
+    manager.events.adjustHeight.bind(function (event) {
+      events.trigger.beforeResize(event.table());
+      var delta = hdirection.delta(event.delta(), event.table());
+      $_8ca8z3odjlnuedot.adjustHeight(event.table(), delta, event.row(), hdirection);
+      events.trigger.afterResize(event.table());
+    });
+    manager.events.startAdjust.bind(function (event) {
+      events.trigger.startDrag();
+    });
+    manager.events.adjustWidth.bind(function (event) {
+      events.trigger.beforeResize(event.table());
+      var delta = vdirection.delta(event.delta(), event.table());
+      $_8ca8z3odjlnuedot.adjustWidth(event.table(), delta, event.column(), vdirection);
+      events.trigger.afterResize(event.table());
+    });
+    return {
+      on: manager.on,
+      off: manager.off,
+      hideBars: manager.hideBars,
+      showBars: manager.showBars,
+      destroy: manager.destroy,
+      events: events.registry
+    };
+  }
+
+  var createContainer = function () {
+    var container = Element$$1.fromTag('div');
+    $_77s8gzmbjlnuecni.setAll(container, {
+      position: 'static',
+      height: '0',
+      width: '0',
+      padding: '0',
+      margin: '0',
+      border: '0'
+    });
+    $_881al2mdjlnuecoa.append($_fq9qoxm6jlnuecln.body(), container);
+    return container;
+  };
+  var get$8 = function (editor, container) {
+    return editor.inline ? $_9fcjbdp3jlnuedyn.body(getBody$1(editor), createContainer()) : $_9fcjbdp3jlnuedyn.only(Element$$1.fromDom(editor.getDoc()));
+  };
+  var remove$6 = function (editor, wire) {
+    if (editor.inline) {
+      $_dzcomomejlnuecod.remove(wire.parent());
+    }
+  };
+  var $_6ec5rgpnjlnuee7j = {
+    get: get$8,
+    remove: remove$6
+  };
+
+  var ResizeHandler = function (editor) {
+    var selectionRng = Option.none();
+    var resize = Option.none();
+    var wire = Option.none();
+    var percentageBasedSizeRegex = /(\d+(\.\d+)?)%/;
+    var startW, startRawW;
+    var isTable = function (elm) {
+      return elm.nodeName === 'TABLE';
+    };
+    var getRawWidth = function (elm) {
+      return editor.dom.getStyle(elm, 'width') || editor.dom.getAttrib(elm, 'width');
+    };
+    var lazyResize = function () {
+      return resize;
+    };
+    var lazyWire = function () {
+      return wire.getOr($_9fcjbdp3jlnuedyn.only(Element$$1.fromDom(editor.getBody())));
+    };
+    var destroy = function () {
+      resize.each(function (sz) {
+        sz.destroy();
+      });
+      wire.each(function (w) {
+        $_6ec5rgpnjlnuee7j.remove(editor, w);
+      });
+    };
+    editor.on('init', function () {
+      var direction = TableDirection($_gg0vwtoljlnuedse.directionAt);
+      var rawWire = $_6ec5rgpnjlnuee7j.get(editor);
+      wire = Option.some(rawWire);
+      if (hasObjectResizing(editor) && hasTableResizeBars(editor)) {
+        var sz = TableResize(rawWire, direction);
+        sz.on();
+        sz.events.startDrag.bind(function (event) {
+          selectionRng = Option.some(editor.selection.getRng());
+        });
+        sz.events.beforeResize.bind(function (event) {
+          var rawTable = event.table().dom();
+          fireObjectResizeStart(editor, rawTable, getPixelWidth$1(rawTable), getPixelHeight(rawTable));
+        });
+        sz.events.afterResize.bind(function (event) {
+          var table = event.table();
+          var rawTable = table.dom();
+          removeDataStyle(table);
+          selectionRng.each(function (rng) {
+            editor.selection.setRng(rng);
+            editor.focus();
+          });
+          fireObjectResized(editor, rawTable, getPixelWidth$1(rawTable), getPixelHeight(rawTable));
+          editor.undoManager.add();
+        });
+        resize = Option.some(sz);
+      }
+    });
+    editor.on('ObjectResizeStart', function (e) {
+      var targetElm = e.target;
+      if (isTable(targetElm)) {
+        startW = e.width;
+        startRawW = getRawWidth(targetElm);
+      }
+    });
+    editor.on('ObjectResized', function (e) {
+      var targetElm = e.target;
+      if (isTable(targetElm)) {
+        var table = targetElm;
+        if (percentageBasedSizeRegex.test(startRawW)) {
+          var percentW = parseFloat(percentageBasedSizeRegex.exec(startRawW)[1]);
+          var targetPercentW = e.width * percentW / startW;
+          editor.dom.setStyle(table, 'width', targetPercentW + '%');
+        } else {
+          var newCellSizes_1 = [];
+          global$1.each(table.rows, function (row) {
+            global$1.each(row.cells, function (cell) {
+              var width = editor.dom.getStyle(cell, 'width', true);
+              newCellSizes_1.push({
+                cell: cell,
+                width: width
+              });
+            });
+          });
+          global$1.each(newCellSizes_1, function (newCellSize) {
+            editor.dom.setStyle(newCellSize.cell, 'width', newCellSize.width);
+            editor.dom.setAttrib(newCellSize.cell, 'width', null);
+          });
+        }
+      }
+    });
+    return {
+      lazyResize: lazyResize,
+      lazyWire: lazyWire,
+      destroy: destroy
+    };
+  };
+
+  var none$2 = function (current) {
+    return folder$1(function (n, f, m, l) {
+      return n(current);
+    });
+  };
+  var first$5 = function (current) {
+    return folder$1(function (n, f, m, l) {
+      return f(current);
+    });
+  };
+  var middle$1 = function (current, target) {
+    return folder$1(function (n, f, m, l) {
+      return m(current, target);
+    });
+  };
+  var last$4 = function (current) {
+    return folder$1(function (n, f, m, l) {
+      return l(current);
+    });
+  };
+  var folder$1 = function (fold) {
+    return { fold: fold };
+  };
+  var $_53wm9xpqjlnueeab = {
+    none: none$2,
+    first: first$5,
+    middle: middle$1,
+    last: last$4
+  };
+
+  var detect$4 = function (current, isRoot) {
+    return $_enoas1ldjlnuecdr.table(current, isRoot).bind(function (table) {
+      var all = $_enoas1ldjlnuecdr.cells(table);
+      var index = findIndex(all, function (x) {
+        return $_45sffllljlnuecht.eq(current, x);
+      });
+      return index.map(function (ind) {
+        return {
+          index: constant(ind),
+          all: constant(all)
+        };
+      });
+    });
+  };
+  var next = function (current, isRoot) {
+    var detection = detect$4(current, isRoot);
+    return detection.fold(function () {
+      return $_53wm9xpqjlnueeab.none(current);
+    }, function (info) {
+      return info.index() + 1 < info.all().length ? $_53wm9xpqjlnueeab.middle(current, info.all()[info.index() + 1]) : $_53wm9xpqjlnueeab.last(current);
+    });
+  };
+  var prev = function (current, isRoot) {
+    var detection = detect$4(current, isRoot);
+    return detection.fold(function () {
+      return $_53wm9xpqjlnueeab.none();
+    }, function (info) {
+      return info.index() - 1 >= 0 ? $_53wm9xpqjlnueeab.middle(current, info.all()[info.index() - 1]) : $_53wm9xpqjlnueeab.first(current);
+    });
+  };
+  var $_7j97skppjlnuee9p = {
+    next: next,
+    prev: prev
+  };
+
+  var adt = Adt.generate([
+    { 'before': ['element'] },
+    {
+      'on': [
+        'element',
+        'offset'
+      ]
+    },
+    { after: ['element'] }
+  ]);
+  var cata$1 = function (subject, onBefore, onOn, onAfter) {
+    return subject.fold(onBefore, onOn, onAfter);
+  };
+  var getStart = function (situ) {
+    return situ.fold(identity, identity, identity);
+  };
+  var $_5z0dgvpsjlnueeat = {
+    before: adt.before,
+    on: adt.on,
+    after: adt.after,
+    cata: cata$1,
+    getStart: getStart
+  };
+
+  var type$2 = Adt.generate([
+    { domRange: ['rng'] },
+    {
+      relative: [
+        'startSitu',
+        'finishSitu'
+      ]
+    },
+    {
+      exact: [
+        'start',
+        'soffset',
+        'finish',
+        'foffset'
+      ]
+    }
+  ]);
+  var range$2 = Immutable('start', 'soffset', 'finish', 'foffset');
+  var exactFromRange = function (simRange) {
+    return type$2.exact(simRange.start(), simRange.soffset(), simRange.finish(), simRange.foffset());
+  };
+  var getStart$1 = function (selection) {
+    return selection.match({
+      domRange: function (rng) {
+        return Element$$1.fromDom(rng.startContainer);
+      },
+      relative: function (startSitu, finishSitu) {
+        return $_5z0dgvpsjlnueeat.getStart(startSitu);
+      },
+      exact: function (start, soffset, finish, foffset) {
+        return start;
+      }
+    });
+  };
+  var getWin = function (selection) {
+    var start = getStart$1(selection);
+    return $_cvabpuljjlnuecgz.defaultView(start);
+  };
+  var $_c99q3zprjlnueeaf = {
+    domRange: type$2.domRange,
+    relative: type$2.relative,
+    exact: type$2.exact,
+    exactFromRange: exactFromRange,
+    range: range$2,
+    getWin: getWin
+  };
+
+  var makeRange = function (start, soffset, finish, foffset) {
+    var doc = $_cvabpuljjlnuecgz.owner(start);
+    var rng = doc.dom().createRange();
+    rng.setStart(start.dom(), soffset);
+    rng.setEnd(finish.dom(), foffset);
+    return rng;
+  };
+  var commonAncestorContainer = function (start, soffset, finish, foffset) {
+    var r = makeRange(start, soffset, finish, foffset);
+    return Element$$1.fromDom(r.commonAncestorContainer);
+  };
+  var after$2 = function (start, soffset, finish, foffset) {
+    var r = makeRange(start, soffset, finish, foffset);
+    var same = $_45sffllljlnuecht.eq(start, finish) && soffset === foffset;
+    return r.collapsed && !same;
+  };
+  var $_98lzqkpujlnueebk = {
+    after: after$2,
+    commonAncestorContainer: commonAncestorContainer
+  };
+
+  var fromElements = function (elements, scope) {
+    var doc = scope || document;
+    var fragment = doc.createDocumentFragment();
+    each(elements, function (element) {
+      fragment.appendChild(element.dom());
+    });
+    return Element$$1.fromDom(fragment);
+  };
+  var $_8pyhafpvjlnueebn = { fromElements: fromElements };
+
+  var selectNodeContents = function (win, element) {
+    var rng = win.document.createRange();
+    selectNodeContentsUsing(rng, element);
+    return rng;
+  };
+  var selectNodeContentsUsing = function (rng, element) {
+    rng.selectNodeContents(element.dom());
+  };
+  var isWithin$1 = function (outerRange, innerRange) {
+    return innerRange.compareBoundaryPoints(outerRange.END_TO_START, outerRange) < 1 && innerRange.compareBoundaryPoints(outerRange.START_TO_END, outerRange) > -1;
+  };
+  var create$1 = function (win) {
+    return win.document.createRange();
+  };
+  var setStart = function (rng, situ) {
+    situ.fold(function (e) {
+      rng.setStartBefore(e.dom());
+    }, function (e, o) {
+      rng.setStart(e.dom(), o);
+    }, function (e) {
+      rng.setStartAfter(e.dom());
+    });
+  };
+  var setFinish = function (rng, situ) {
+    situ.fold(function (e) {
+      rng.setEndBefore(e.dom());
+    }, function (e, o) {
+      rng.setEnd(e.dom(), o);
+    }, function (e) {
+      rng.setEndAfter(e.dom());
+    });
+  };
+  var replaceWith = function (rng, fragment) {
+    deleteContents(rng);
+    rng.insertNode(fragment.dom());
+  };
+  var relativeToNative = function (win, startSitu, finishSitu) {
+    var range = win.document.createRange();
+    setStart(range, startSitu);
+    setFinish(range, finishSitu);
+    return range;
+  };
+  var exactToNative = function (win, start, soffset, finish, foffset) {
+    var rng = win.document.createRange();
+    rng.setStart(start.dom(), soffset);
+    rng.setEnd(finish.dom(), foffset);
+    return rng;
+  };
+  var deleteContents = function (rng) {
+    rng.deleteContents();
+  };
+  var cloneFragment = function (rng) {
+    var fragment = rng.cloneContents();
+    return Element$$1.fromDom(fragment);
+  };
+  var toRect = function (rect) {
+    return {
+      left: constant(rect.left),
+      top: constant(rect.top),
+      right: constant(rect.right),
+      bottom: constant(rect.bottom),
+      width: constant(rect.width),
+      height: constant(rect.height)
+    };
+  };
+  var getFirstRect = function (rng) {
+    var rects = rng.getClientRects();
+    var rect = rects.length > 0 ? rects[0] : rng.getBoundingClientRect();
+    return rect.width > 0 || rect.height > 0 ? Option.some(rect).map(toRect) : Option.none();
+  };
+  var getBounds$1 = function (rng) {
+    var rect = rng.getBoundingClientRect();
+    return rect.width > 0 || rect.height > 0 ? Option.some(rect).map(toRect) : Option.none();
+  };
+  var toString = function (rng) {
+    return rng.toString();
+  };
+  var $_9xhx52pwjlnueec0 = {
+    create: create$1,
+    replaceWith: replaceWith,
+    selectNodeContents: selectNodeContents,
+    selectNodeContentsUsing: selectNodeContentsUsing,
+    relativeToNative: relativeToNative,
+    exactToNative: exactToNative,
+    deleteContents: deleteContents,
+    cloneFragment: cloneFragment,
+    getFirstRect: getFirstRect,
+    getBounds: getBounds$1,
+    isWithin: isWithin$1,
+    toString: toString
+  };
+
+  var adt$1 = Adt.generate([
+    {
+      ltr: [
+        'start',
+        'soffset',
+        'finish',
+        'foffset'
+      ]
+    },
+    {
+      rtl: [
+        'start',
+        'soffset',
+        'finish',
+        'foffset'
+      ]
+    }
+  ]);
+  var fromRange = function (win, type, range) {
+    return type(Element$$1.fromDom(range.startContainer), range.startOffset, Element$$1.fromDom(range.endContainer), range.endOffset);
+  };
+  var getRanges = function (win, selection) {
+    return selection.match({
+      domRange: function (rng) {
+        return {
+          ltr: constant(rng),
+          rtl: Option.none
+        };
+      },
+      relative: function (startSitu, finishSitu) {
+        return {
+          ltr: cached(function () {
+            return $_9xhx52pwjlnueec0.relativeToNative(win, startSitu, finishSitu);
+          }),
+          rtl: cached(function () {
+            return Option.some($_9xhx52pwjlnueec0.relativeToNative(win, finishSitu, startSitu));
+          })
+        };
+      },
+      exact: function (start, soffset, finish, foffset) {
+        return {
+          ltr: cached(function () {
+            return $_9xhx52pwjlnueec0.exactToNative(win, start, soffset, finish, foffset);
+          }),
+          rtl: cached(function () {
+            return Option.some($_9xhx52pwjlnueec0.exactToNative(win, finish, foffset, start, soffset));
+          })
+        };
+      }
+    });
+  };
+  var doDiagnose = function (win, ranges) {
+    var rng = ranges.ltr();
+    if (rng.collapsed) {
+      var reversed = ranges.rtl().filter(function (rev) {
+        return rev.collapsed === false;
+      });
+      return reversed.map(function (rev) {
+        return adt$1.rtl(Element$$1.fromDom(rev.endContainer), rev.endOffset, Element$$1.fromDom(rev.startContainer), rev.startOffset);
+      }).getOrThunk(function () {
+        return fromRange(win, adt$1.ltr, rng);
+      });
+    } else {
+      return fromRange(win, adt$1.ltr, rng);
+    }
+  };
+  var diagnose = function (win, selection) {
+    var ranges = getRanges(win, selection);
+    return doDiagnose(win, ranges);
+  };
+  var asLtrRange = function (win, selection) {
+    var diagnosis = diagnose(win, selection);
+    return diagnosis.match({
+      ltr: function (start, soffset, finish, foffset) {
+        var rng = win.document.createRange();
+        rng.setStart(start.dom(), soffset);
+        rng.setEnd(finish.dom(), foffset);
+        return rng;
+      },
+      rtl: function (start, soffset, finish, foffset) {
+        var rng = win.document.createRange();
+        rng.setStart(finish.dom(), foffset);
+        rng.setEnd(start.dom(), soffset);
+        return rng;
+      }
+    });
+  };
+  var $_apfh0npxjlnueecg = {
+    ltr: adt$1.ltr,
+    rtl: adt$1.rtl,
+    diagnose: diagnose,
+    asLtrRange: asLtrRange
+  };
+
+  var searchForPoint = function (rectForOffset, x, y, maxX, length) {
+    if (length === 0)
+      return 0;
+    else if (x === maxX)
+      return length - 1;
+    var xDelta = maxX;
+    for (var i = 1; i < length; i++) {
+      var rect = rectForOffset(i);
+      var curDeltaX = Math.abs(x - rect.left);
+      if (y <= rect.bottom) {
+        if (y < rect.top || curDeltaX > xDelta) {
+          return i - 1;
+        } else {
+          xDelta = curDeltaX;
+        }
+      }
+    }
+    return 0;
+  };
+  var inRect = function (rect, x, y) {
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  };
+  var $_ljqutq0jlnueedx = {
+    inRect: inRect,
+    searchForPoint: searchForPoint
+  };
+
+  var locateOffset = function (doc, textnode, x, y, rect) {
+    var rangeForOffset = function (offset) {
+      var r = doc.dom().createRange();
+      r.setStart(textnode.dom(), offset);
+      r.collapse(true);
+      return r;
+    };
+    var rectForOffset = function (offset) {
+      var r = rangeForOffset(offset);
+      return r.getBoundingClientRect();
+    };
+    var length = $_u2vdgmkjlnuecrz.get(textnode).length;
+    var offset = $_ljqutq0jlnueedx.searchForPoint(rectForOffset, x, y, rect.right, length);
+    return rangeForOffset(offset);
+  };
+  var locate = function (doc, node, x, y) {
+    var r = doc.dom().createRange();
+    r.selectNode(node.dom());
+    var rects = r.getClientRects();
+    var foundRect = findMap(rects, function (rect) {
+      return $_ljqutq0jlnueedx.inRect(rect, x, y) ? Option.some(rect) : Option.none();
+    });
+    return foundRect.map(function (rect) {
+      return locateOffset(doc, node, x, y, rect);
+    });
+  };
+  var $_29xplgq1jlnueee0 = { locate: locate };
+
+  var searchInChildren = function (doc, node, x, y) {
+    var r = doc.dom().createRange();
+    var nodes = $_cvabpuljjlnuecgz.children(node);
+    return findMap(nodes, function (n) {
+      r.selectNode(n.dom());
+      return $_ljqutq0jlnueedx.inRect(r.getBoundingClientRect(), x, y) ? locateNode(doc, n, x, y) : Option.none();
+    });
+  };
+  var locateNode = function (doc, node, x, y) {
+    var locator = $_moydym3jlnueclb.isText(node) ? $_29xplgq1jlnueee0.locate : searchInChildren;
+    return locator(doc, node, x, y);
+  };
+  var locate$1 = function (doc, node, x, y) {
+    var r = doc.dom().createRange();
+    r.selectNode(node.dom());
+    var rect = r.getBoundingClientRect();
+    var boundedX = Math.max(rect.left, Math.min(rect.right, x));
+    var boundedY = Math.max(rect.top, Math.min(rect.bottom, y));
+    return locateNode(doc, node, boundedX, boundedY);
+  };
+  var $_4slvrlpzjlnueedh = { locate: locate$1 };
+
+  var COLLAPSE_TO_LEFT = true;
+  var COLLAPSE_TO_RIGHT = false;
+  var getCollapseDirection = function (rect, x) {
+    return x - rect.left < rect.right - x ? COLLAPSE_TO_LEFT : COLLAPSE_TO_RIGHT;
+  };
+  var createCollapsedNode = function (doc, target, collapseDirection) {
+    var r = doc.dom().createRange();
+    r.selectNode(target.dom());
+    r.collapse(collapseDirection);
+    return r;
+  };
+  var locateInElement = function (doc, node, x) {
+    var cursorRange = doc.dom().createRange();
+    cursorRange.selectNode(node.dom());
+    var rect = cursorRange.getBoundingClientRect();
+    var collapseDirection = getCollapseDirection(rect, x);
+    var f = collapseDirection === COLLAPSE_TO_LEFT ? $_6ikghvmijlnuecr8.first : $_6ikghvmijlnuecr8.last;
+    return f(node).map(function (target) {
+      return createCollapsedNode(doc, target, collapseDirection);
+    });
+  };
+  var locateInEmpty = function (doc, node, x) {
+    var rect = node.dom().getBoundingClientRect();
+    var collapseDirection = getCollapseDirection(rect, x);
+    return Option.some(createCollapsedNode(doc, node, collapseDirection));
+  };
+  var search = function (doc, node, x) {
+    var f = $_cvabpuljjlnuecgz.children(node).length === 0 ? locateInEmpty : locateInElement;
+    return f(doc, node, x);
+  };
+  var $_ftfdbyq2jlnueeee = { search: search };
+
+  var caretPositionFromPoint = function (doc, x, y) {
+    return Option.from(doc.dom().caretPositionFromPoint(x, y)).bind(function (pos) {
+      if (pos.offsetNode === null)
+        return Option.none();
+      var r = doc.dom().createRange();
+      r.setStart(pos.offsetNode, pos.offset);
+      r.collapse();
+      return Option.some(r);
+    });
+  };
+  var caretRangeFromPoint = function (doc, x, y) {
+    return Option.from(doc.dom().caretRangeFromPoint(x, y));
+  };
+  var searchTextNodes = function (doc, node, x, y) {
+    var r = doc.dom().createRange();
+    r.selectNode(node.dom());
+    var rect = r.getBoundingClientRect();
+    var boundedX = Math.max(rect.left, Math.min(rect.right, x));
+    var boundedY = Math.max(rect.top, Math.min(rect.bottom, y));
+    return $_4slvrlpzjlnueedh.locate(doc, node, boundedX, boundedY);
+  };
+  var searchFromPoint = function (doc, x, y) {
+    return Element$$1.fromPoint(doc, x, y).bind(function (elem) {
+      var fallback = function () {
+        return $_ftfdbyq2jlnueeee.search(doc, elem, x);
+      };
+      return $_cvabpuljjlnuecgz.children(elem).length === 0 ? fallback() : searchTextNodes(doc, elem, x, y).orThunk(fallback);
+    });
+  };
+  var availableSearch = document.caretPositionFromPoint ? caretPositionFromPoint : document.caretRangeFromPoint ? caretRangeFromPoint : searchFromPoint;
+  var fromPoint$1 = function (win, x, y) {
+    var doc = Element$$1.fromDom(win.document);
+    return availableSearch(doc, x, y).map(function (rng) {
+      return $_c99q3zprjlnueeaf.range(Element$$1.fromDom(rng.startContainer), rng.startOffset, Element$$1.fromDom(rng.endContainer), rng.endOffset);
+    });
+  };
+  var $_adoms5pyjlnueed8 = { fromPoint: fromPoint$1 };
+
+  var withinContainer = function (win, ancestor, outerRange, selector) {
+    var innerRange = $_9xhx52pwjlnueec0.create(win);
+    var self = $_fjyr6olfjlnuecfn.is(ancestor, selector) ? [ancestor] : [];
+    var elements = self.concat($_49wdgem4jlnuecle.descendants(ancestor, selector));
+    return filter(elements, function (elem) {
+      $_9xhx52pwjlnueec0.selectNodeContentsUsing(innerRange, elem);
+      return $_9xhx52pwjlnueec0.isWithin(outerRange, innerRange);
+    });
+  };
+  var find$3 = function (win, selection, selector) {
+    var outerRange = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    var ancestor = Element$$1.fromDom(outerRange.commonAncestorContainer);
+    return $_moydym3jlnueclb.isElement(ancestor) ? withinContainer(win, ancestor, outerRange, selector) : [];
+  };
+  var $_9gqjaeq3jlnueeem = { find: find$3 };
+
+  var beforeSpecial = function (element, offset) {
+    var name = $_moydym3jlnueclb.name(element);
+    if ('input' === name)
+      return $_5z0dgvpsjlnueeat.after(element);
+    else if (!contains([
+        'br',
+        'img'
+      ], name))
+      return $_5z0dgvpsjlnueeat.on(element, offset);
+    else
+      return offset === 0 ? $_5z0dgvpsjlnueeat.before(element) : $_5z0dgvpsjlnueeat.after(element);
+  };
+  var preprocessRelative = function (startSitu, finishSitu) {
+    var start = startSitu.fold($_5z0dgvpsjlnueeat.before, beforeSpecial, $_5z0dgvpsjlnueeat.after);
+    var finish = finishSitu.fold($_5z0dgvpsjlnueeat.before, beforeSpecial, $_5z0dgvpsjlnueeat.after);
+    return $_c99q3zprjlnueeaf.relative(start, finish);
+  };
+  var preprocessExact = function (start, soffset, finish, foffset) {
+    var startSitu = beforeSpecial(start, soffset);
+    var finishSitu = beforeSpecial(finish, foffset);
+    return $_c99q3zprjlnueeaf.relative(startSitu, finishSitu);
+  };
+  var preprocess = function (selection) {
+    return selection.match({
+      domRange: function (rng) {
+        var start = Element$$1.fromDom(rng.startContainer);
+        var finish = Element$$1.fromDom(rng.endContainer);
+        return preprocessExact(start, rng.startOffset, finish, rng.endOffset);
+      },
+      relative: preprocessRelative,
+      exact: preprocessExact
+    });
+  };
+  var $_emq630q4jlnueeeu = {
+    beforeSpecial: beforeSpecial,
+    preprocess: preprocess,
+    preprocessRelative: preprocessRelative,
+    preprocessExact: preprocessExact
+  };
+
+  var doSetNativeRange = function (win, rng) {
+    Option.from(win.getSelection()).each(function (selection) {
+      selection.removeAllRanges();
+      selection.addRange(rng);
+    });
+  };
+  var doSetRange = function (win, start, soffset, finish, foffset) {
+    var rng = $_9xhx52pwjlnueec0.exactToNative(win, start, soffset, finish, foffset);
+    doSetNativeRange(win, rng);
+  };
+  var findWithin = function (win, selection, selector) {
+    return $_9gqjaeq3jlnueeem.find(win, selection, selector);
+  };
+  var setLegacyRtlRange = function (win, selection, start, soffset, finish, foffset) {
+    selection.collapse(start.dom(), soffset);
+    selection.extend(finish.dom(), foffset);
+  };
+  var setRangeFromRelative = function (win, relative) {
+    return $_apfh0npxjlnueecg.diagnose(win, relative).match({
+      ltr: function (start, soffset, finish, foffset) {
+        doSetRange(win, start, soffset, finish, foffset);
+      },
+      rtl: function (start, soffset, finish, foffset) {
+        var selection = win.getSelection();
+        if (selection.setBaseAndExtent) {
+          selection.setBaseAndExtent(start.dom(), soffset, finish.dom(), foffset);
+        } else if (selection.extend) {
+          try {
+            setLegacyRtlRange(win, selection, start, soffset, finish, foffset);
+          } catch (e) {
+            doSetRange(win, finish, foffset, start, soffset);
+          }
+        } else {
+          doSetRange(win, finish, foffset, start, soffset);
+        }
+      }
+    });
+  };
+  var setExact = function (win, start, soffset, finish, foffset) {
+    var relative = $_emq630q4jlnueeeu.preprocessExact(start, soffset, finish, foffset);
+    setRangeFromRelative(win, relative);
+  };
+  var setRelative = function (win, startSitu, finishSitu) {
+    var relative = $_emq630q4jlnueeeu.preprocessRelative(startSitu, finishSitu);
+    setRangeFromRelative(win, relative);
+  };
+  var toNative = function (selection) {
+    var win = $_c99q3zprjlnueeaf.getWin(selection).dom();
+    var getDomRange = function (start, soffset, finish, foffset) {
+      return $_9xhx52pwjlnueec0.exactToNative(win, start, soffset, finish, foffset);
+    };
+    var filtered = $_emq630q4jlnueeeu.preprocess(selection);
+    return $_apfh0npxjlnueecg.diagnose(win, filtered).match({
+      ltr: getDomRange,
+      rtl: getDomRange
+    });
+  };
+  var readRange = function (selection) {
+    if (selection.rangeCount > 0) {
+      var firstRng = selection.getRangeAt(0);
+      var lastRng = selection.getRangeAt(selection.rangeCount - 1);
+      return Option.some($_c99q3zprjlnueeaf.range(Element$$1.fromDom(firstRng.startContainer), firstRng.startOffset, Element$$1.fromDom(lastRng.endContainer), lastRng.endOffset));
+    } else {
+      return Option.none();
+    }
+  };
+  var doGetExact = function (selection) {
+    var anchorNode = Element$$1.fromDom(selection.anchorNode);
+    var focusNode = Element$$1.fromDom(selection.focusNode);
+    return $_98lzqkpujlnueebk.after(anchorNode, selection.anchorOffset, focusNode, selection.focusOffset) ? Option.some($_c99q3zprjlnueeaf.range(Element$$1.fromDom(selection.anchorNode), selection.anchorOffset, Element$$1.fromDom(selection.focusNode), selection.focusOffset)) : readRange(selection);
+  };
+  var setToElement = function (win, element) {
+    var rng = $_9xhx52pwjlnueec0.selectNodeContents(win, element);
+    doSetNativeRange(win, rng);
+  };
+  var forElement = function (win, element) {
+    var rng = $_9xhx52pwjlnueec0.selectNodeContents(win, element);
+    return $_c99q3zprjlnueeaf.range(Element$$1.fromDom(rng.startContainer), rng.startOffset, Element$$1.fromDom(rng.endContainer), rng.endOffset);
+  };
+  var getExact = function (win) {
+    return Option.from(win.getSelection()).filter(function (sel) {
+      return sel.rangeCount > 0;
+    }).bind(doGetExact);
+  };
+  var get$9 = function (win) {
+    return getExact(win).map(function (range) {
+      return $_c99q3zprjlnueeaf.exact(range.start(), range.soffset(), range.finish(), range.foffset());
+    });
+  };
+  var getFirstRect$1 = function (win, selection) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    return $_9xhx52pwjlnueec0.getFirstRect(rng);
+  };
+  var getBounds$2 = function (win, selection) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    return $_9xhx52pwjlnueec0.getBounds(rng);
+  };
+  var getAtPoint = function (win, x, y) {
+    return $_adoms5pyjlnueed8.fromPoint(win, x, y);
+  };
+  var getAsString = function (win, selection) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    return $_9xhx52pwjlnueec0.toString(rng);
+  };
+  var clear$1 = function (win) {
+    var selection = win.getSelection();
+    selection.removeAllRanges();
+  };
+  var clone$2 = function (win, selection) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    return $_9xhx52pwjlnueec0.cloneFragment(rng);
+  };
+  var replace$1 = function (win, selection, elements) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    var fragment = $_8pyhafpvjlnueebn.fromElements(elements, win.document);
+    $_9xhx52pwjlnueec0.replaceWith(rng, fragment);
+  };
+  var deleteAt = function (win, selection) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    $_9xhx52pwjlnueec0.deleteContents(rng);
+  };
+  var isCollapsed = function (start, soffset, finish, foffset) {
+    return $_45sffllljlnuecht.eq(start, finish) && soffset === foffset;
+  };
+  var $_55tagrptjlnueeb9 = {
+    setExact: setExact,
+    getExact: getExact,
+    get: get$9,
+    setRelative: setRelative,
+    toNative: toNative,
+    setToElement: setToElement,
+    clear: clear$1,
+    clone: clone$2,
+    replace: replace$1,
+    deleteAt: deleteAt,
+    forElement: forElement,
+    getFirstRect: getFirstRect$1,
+    getBounds: getBounds$2,
+    getAtPoint: getAtPoint,
+    findWithin: findWithin,
+    getAsString: getAsString,
+    isCollapsed: isCollapsed
+  };
+
+  var global$3 = tinymce.util.Tools.resolve('tinymce.util.VK');
+
+  var forward = function (editor, isRoot, cell, lazyWire) {
+    return go(editor, isRoot, $_7j97skppjlnuee9p.next(cell), lazyWire);
+  };
+  var backward = function (editor, isRoot, cell, lazyWire) {
+    return go(editor, isRoot, $_7j97skppjlnuee9p.prev(cell), lazyWire);
+  };
+  var getCellFirstCursorPosition = function (editor, cell) {
+    var selection = $_c99q3zprjlnueeaf.exact(cell, 0, cell, 0);
+    return $_55tagrptjlnueeb9.toNative(selection);
+  };
+  var getNewRowCursorPosition = function (editor, table) {
+    var rows = $_49wdgem4jlnuecle.descendants(table, 'tr');
+    return last(rows).bind(function (last$$1) {
+      return $_17q5jxm7jlnueclv.descendant(last$$1, 'td,th').map(function (first) {
+        return getCellFirstCursorPosition(editor, first);
+      });
+    });
+  };
+  var go = function (editor, isRoot, cell, actions, lazyWire) {
+    return cell.fold(Option.none, Option.none, function (current, next) {
+      return $_6ikghvmijlnuecr8.first(next).map(function (cell) {
+        return getCellFirstCursorPosition(editor, cell);
+      });
+    }, function (current) {
+      return $_enoas1ldjlnuecdr.table(current, isRoot).bind(function (table) {
+        var targets = $_5l7hzjmnjlnuect0.noMenu(current);
+        editor.undoManager.transact(function () {
+          actions.insertRowsAfter(table, targets);
+        });
+        return getNewRowCursorPosition(editor, table);
+      });
+    });
+  };
+  var rootElements = [
+    'table',
+    'li',
+    'dl'
+  ];
+  var handle$1 = function (event, editor, actions, lazyWire) {
+    if (event.keyCode === global$3.TAB) {
+      var body_1 = getBody$1(editor);
+      var isRoot_1 = function (element) {
+        var name = $_moydym3jlnueclb.name(element);
+        return $_45sffllljlnuecht.eq(element, body_1) || contains(rootElements, name);
+      };
+      var rng = editor.selection.getRng();
+      if (rng.collapsed) {
+        var start = Element$$1.fromDom(rng.startContainer);
+        $_enoas1ldjlnuecdr.cell(start, isRoot_1).each(function (cell) {
+          event.preventDefault();
+          var navigation = event.shiftKey ? backward : forward;
+          var rng = navigation(editor, isRoot_1, cell, actions, lazyWire);
+          rng.each(function (range$$1) {
+            editor.selection.setRng(range$$1);
+          });
+        });
+      }
+    }
+  };
+  var $_7uqmllpojlnuee87 = { handle: handle$1 };
+
+  var response = Immutable('selection', 'kill');
+  var $_enujbxq8jlnueehl = { response: response };
+
+  var isKey = function (key) {
+    return function (keycode) {
+      return keycode === key;
+    };
+  };
+  var isUp = isKey(38);
+  var isDown = isKey(40);
+  var isNavigation = function (keycode) {
+    return keycode >= 37 && keycode <= 40;
+  };
+  var $_ch8wzhq9jlnueehs = {
+    ltr: {
+      isBackward: isKey(37),
+      isForward: isKey(39)
+    },
+    rtl: {
+      isBackward: isKey(39),
+      isForward: isKey(37)
+    },
+    isUp: isUp,
+    isDown: isDown,
+    isNavigation: isNavigation
+  };
+
+  var convertToRange = function (win, selection) {
+    var rng = $_apfh0npxjlnueecg.asLtrRange(win, selection);
+    return {
+      start: constant(Element$$1.fromDom(rng.startContainer)),
+      soffset: constant(rng.startOffset),
+      finish: constant(Element$$1.fromDom(rng.endContainer)),
+      foffset: constant(rng.endOffset)
+    };
+  };
+  var makeSitus = function (start, soffset, finish, foffset) {
+    return {
+      start: constant($_5z0dgvpsjlnueeat.on(start, soffset)),
+      finish: constant($_5z0dgvpsjlnueeat.on(finish, foffset))
+    };
+  };
+  var $_eeh3bgqbjlnueej2 = {
+    convertToRange: convertToRange,
+    makeSitus: makeSitus
+  };
+
+  var isSafari = $_gdzrivlqjlnueciv.detect().browser.isSafari();
+  var get$10 = function (_doc) {
+    var doc = _doc !== undefined ? _doc.dom() : document;
+    var x = doc.body.scrollLeft || doc.documentElement.scrollLeft;
+    var y = doc.body.scrollTop || doc.documentElement.scrollTop;
+    return Position(x, y);
+  };
+  var to = function (x, y, _doc) {
+    var doc = _doc !== undefined ? _doc.dom() : document;
+    var win = doc.defaultView;
+    win.scrollTo(x, y);
+  };
+  var by = function (x, y, _doc) {
+    var doc = _doc !== undefined ? _doc.dom() : document;
+    var win = doc.defaultView;
+    win.scrollBy(x, y);
+  };
+  var setToElement$1 = function (win, element) {
+    var pos = $_2eshhonfjlnued9i.absolute(element);
+    var doc = Element$$1.fromDom(win.document);
+    to(pos.left(), pos.top(), doc);
+  };
+  var preserve$1 = function (doc, f) {
+    var before = get$10(doc);
+    f();
+    var after = get$10(doc);
+    if (before.top() !== after.top() || before.left() !== after.left()) {
+      to(before.left(), before.top(), doc);
+    }
+  };
+  var capture$2 = function (doc) {
+    var previous = Option.none();
+    var save = function () {
+      previous = Option.some(get$10(doc));
+    };
+    var restore = function () {
+      previous.each(function (p) {
+        to(p.left(), p.top(), doc);
+      });
+    };
+    save();
+    return {
+      save: save,
+      restore: restore
+    };
+  };
+  var intoView = function (element, alignToTop) {
+    if (isSafari && isFunction(element.dom().scrollIntoViewIfNeeded)) {
+      element.dom().scrollIntoViewIfNeeded(false);
+    } else {
+      element.dom().scrollIntoView(alignToTop);
+    }
+  };
+  var intoViewIfNeeded = function (element, container) {
+    var containerBox = container.dom().getBoundingClientRect();
+    var elementBox = element.dom().getBoundingClientRect();
+    if (elementBox.top < containerBox.top) {
+      intoView(element, true);
+    } else if (elementBox.bottom > containerBox.bottom) {
+      intoView(element, false);
+    }
+  };
+  var scrollBarWidth = function () {
+    var scrollDiv = Element$$1.fromHtml('<div style="width: 100px; height: 100px; overflow: scroll; position: absolute; top: -9999px;"></div>');
+    $_881al2mdjlnuecoa.after($_fq9qoxm6jlnuecln.body(), scrollDiv);
+    var w = scrollDiv.dom().offsetWidth - scrollDiv.dom().clientWidth;
+    $_dzcomomejlnuecod.remove(scrollDiv);
+    return w;
+  };
+  var $_7bc79pqcjlnueejo = {
+    get: get$10,
+    to: to,
+    by: by,
+    preserve: preserve$1,
+    capture: capture$2,
+    intoView: intoView,
+    intoViewIfNeeded: intoViewIfNeeded,
+    setToElement: setToElement$1,
+    scrollBarWidth: scrollBarWidth
+  };
+
+  function WindowBridge (win) {
+    var elementFromPoint = function (x, y) {
+      return Element$$1.fromPoint(Element$$1.fromDom(win.document), x, y);
+    };
+    var getRect = function (element) {
+      return element.dom().getBoundingClientRect();
+    };
+    var getRangedRect = function (start, soffset, finish, foffset) {
+      var sel = $_c99q3zprjlnueeaf.exact(start, soffset, finish, foffset);
+      return $_55tagrptjlnueeb9.getFirstRect(win, sel).map(function (structRect) {
+        return map$1(structRect, apply);
+      });
+    };
+    var getSelection = function () {
+      return $_55tagrptjlnueeb9.get(win).map(function (exactAdt) {
+        return $_eeh3bgqbjlnueej2.convertToRange(win, exactAdt);
+      });
+    };
+    var fromSitus = function (situs) {
+      var relative = $_c99q3zprjlnueeaf.relative(situs.start(), situs.finish());
+      return $_eeh3bgqbjlnueej2.convertToRange(win, relative);
+    };
+    var situsFromPoint = function (x, y) {
+      return $_55tagrptjlnueeb9.getAtPoint(win, x, y).map(function (exact) {
+        return {
+          start: constant($_5z0dgvpsjlnueeat.on(exact.start(), exact.soffset())),
+          finish: constant($_5z0dgvpsjlnueeat.on(exact.finish(), exact.foffset()))
+        };
+      });
+    };
+    var clearSelection = function () {
+      $_55tagrptjlnueeb9.clear(win);
+    };
+    var selectContents = function (element) {
+      $_55tagrptjlnueeb9.setToElement(win, element);
+    };
+    var setSelection = function (sel) {
+      $_55tagrptjlnueeb9.setExact(win, sel.start(), sel.soffset(), sel.finish(), sel.foffset());
+    };
+    var setRelativeSelection = function (start, finish) {
+      $_55tagrptjlnueeb9.setRelative(win, start, finish);
+    };
+    var getInnerHeight = function () {
+      return win.innerHeight;
+    };
+    var getScrollY = function () {
+      var pos = $_7bc79pqcjlnueejo.get(Element$$1.fromDom(win.document));
+      return pos.top();
+    };
+    var scrollBy = function (x, y) {
+      $_7bc79pqcjlnueejo.by(x, y, Element$$1.fromDom(win.document));
+    };
+    return {
+      elementFromPoint: elementFromPoint,
+      getRect: getRect,
+      getRangedRect: getRangedRect,
+      getSelection: getSelection,
+      fromSitus: fromSitus,
+      situsFromPoint: situsFromPoint,
+      clearSelection: clearSelection,
+      setSelection: setSelection,
+      setRelativeSelection: setRelativeSelection,
+      selectContents: selectContents,
+      getInnerHeight: getInnerHeight,
+      getScrollY: getScrollY,
+      scrollBy: scrollBy
+    };
+  }
+
+  var sync = function (container, isRoot, start, soffset, finish, foffset, selectRange) {
+    if (!($_45sffllljlnuecht.eq(start, finish) && soffset === foffset)) {
+      return $_17q5jxm7jlnueclv.closest(start, 'td,th', isRoot).bind(function (s) {
+        return $_17q5jxm7jlnueclv.closest(finish, 'td,th', isRoot).bind(function (f) {
+          return detect$5(container, isRoot, s, f, selectRange);
+        });
+      });
+    } else {
+      return Option.none();
+    }
+  };
+  var detect$5 = function (container, isRoot, start, finish, selectRange) {
+    if (!$_45sffllljlnuecht.eq(start, finish)) {
+      return $_5p9cdemqjlnuecva.identify(start, finish, isRoot).bind(function (cellSel) {
+        var boxes = cellSel.boxes().getOr([]);
+        if (boxes.length > 0) {
+          selectRange(container, boxes, cellSel.start(), cellSel.finish());
+          return Option.some($_enujbxq8jlnueehl.response(Option.some($_eeh3bgqbjlnueej2.makeSitus(start, 0, start, $_5fv0nomjjlnuecrl.getEnd(start))), true));
+        } else {
+          return Option.none();
+        }
+      });
+    } else {
+      return Option.none();
+    }
+  };
+  var update = function (rows, columns, container, selected, annotations) {
+    var updateSelection = function (newSels) {
+      annotations.clear(container);
+      annotations.selectRange(container, newSels.boxes(), newSels.start(), newSels.finish());
+      return newSels.boxes();
+    };
+    return $_5p9cdemqjlnuecva.shiftSelection(selected, rows, columns, annotations.firstSelectedSelector(), annotations.lastSelectedSelector()).map(updateSelection);
+  };
+  var $_c1g7bwqdjlnueekb = {
+    sync: sync,
+    detect: detect$5,
+    update: update
+  };
+
+  var nu$3 = MixedBag([
+    'left',
+    'top',
+    'right',
+    'bottom'
+  ], []);
+  var moveDown = function (caret, amount) {
+    return nu$3({
+      left: caret.left(),
+      top: caret.top() + amount,
+      right: caret.right(),
+      bottom: caret.bottom() + amount
+    });
+  };
+  var moveUp = function (caret, amount) {
+    return nu$3({
+      left: caret.left(),
+      top: caret.top() - amount,
+      right: caret.right(),
+      bottom: caret.bottom() - amount
+    });
+  };
+  var moveBottomTo = function (caret, bottom) {
+    var height = caret.bottom() - caret.top();
+    return nu$3({
+      left: caret.left(),
+      top: bottom - height,
+      right: caret.right(),
+      bottom: bottom
+    });
+  };
+  var moveTopTo = function (caret, top) {
+    var height = caret.bottom() - caret.top();
+    return nu$3({
+      left: caret.left(),
+      top: top,
+      right: caret.right(),
+      bottom: top + height
+    });
+  };
+  var translate = function (caret, xDelta, yDelta) {
+    return nu$3({
+      left: caret.left() + xDelta,
+      top: caret.top() + yDelta,
+      right: caret.right() + xDelta,
+      bottom: caret.bottom() + yDelta
+    });
+  };
+  var getTop$1 = function (caret) {
+    return caret.top();
+  };
+  var getBottom = function (caret) {
+    return caret.bottom();
+  };
+  var toString$1 = function (caret) {
+    return '(' + caret.left() + ', ' + caret.top() + ') -> (' + caret.right() + ', ' + caret.bottom() + ')';
+  };
+  var $_84s22xqgjlnueenj = {
+    nu: nu$3,
+    moveUp: moveUp,
+    moveDown: moveDown,
+    moveBottomTo: moveBottomTo,
+    moveTopTo: moveTopTo,
+    getTop: getTop$1,
+    getBottom: getBottom,
+    translate: translate,
+    toString: toString$1
+  };
+
+  var getPartialBox = function (bridge, element, offset) {
+    if (offset >= 0 && offset < $_5fv0nomjjlnuecrl.getEnd(element))
+      return bridge.getRangedRect(element, offset, element, offset + 1);
+    else if (offset > 0)
+      return bridge.getRangedRect(element, offset - 1, element, offset);
+    return Option.none();
+  };
+  var toCaret = function (rect) {
+    return $_84s22xqgjlnueenj.nu({
+      left: rect.left,
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom
+    });
+  };
+  var getElemBox = function (bridge, element) {
+    return Option.some(bridge.getRect(element));
+  };
+  var getBoxAt = function (bridge, element, offset) {
+    if ($_moydym3jlnueclb.isElement(element))
+      return getElemBox(bridge, element).map(toCaret);
+    else if ($_moydym3jlnueclb.isText(element))
+      return getPartialBox(bridge, element, offset).map(toCaret);
+    else
+      return Option.none();
+  };
+  var getEntireBox = function (bridge, element) {
+    if ($_moydym3jlnueclb.isElement(element))
+      return getElemBox(bridge, element).map(toCaret);
+    else if ($_moydym3jlnueclb.isText(element))
+      return bridge.getRangedRect(element, 0, element, $_5fv0nomjjlnuecrl.getEnd(element)).map(toCaret);
+    else
+      return Option.none();
+  };
+  var $_bdzou5qhjlnueenq = {
+    getBoxAt: getBoxAt,
+    getEntireBox: getEntireBox
+  };
+
+  var traverse = Immutable('item', 'mode');
+  var backtrack = function (universe, item, direction, _transition) {
+    var transition = _transition !== undefined ? _transition : sidestep;
+    return universe.property().parent(item).map(function (p) {
+      return traverse(p, transition);
+    });
+  };
+  var sidestep = function (universe, item, direction, _transition) {
+    var transition = _transition !== undefined ? _transition : advance;
+    return direction.sibling(universe, item).map(function (p) {
+      return traverse(p, transition);
+    });
+  };
+  var advance = function (universe, item, direction, _transition) {
+    var transition = _transition !== undefined ? _transition : advance;
+    var children = universe.property().children(item);
+    var result = direction.first(children);
+    return result.map(function (r) {
+      return traverse(r, transition);
+    });
+  };
+  var successors = [
+    {
+      current: backtrack,
+      next: sidestep,
+      fallback: Option.none()
+    },
+    {
+      current: sidestep,
+      next: advance,
+      fallback: Option.some(backtrack)
+    },
+    {
+      current: advance,
+      next: advance,
+      fallback: Option.some(sidestep)
+    }
+  ];
+  var go$1 = function (universe, item, mode, direction, rules) {
+    var rules = rules !== undefined ? rules : successors;
+    var ruleOpt = find(rules, function (succ) {
+      return succ.current === mode;
+    });
+    return ruleOpt.bind(function (rule) {
+      return rule.current(universe, item, direction, rule.next).orThunk(function () {
+        return rule.fallback.bind(function (fb) {
+          return go$1(universe, item, fb, direction);
+        });
+      });
+    });
+  };
+  var $_a1g5d5qmjlnueeq7 = {
+    backtrack: backtrack,
+    sidestep: sidestep,
+    advance: advance,
+    go: go$1
+  };
+
+  var left$1 = function () {
+    var sibling = function (universe, item) {
+      return universe.query().prevSibling(item);
+    };
+    var first = function (children) {
+      return children.length > 0 ? Option.some(children[children.length - 1]) : Option.none();
+    };
+    return {
+      sibling: sibling,
+      first: first
+    };
+  };
+  var right$1 = function () {
+    var sibling = function (universe, item) {
+      return universe.query().nextSibling(item);
+    };
+    var first = function (children) {
+      return children.length > 0 ? Option.some(children[0]) : Option.none();
+    };
+    return {
+      sibling: sibling,
+      first: first
+    };
+  };
+  var $_fajx0xqnjlnueeqp = {
+    left: left$1,
+    right: right$1
+  };
+
+  var hone = function (universe, item, predicate, mode, direction, isRoot) {
+    var next = $_a1g5d5qmjlnueeq7.go(universe, item, mode, direction);
+    return next.bind(function (n) {
+      if (isRoot(n.item()))
+        return Option.none();
+      else
+        return predicate(n.item()) ? Option.some(n.item()) : hone(universe, n.item(), predicate, n.mode(), direction, isRoot);
+    });
+  };
+  var left$2 = function (universe, item, predicate, isRoot) {
+    return hone(universe, item, predicate, $_a1g5d5qmjlnueeq7.sidestep, $_fajx0xqnjlnueeqp.left(), isRoot);
+  };
+  var right$2 = function (universe, item, predicate, isRoot) {
+    return hone(universe, item, predicate, $_a1g5d5qmjlnueeq7.sidestep, $_fajx0xqnjlnueeqp.right(), isRoot);
+  };
+  var $_97ydaaqljlnueepz = {
+    left: left$2,
+    right: right$2
+  };
+
+  var isLeaf = function (universe, element) {
+    return universe.property().children(element).length === 0;
+  };
+  var before$2 = function (universe, item, isRoot) {
+    return seekLeft(universe, item, curry(isLeaf, universe), isRoot);
+  };
+  var after$3 = function (universe, item, isRoot) {
+    return seekRight(universe, item, curry(isLeaf, universe), isRoot);
+  };
+  var seekLeft = function (universe, item, predicate, isRoot) {
+    return $_97ydaaqljlnueepz.left(universe, item, predicate, isRoot);
+  };
+  var seekRight = function (universe, item, predicate, isRoot) {
+    return $_97ydaaqljlnueepz.right(universe, item, predicate, isRoot);
+  };
+  var walkers = function () {
+    return {
+      left: $_fajx0xqnjlnueeqp.left,
+      right: $_fajx0xqnjlnueeqp.right
+    };
+  };
+  var walk = function (universe, item, mode, direction, _rules) {
+    return $_a1g5d5qmjlnueeq7.go(universe, item, mode, direction, _rules);
+  };
+  var $_79yl1xqkjlnueepr = {
+    before: before$2,
+    after: after$3,
+    seekLeft: seekLeft,
+    seekRight: seekRight,
+    walkers: walkers,
+    walk: walk,
+    backtrack: $_a1g5d5qmjlnueeq7.backtrack,
+    sidestep: $_a1g5d5qmjlnueeq7.sidestep,
+    advance: $_a1g5d5qmjlnueeq7.advance
+  };
+
+  var universe$2 = DomUniverse();
+  var gather = function (element, prune, transform) {
+    return $_79yl1xqkjlnueepr.gather(universe$2, element, prune, transform);
+  };
+  var before$3 = function (element, isRoot) {
+    return $_79yl1xqkjlnueepr.before(universe$2, element, isRoot);
+  };
+  var after$4 = function (element, isRoot) {
+    return $_79yl1xqkjlnueepr.after(universe$2, element, isRoot);
+  };
+  var seekLeft$1 = function (element, predicate, isRoot) {
+    return $_79yl1xqkjlnueepr.seekLeft(universe$2, element, predicate, isRoot);
+  };
+  var seekRight$1 = function (element, predicate, isRoot) {
+    return $_79yl1xqkjlnueepr.seekRight(universe$2, element, predicate, isRoot);
+  };
+  var walkers$1 = function () {
+    return $_79yl1xqkjlnueepr.walkers();
+  };
+  var walk$1 = function (item, mode, direction, _rules) {
+    return $_79yl1xqkjlnueepr.walk(universe$2, item, mode, direction, _rules);
+  };
+  var $_8p30uiqjjlnueepi = {
+    gather: gather,
+    before: before$3,
+    after: after$4,
+    seekLeft: seekLeft$1,
+    seekRight: seekRight$1,
+    walkers: walkers$1,
+    walk: walk$1
+  };
+
+  var JUMP_SIZE = 5;
+  var NUM_RETRIES = 100;
+  var adt$2 = Adt.generate([
+    { 'none': [] },
+    { 'retry': ['caret'] }
+  ]);
+  var isOutside = function (caret, box) {
+    return caret.left() < box.left() || Math.abs(box.right() - caret.left()) < 1 || caret.left() > box.right();
+  };
+  var inOutsideBlock = function (bridge, element, caret) {
+    return $_957pbwm8jlnueclx.closest(element, $_ck29ginojlnuede6.isBlock).fold(constant(false), function (cell) {
+      return $_bdzou5qhjlnueenq.getEntireBox(bridge, cell).exists(function (box) {
+        return isOutside(caret, box);
+      });
+    });
+  };
+  var adjustDown = function (bridge, element, guessBox, original, caret) {
+    var lowerCaret = $_84s22xqgjlnueenj.moveDown(caret, JUMP_SIZE);
+    if (Math.abs(guessBox.bottom() - original.bottom()) < 1)
+      return adt$2.retry(lowerCaret);
+    else if (guessBox.top() > caret.bottom())
+      return adt$2.retry(lowerCaret);
+    else if (guessBox.top() === caret.bottom())
+      return adt$2.retry($_84s22xqgjlnueenj.moveDown(caret, 1));
+    else
+      return inOutsideBlock(bridge, element, caret) ? adt$2.retry($_84s22xqgjlnueenj.translate(lowerCaret, JUMP_SIZE, 0)) : adt$2.none();
+  };
+  var adjustUp = function (bridge, element, guessBox, original, caret) {
+    var higherCaret = $_84s22xqgjlnueenj.moveUp(caret, JUMP_SIZE);
+    if (Math.abs(guessBox.top() - original.top()) < 1)
+      return adt$2.retry(higherCaret);
+    else if (guessBox.bottom() < caret.top())
+      return adt$2.retry(higherCaret);
+    else if (guessBox.bottom() === caret.top())
+      return adt$2.retry($_84s22xqgjlnueenj.moveUp(caret, 1));
+    else
+      return inOutsideBlock(bridge, element, caret) ? adt$2.retry($_84s22xqgjlnueenj.translate(higherCaret, JUMP_SIZE, 0)) : adt$2.none();
+  };
+  var upMovement = {
+    point: $_84s22xqgjlnueenj.getTop,
+    adjuster: adjustUp,
+    move: $_84s22xqgjlnueenj.moveUp,
+    gather: $_8p30uiqjjlnueepi.before
+  };
+  var downMovement = {
+    point: $_84s22xqgjlnueenj.getBottom,
+    adjuster: adjustDown,
+    move: $_84s22xqgjlnueenj.moveDown,
+    gather: $_8p30uiqjjlnueepi.after
+  };
+  var isAtTable = function (bridge, x, y) {
+    return bridge.elementFromPoint(x, y).filter(function (elm) {
+      return $_moydym3jlnueclb.name(elm) === 'table';
+    }).isSome();
+  };
+  var adjustForTable = function (bridge, movement, original, caret, numRetries) {
+    return adjustTil(bridge, movement, original, movement.move(caret, JUMP_SIZE), numRetries);
+  };
+  var adjustTil = function (bridge, movement, original, caret, numRetries) {
+    if (numRetries === 0)
+      return Option.some(caret);
+    if (isAtTable(bridge, caret.left(), movement.point(caret)))
+      return adjustForTable(bridge, movement, original, caret, numRetries - 1);
+    return bridge.situsFromPoint(caret.left(), movement.point(caret)).bind(function (guess) {
+      return guess.start().fold(Option.none, function (element, offset) {
+        return $_bdzou5qhjlnueenq.getEntireBox(bridge, element, offset).bind(function (guessBox) {
+          return movement.adjuster(bridge, element, guessBox, original, caret).fold(Option.none, function (newCaret) {
+            return adjustTil(bridge, movement, original, newCaret, numRetries - 1);
+          });
+        }).orThunk(function () {
+          return Option.some(caret);
+        });
+      }, Option.none);
+    });
+  };
+  var ieTryDown = function (bridge, caret) {
+    return bridge.situsFromPoint(caret.left(), caret.bottom() + JUMP_SIZE);
+  };
+  var ieTryUp = function (bridge, caret) {
+    return bridge.situsFromPoint(caret.left(), caret.top() - JUMP_SIZE);
+  };
+  var checkScroll = function (movement, adjusted, bridge) {
+    if (movement.point(adjusted) > bridge.getInnerHeight())
+      return Option.some(movement.point(adjusted) - bridge.getInnerHeight());
+    else if (movement.point(adjusted) < 0)
+      return Option.some(-movement.point(adjusted));
+    else
+      return Option.none();
+  };
+  var retry = function (movement, bridge, caret) {
+    var moved = movement.move(caret, JUMP_SIZE);
+    var adjusted = adjustTil(bridge, movement, caret, moved, NUM_RETRIES).getOr(moved);
+    return checkScroll(movement, adjusted, bridge).fold(function () {
+      return bridge.situsFromPoint(adjusted.left(), movement.point(adjusted));
+    }, function (delta) {
+      bridge.scrollBy(0, delta);
+      return bridge.situsFromPoint(adjusted.left(), movement.point(adjusted) - delta);
+    });
+  };
+  var $_g2qnjhqijlnueeo8 = {
+    tryUp: curry(retry, upMovement),
+    tryDown: curry(retry, downMovement),
+    ieTryUp: ieTryUp,
+    ieTryDown: ieTryDown,
+    getJumpSize: constant(JUMP_SIZE)
+  };
+
+  var adt$3 = Adt.generate([
+    { 'none': ['message'] },
+    { 'success': [] },
+    { 'failedUp': ['cell'] },
+    { 'failedDown': ['cell'] }
+  ]);
+  var isOverlapping = function (bridge, before, after) {
+    var beforeBounds = bridge.getRect(before);
+    var afterBounds = bridge.getRect(after);
+    return afterBounds.right > beforeBounds.left && afterBounds.left < beforeBounds.right;
+  };
+  var verify = function (bridge, before, beforeOffset, after, afterOffset, failure, isRoot) {
+    return $_17q5jxm7jlnueclv.closest(after, 'td,th', isRoot).bind(function (afterCell) {
+      return $_17q5jxm7jlnueclv.closest(before, 'td,th', isRoot).map(function (beforeCell) {
+        if (!$_45sffllljlnuecht.eq(afterCell, beforeCell)) {
+          return $_8zmlphmrjlnuecwu.sharedOne(isRow, [
+            afterCell,
+            beforeCell
+          ]).fold(function () {
+            return isOverlapping(bridge, beforeCell, afterCell) ? adt$3.success() : failure(beforeCell);
+          }, function (sharedRow) {
+            return failure(beforeCell);
+          });
+        } else {
+          return $_45sffllljlnuecht.eq(after, afterCell) && $_5fv0nomjjlnuecrl.getEnd(afterCell) === afterOffset ? failure(beforeCell) : adt$3.none('in same cell');
+        }
+      });
+    }).getOr(adt$3.none('default'));
+  };
+  var isRow = function (elem) {
+    return $_17q5jxm7jlnueclv.closest(elem, 'tr');
+  };
+  var cata$2 = function (subject, onNone, onSuccess, onFailedUp, onFailedDown) {
+    return subject.fold(onNone, onSuccess, onFailedUp, onFailedDown);
+  };
+  var $_4shfyaqojlnueeqw = {
+    verify: verify,
+    cata: cata$2,
+    adt: adt$3
+  };
+
+  var point = Immutable('element', 'offset');
+  var delta = Immutable('element', 'deltaOffset');
+  var range$3 = Immutable('element', 'start', 'finish');
+  var points = Immutable('begin', 'end');
+  var text = Immutable('element', 'text');
+  var $_33601iqqjlnueet4 = {
+    point: point,
+    delta: delta,
+    range: range$3,
+    points: points,
+    text: text
+  };
+
+  var inAncestor = Immutable('ancestor', 'descendants', 'element', 'index');
+  var inParent = Immutable('parent', 'children', 'element', 'index');
+  var childOf = function (element, ancestor) {
+    return $_957pbwm8jlnueclx.closest(element, function (elem) {
+      return $_cvabpuljjlnuecgz.parent(elem).exists(function (parent) {
+        return $_45sffllljlnuecht.eq(parent, ancestor);
+      });
+    });
+  };
+  var indexInParent = function (element) {
+    return $_cvabpuljjlnuecgz.parent(element).bind(function (parent) {
+      var children = $_cvabpuljjlnuecgz.children(parent);
+      return indexOf$1(children, element).map(function (index) {
+        return inParent(parent, children, element, index);
+      });
+    });
+  };
+  var indexOf$1 = function (elements, element) {
+    return findIndex(elements, curry($_45sffllljlnuecht.eq, element));
+  };
+  var selectorsInParent = function (element, selector) {
+    return $_cvabpuljjlnuecgz.parent(element).bind(function (parent) {
+      var children = $_49wdgem4jlnuecle.children(parent, selector);
+      return indexOf$1(children, element).map(function (index) {
+        return inParent(parent, children, element, index);
+      });
+    });
+  };
+  var descendantsInAncestor = function (element, ancestorSelector, descendantSelector) {
+    return $_17q5jxm7jlnueclv.closest(element, ancestorSelector).bind(function (ancestor) {
+      var descendants = $_49wdgem4jlnuecle.descendants(ancestor, descendantSelector);
+      return indexOf$1(descendants, element).map(function (index) {
+        return inAncestor(ancestor, descendants, element, index);
+      });
+    });
+  };
+  var $_8hugvfqrjlnueetc = {
+    childOf: childOf,
+    indexOf: indexOf$1,
+    indexInParent: indexInParent,
+    selectorsInParent: selectorsInParent,
+    descendantsInAncestor: descendantsInAncestor
+  };
+
+  var isBr = function (elem) {
+    return $_moydym3jlnueclb.name(elem) === 'br';
+  };
+  var gatherer = function (cand, gather, isRoot) {
+    return gather(cand, isRoot).bind(function (target) {
+      return $_moydym3jlnueclb.isText(target) && $_u2vdgmkjlnuecrz.get(target).trim().length === 0 ? gatherer(target, gather, isRoot) : Option.some(target);
+    });
+  };
+  var handleBr = function (isRoot, element, direction) {
+    return direction.traverse(element).orThunk(function () {
+      return gatherer(element, direction.gather, isRoot);
+    }).map(direction.relative);
+  };
+  var findBr = function (element, offset) {
+    return $_cvabpuljjlnuecgz.child(element, offset).filter(isBr).orThunk(function () {
+      return $_cvabpuljjlnuecgz.child(element, offset - 1).filter(isBr);
+    });
+  };
+  var handleParent = function (isRoot, element, offset, direction) {
+    return findBr(element, offset).bind(function (br) {
+      return direction.traverse(br).fold(function () {
+        return gatherer(br, direction.gather, isRoot).map(direction.relative);
+      }, function (adjacent) {
+        return $_8hugvfqrjlnueetc.indexInParent(adjacent).map(function (info) {
+          return $_5z0dgvpsjlnueeat.on(info.parent(), info.index());
+        });
+      });
+    });
+  };
+  var tryBr = function (isRoot, element, offset, direction) {
+    var target = isBr(element) ? handleBr(isRoot, element, direction) : handleParent(isRoot, element, offset, direction);
+    return target.map(function (tgt) {
+      return {
+        start: constant(tgt),
+        finish: constant(tgt)
+      };
+    });
+  };
+  var process = function (analysis) {
+    return $_4shfyaqojlnueeqw.cata(analysis, function (message) {
+      return Option.none();
+    }, function () {
+      return Option.none();
+    }, function (cell) {
+      return Option.some($_33601iqqjlnueet4.point(cell, 0));
+    }, function (cell) {
+      return Option.some($_33601iqqjlnueet4.point(cell, $_5fv0nomjjlnuecrl.getEnd(cell)));
+    });
+  };
+  var $_bvhg8cqpjlnueerr = {
+    tryBr: tryBr,
+    process: process
+  };
+
+  var MAX_RETRIES = 20;
+  var platform$1 = $_gdzrivlqjlnueciv.detect();
+  var findSpot = function (bridge, isRoot, direction) {
+    return bridge.getSelection().bind(function (sel) {
+      return $_bvhg8cqpjlnueerr.tryBr(isRoot, sel.finish(), sel.foffset(), direction).fold(function () {
+        return Option.some($_33601iqqjlnueet4.point(sel.finish(), sel.foffset()));
+      }, function (brNeighbour) {
+        var range = bridge.fromSitus(brNeighbour);
+        var analysis = $_4shfyaqojlnueeqw.verify(bridge, sel.finish(), sel.foffset(), range.finish(), range.foffset(), direction.failure, isRoot);
+        return $_bvhg8cqpjlnueerr.process(analysis);
+      });
+    });
+  };
+  var scan = function (bridge, isRoot, element, offset, direction, numRetries) {
+    if (numRetries === 0)
+      return Option.none();
+    return tryCursor(bridge, isRoot, element, offset, direction).bind(function (situs) {
+      var range = bridge.fromSitus(situs);
+      var analysis = $_4shfyaqojlnueeqw.verify(bridge, element, offset, range.finish(), range.foffset(), direction.failure, isRoot);
+      return $_4shfyaqojlnueeqw.cata(analysis, function () {
+        return Option.none();
+      }, function () {
+        return Option.some(situs);
+      }, function (cell) {
+        if ($_45sffllljlnuecht.eq(element, cell) && offset === 0)
+          return tryAgain(bridge, element, offset, $_84s22xqgjlnueenj.moveUp, direction);
+        else
+          return scan(bridge, isRoot, cell, 0, direction, numRetries - 1);
+      }, function (cell) {
+        if ($_45sffllljlnuecht.eq(element, cell) && offset === $_5fv0nomjjlnuecrl.getEnd(cell))
+          return tryAgain(bridge, element, offset, $_84s22xqgjlnueenj.moveDown, direction);
+        else
+          return scan(bridge, isRoot, cell, $_5fv0nomjjlnuecrl.getEnd(cell), direction, numRetries - 1);
+      });
+    });
+  };
+  var tryAgain = function (bridge, element, offset, move, direction) {
+    return $_bdzou5qhjlnueenq.getBoxAt(bridge, element, offset).bind(function (box) {
+      return tryAt(bridge, direction, move(box, $_g2qnjhqijlnueeo8.getJumpSize()));
+    });
+  };
+  var tryAt = function (bridge, direction, box) {
+    if (platform$1.browser.isChrome() || platform$1.browser.isSafari() || platform$1.browser.isFirefox() || platform$1.browser.isEdge())
+      return direction.otherRetry(bridge, box);
+    else if (platform$1.browser.isIE())
+      return direction.ieRetry(bridge, box);
+    else
+      return Option.none();
+  };
+  var tryCursor = function (bridge, isRoot, element, offset, direction) {
+    return $_bdzou5qhjlnueenq.getBoxAt(bridge, element, offset).bind(function (box) {
+      return tryAt(bridge, direction, box);
+    });
+  };
+  var handle$2 = function (bridge, isRoot, direction) {
+    return findSpot(bridge, isRoot, direction).bind(function (spot) {
+      return scan(bridge, isRoot, spot.element(), spot.offset(), direction, MAX_RETRIES).map(bridge.fromSitus);
+    });
+  };
+  var $_atszpmqfjlnueemr = { handle: handle$2 };
+
+  var any$1 = function (predicate) {
+    return $_957pbwm8jlnueclx.first(predicate).isSome();
+  };
+  var ancestor$3 = function (scope, predicate, isRoot) {
+    return $_957pbwm8jlnueclx.ancestor(scope, predicate, isRoot).isSome();
+  };
+  var closest$3 = function (scope, predicate, isRoot) {
+    return $_957pbwm8jlnueclx.closest(scope, predicate, isRoot).isSome();
+  };
+  var sibling$3 = function (scope, predicate) {
+    return $_957pbwm8jlnueclx.sibling(scope, predicate).isSome();
+  };
+  var child$4 = function (scope, predicate) {
+    return $_957pbwm8jlnueclx.child(scope, predicate).isSome();
+  };
+  var descendant$3 = function (scope, predicate) {
+    return $_957pbwm8jlnueclx.descendant(scope, predicate).isSome();
+  };
+  var $_fsy588qsjlnueetv = {
+    any: any$1,
+    ancestor: ancestor$3,
+    closest: closest$3,
+    sibling: sibling$3,
+    child: child$4,
+    descendant: descendant$3
+  };
+
+  var detection = $_gdzrivlqjlnueciv.detect();
+  var inSameTable = function (elem, table) {
+    return $_fsy588qsjlnueetv.ancestor(elem, function (e) {
+      return $_cvabpuljjlnuecgz.parent(e).exists(function (p) {
+        return $_45sffllljlnuecht.eq(p, table);
+      });
+    });
+  };
+
+  var simulate = function (bridge, isRoot, direction, initial, anchor) {
+    return $_17q5jxm7jlnueclv.closest(initial, 'td,th', isRoot).bind(function (start) {
+      return $_17q5jxm7jlnueclv.closest(start, 'table', isRoot).bind(function (table) {
+        if (!inSameTable(anchor, table))
+          return Option.none();
+        return $_atszpmqfjlnueemr.handle(bridge, isRoot, direction).bind(function (range) {
+          return $_17q5jxm7jlnueclv.closest(range.finish(), 'td,th', isRoot).map(function (finish) {
+            return {
+              start: constant(start),
+              finish: constant(finish),
+              range: constant(range)
+            };
+          });
+        });
+      });
+    });
+  };
+  var navigate = function (bridge, isRoot, direction, initial, anchor, precheck) {
+    if (detection.browser.isIE()) {
+      return Option.none();
+    } else {
+      return precheck(initial, isRoot).orThunk(function () {
+        return simulate(bridge, isRoot, direction, initial, anchor).map(function (info) {
+          var range = info.range();
+          return $_enujbxq8jlnueehl.response(Option.some($_eeh3bgqbjlnueej2.makeSitus(range.start(), range.soffset(), range.finish(), range.foffset())), true);
+        });
+      });
+    }
+  };
+  var firstUpCheck = function (initial, isRoot) {
+    return $_17q5jxm7jlnueclv.closest(initial, 'tr', isRoot).bind(function (startRow) {
+      return $_17q5jxm7jlnueclv.closest(startRow, 'table', isRoot).bind(function (table) {
+        var rows = $_49wdgem4jlnuecle.descendants(table, 'tr');
+        if ($_45sffllljlnuecht.eq(startRow, rows[0])) {
+          return $_8p30uiqjjlnueepi.seekLeft(table, function (element) {
+            return $_6ikghvmijlnuecr8.last(element).isSome();
+          }, isRoot).map(function (last) {
+            var lastOffset = $_5fv0nomjjlnuecrl.getEnd(last);
+            return $_enujbxq8jlnueehl.response(Option.some($_eeh3bgqbjlnueej2.makeSitus(last, lastOffset, last, lastOffset)), true);
+          });
+        } else {
+          return Option.none();
+        }
+      });
+    });
+  };
+  var lastDownCheck = function (initial, isRoot) {
+    return $_17q5jxm7jlnueclv.closest(initial, 'tr', isRoot).bind(function (startRow) {
+      return $_17q5jxm7jlnueclv.closest(startRow, 'table', isRoot).bind(function (table) {
+        var rows = $_49wdgem4jlnuecle.descendants(table, 'tr');
+        if ($_45sffllljlnuecht.eq(startRow, rows[rows.length - 1])) {
+          return $_8p30uiqjjlnueepi.seekRight(table, function (element) {
+            return $_6ikghvmijlnuecr8.first(element).isSome();
+          }, isRoot).map(function (first) {
+            return $_enujbxq8jlnueehl.response(Option.some($_eeh3bgqbjlnueej2.makeSitus(first, 0, first, 0)), true);
+          });
+        } else {
+          return Option.none();
+        }
+      });
+    });
+  };
+  var select = function (bridge, container, isRoot, direction, initial, anchor, selectRange) {
+    return simulate(bridge, isRoot, direction, initial, anchor).bind(function (info) {
+      return $_c1g7bwqdjlnueekb.detect(container, isRoot, info.start(), info.finish(), selectRange);
+    });
+  };
+  var $_a3uv1aqejlnueekz = {
+    navigate: navigate,
+    select: select,
+    firstUpCheck: firstUpCheck,
+    lastDownCheck: lastDownCheck
+  };
+
+  var findCell = function (target, isRoot) {
+    return $_17q5jxm7jlnueclv.closest(target, 'td,th', isRoot);
+  };
+  function MouseSelection (bridge, container, isRoot, annotations) {
+    var cursor = Option.none();
+    var clearState = function () {
+      cursor = Option.none();
+    };
+    var mousedown = function (event) {
+      annotations.clear(container);
+      cursor = findCell(event.target(), isRoot);
+    };
+    var mouseover = function (event) {
+      cursor.each(function (start) {
+        annotations.clear(container);
+        findCell(event.target(), isRoot).each(function (finish) {
+          $_5p9cdemqjlnuecva.identify(start, finish, isRoot).each(function (cellSel) {
+            var boxes = cellSel.boxes().getOr([]);
+            if (boxes.length > 1 || boxes.length === 1 && !$_45sffllljlnuecht.eq(start, finish)) {
+              annotations.selectRange(container, boxes, cellSel.start(), cellSel.finish());
+              bridge.selectContents(finish);
+            }
+          });
+        });
+      });
+    };
+    var mouseup = function () {
+      cursor.each(clearState);
+    };
+    return {
+      mousedown: mousedown,
+      mouseover: mouseover,
+      mouseup: mouseup
+    };
+  }
+
+  var $_7p2nyiqujlnueeuj = {
+    down: {
+      traverse: $_cvabpuljjlnuecgz.nextSibling,
+      gather: $_8p30uiqjjlnueepi.after,
+      relative: $_5z0dgvpsjlnueeat.before,
+      otherRetry: $_g2qnjhqijlnueeo8.tryDown,
+      ieRetry: $_g2qnjhqijlnueeo8.ieTryDown,
+      failure: $_4shfyaqojlnueeqw.adt.failedDown
+    },
+    up: {
+      traverse: $_cvabpuljjlnuecgz.prevSibling,
+      gather: $_8p30uiqjjlnueepi.before,
+      relative: $_5z0dgvpsjlnueeat.before,
+      otherRetry: $_g2qnjhqijlnueeo8.tryUp,
+      ieRetry: $_g2qnjhqijlnueeo8.ieTryUp,
+      failure: $_4shfyaqojlnueeqw.adt.failedUp
+    }
+  };
+
+  var rc = Immutable('rows', 'cols');
+  var mouse = function (win, container, isRoot, annotations) {
+    var bridge = WindowBridge(win);
+    var handlers = MouseSelection(bridge, container, isRoot, annotations);
+    return {
+      mousedown: handlers.mousedown,
+      mouseover: handlers.mouseover,
+      mouseup: handlers.mouseup
+    };
+  };
+  var keyboard = function (win, container, isRoot, annotations) {
+    var bridge = WindowBridge(win);
+    var clearToNavigate = function () {
+      annotations.clear(container);
+      return Option.none();
+    };
+    var keydown = function (event, start, soffset, finish, foffset, direction) {
+      var keycode = event.raw().which;
+      var shiftKey = event.raw().shiftKey === true;
+      var handler = $_5p9cdemqjlnuecva.retrieve(container, annotations.selectedSelector()).fold(function () {
+        if ($_ch8wzhq9jlnueehs.isDown(keycode) && shiftKey) {
+          return curry($_a3uv1aqejlnueekz.select, bridge, container, isRoot, $_7p2nyiqujlnueeuj.down, finish, start, annotations.selectRange);
+        } else if ($_ch8wzhq9jlnueehs.isUp(keycode) && shiftKey) {
+          return curry($_a3uv1aqejlnueekz.select, bridge, container, isRoot, $_7p2nyiqujlnueeuj.up, finish, start, annotations.selectRange);
+        } else if ($_ch8wzhq9jlnueehs.isDown(keycode)) {
+          return curry($_a3uv1aqejlnueekz.navigate, bridge, isRoot, $_7p2nyiqujlnueeuj.down, finish, start, $_a3uv1aqejlnueekz.lastDownCheck);
+        } else if ($_ch8wzhq9jlnueehs.isUp(keycode)) {
+          return curry($_a3uv1aqejlnueekz.navigate, bridge, isRoot, $_7p2nyiqujlnueeuj.up, finish, start, $_a3uv1aqejlnueekz.firstUpCheck);
+        } else {
+          return Option.none;
+        }
+      }, function (selected) {
+        var update = function (attempts) {
+          return function () {
+            var navigation = findMap(attempts, function (delta) {
+              return $_c1g7bwqdjlnueekb.update(delta.rows(), delta.cols(), container, selected, annotations);
+            });
+            return navigation.fold(function () {
+              return $_5p9cdemqjlnuecva.getEdges(container, annotations.firstSelectedSelector(), annotations.lastSelectedSelector()).map(function (edges) {
+                var relative = $_ch8wzhq9jlnueehs.isDown(keycode) || direction.isForward(keycode) ? $_5z0dgvpsjlnueeat.after : $_5z0dgvpsjlnueeat.before;
+                bridge.setRelativeSelection($_5z0dgvpsjlnueeat.on(edges.first(), 0), relative(edges.table()));
+                annotations.clear(container);
+                return $_enujbxq8jlnueehl.response(Option.none(), true);
+              });
+            }, function (_) {
+              return Option.some($_enujbxq8jlnueehl.response(Option.none(), true));
+            });
+          };
+        };
+        if ($_ch8wzhq9jlnueehs.isDown(keycode) && shiftKey)
+          return update([rc(+1, 0)]);
+        else if ($_ch8wzhq9jlnueehs.isUp(keycode) && shiftKey)
+          return update([rc(-1, 0)]);
+        else if (direction.isBackward(keycode) && shiftKey)
+          return update([
+            rc(0, -1),
+            rc(-1, 0)
+          ]);
+        else if (direction.isForward(keycode) && shiftKey)
+          return update([
+            rc(0, +1),
+            rc(+1, 0)
+          ]);
+        else if ($_ch8wzhq9jlnueehs.isNavigation(keycode) && shiftKey === false)
+          return clearToNavigate;
+        else
+          return Option.none;
+      });
+      return handler();
+    };
+    var keyup = function (event, start, soffset, finish, foffset) {
+      return $_5p9cdemqjlnuecva.retrieve(container, annotations.selectedSelector()).fold(function () {
+        var keycode = event.raw().which;
+        var shiftKey = event.raw().shiftKey === true;
+        if (shiftKey === false)
+          return Option.none();
+        if ($_ch8wzhq9jlnueehs.isNavigation(keycode))
+          return $_c1g7bwqdjlnueekb.sync(container, isRoot, start, soffset, finish, foffset, annotations.selectRange);
+        else
+          return Option.none();
+      }, Option.none);
+    };
+    return {
+      keydown: keydown,
+      keyup: keyup
+    };
+  };
+  var $_4vha6dq7jlnueegl = {
+    mouse: mouse,
+    keyboard: keyboard
+  };
+
+  var add$3 = function (element, classes) {
+    each(classes, function (x) {
+      $_42k0o5o3jlnuedmc.add(element, x);
+    });
+  };
+  var remove$7 = function (element, classes) {
+    each(classes, function (x) {
+      $_42k0o5o3jlnuedmc.remove(element, x);
+    });
+  };
+  var toggle$2 = function (element, classes) {
+    each(classes, function (x) {
+      $_42k0o5o3jlnuedmc.toggle(element, x);
+    });
+  };
+  var hasAll = function (element, classes) {
+    return forall(classes, function (clazz) {
+      return $_42k0o5o3jlnuedmc.has(element, clazz);
+    });
+  };
+  var hasAny = function (element, classes) {
+    return exists(classes, function (clazz) {
+      return $_42k0o5o3jlnuedmc.has(element, clazz);
+    });
+  };
+  var getNative = function (element) {
+    var classList = element.dom().classList;
+    var r = new Array(classList.length);
+    for (var i = 0; i < classList.length; i++) {
+      r[i] = classList.item(i);
+    }
+    return r;
+  };
+  var get$11 = function (element) {
+    return $_7wfj60o5jlnuedmh.supports(element) ? getNative(element) : $_7wfj60o5jlnuedmh.get(element);
+  };
+  var $_fk7lruqxjlnueevw = {
+    add: add$3,
+    remove: remove$7,
+    toggle: toggle$2,
+    hasAll: hasAll,
+    hasAny: hasAny,
+    get: get$11
+  };
+
+  var addClass = function (clazz) {
+    return function (element) {
+      $_42k0o5o3jlnuedmc.add(element, clazz);
+    };
+  };
+  var removeClass = function (clazz) {
+    return function (element) {
+      $_42k0o5o3jlnuedmc.remove(element, clazz);
+    };
+  };
+  var removeClasses = function (classes) {
+    return function (element) {
+      $_fk7lruqxjlnueevw.remove(element, classes);
+    };
+  };
+  var hasClass = function (clazz) {
+    return function (element) {
+      return $_42k0o5o3jlnuedmc.has(element, clazz);
+    };
+  };
+  var $_2222ilqwjlnueevt = {
+    addClass: addClass,
+    removeClass: removeClass,
+    removeClasses: removeClasses,
+    hasClass: hasClass
+  };
+
+  var byClass = function (ephemera) {
+    var addSelectionClass = $_2222ilqwjlnueevt.addClass(ephemera.selected());
+    var removeSelectionClasses = $_2222ilqwjlnueevt.removeClasses([
+      ephemera.selected(),
+      ephemera.lastSelected(),
+      ephemera.firstSelected()
+    ]);
+    var clear = function (container) {
+      var sels = $_49wdgem4jlnuecle.descendants(container, ephemera.selectedSelector());
+      each(sels, removeSelectionClasses);
+    };
+    var selectRange = function (container, cells, start, finish) {
+      clear(container);
+      each(cells, addSelectionClass);
+      $_42k0o5o3jlnuedmc.add(start, ephemera.firstSelected());
+      $_42k0o5o3jlnuedmc.add(finish, ephemera.lastSelected());
+    };
+    return {
+      clear: clear,
+      selectRange: selectRange,
+      selectedSelector: ephemera.selectedSelector,
+      firstSelectedSelector: ephemera.firstSelectedSelector,
+      lastSelectedSelector: ephemera.lastSelectedSelector
+    };
+  };
+  var byAttr = function (ephemera) {
+    var removeSelectionAttributes = function (element) {
+      $_6f9wwmm2jlnueckv.remove(element, ephemera.selected());
+      $_6f9wwmm2jlnueckv.remove(element, ephemera.firstSelected());
+      $_6f9wwmm2jlnueckv.remove(element, ephemera.lastSelected());
+    };
+    var addSelectionAttribute = function (element) {
+      $_6f9wwmm2jlnueckv.set(element, ephemera.selected(), '1');
+    };
+    var clear = function (container) {
+      var sels = $_49wdgem4jlnuecle.descendants(container, ephemera.selectedSelector());
+      each(sels, removeSelectionAttributes);
+    };
+    var selectRange = function (container, cells, start, finish) {
+      clear(container);
+      each(cells, addSelectionAttribute);
+      $_6f9wwmm2jlnueckv.set(start, ephemera.firstSelected(), '1');
+      $_6f9wwmm2jlnueckv.set(finish, ephemera.lastSelected(), '1');
+    };
+    return {
+      clear: clear,
+      selectRange: selectRange,
+      selectedSelector: ephemera.selectedSelector,
+      firstSelectedSelector: ephemera.firstSelectedSelector,
+      lastSelectedSelector: ephemera.lastSelectedSelector
+    };
+  };
+  var $_vhsjkqvjlnueev0 = {
+    byClass: byClass,
+    byAttr: byAttr
+  };
+
+  var hasInternalTarget = function (e) {
+    return $_42k0o5o3jlnuedmc.has(Element$$1.fromDom(e.target), 'ephox-snooker-resizer-bar') === false;
+  };
+  function CellSelection$1 (editor, lazyResize) {
+    var handlerStruct = MixedBag([
+      'mousedown',
+      'mouseover',
+      'mouseup',
+      'keyup',
+      'keydown'
+    ], []);
+    var handlers = Option.none();
+    var annotations = $_vhsjkqvjlnueev0.byAttr($_g4qriwn2jlnued4e);
+    editor.on('init', function (e) {
+      var win = editor.getWin();
+      var body = getBody$1(editor);
+      var isRoot = getIsRoot(editor);
+      var syncSelection = function () {
+        var sel = editor.selection;
+        var start = Element$$1.fromDom(sel.getStart());
+        var end = Element$$1.fromDom(sel.getEnd());
+        var shared = $_8zmlphmrjlnuecwu.sharedOne($_enoas1ldjlnuecdr.table, [
+          start,
+          end
+        ]);
+        shared.fold(function () {
+          annotations.clear(body);
+        }, noop);
+      };
+      var mouseHandlers = $_4vha6dq7jlnueegl.mouse(win, body, isRoot, annotations);
+      var keyHandlers = $_4vha6dq7jlnueegl.keyboard(win, body, isRoot, annotations);
+      var hasShiftKey = function (event) {
+        return event.raw().shiftKey === true;
+      };
+      var handleResponse = function (event, response) {
+        if (!hasShiftKey(event)) {
+          return;
+        }
+        if (response.kill()) {
+          event.kill();
+        }
+        response.selection().each(function (ns) {
+          var relative = $_c99q3zprjlnueeaf.relative(ns.start(), ns.finish());
+          var rng = $_apfh0npxjlnueecg.asLtrRange(win, relative);
+          editor.selection.setRng(rng);
+        });
+      };
+      var keyup = function (event) {
+        var wrappedEvent = wrapEvent(event);
+        if (wrappedEvent.raw().shiftKey && $_ch8wzhq9jlnueehs.isNavigation(wrappedEvent.raw().which)) {
+          var rng = editor.selection.getRng();
+          var start = Element$$1.fromDom(rng.startContainer);
+          var end = Element$$1.fromDom(rng.endContainer);
+          keyHandlers.keyup(wrappedEvent, start, rng.startOffset, end, rng.endOffset).each(function (response) {
+            handleResponse(wrappedEvent, response);
+          });
+        }
+      };
+      var keydown = function (event) {
+        var wrappedEvent = wrapEvent(event);
+        lazyResize().each(function (resize) {
+          resize.hideBars();
+        });
+        var rng = editor.selection.getRng();
+        var startContainer = Element$$1.fromDom(editor.selection.getStart());
+        var start = Element$$1.fromDom(rng.startContainer);
+        var end = Element$$1.fromDom(rng.endContainer);
+        var direction = $_gg0vwtoljlnuedse.directionAt(startContainer).isRtl() ? $_ch8wzhq9jlnueehs.rtl : $_ch8wzhq9jlnueehs.ltr;
+        keyHandlers.keydown(wrappedEvent, start, rng.startOffset, end, rng.endOffset, direction).each(function (response) {
+          handleResponse(wrappedEvent, response);
+        });
+        lazyResize().each(function (resize) {
+          resize.showBars();
+        });
+      };
+      var isMouseEvent = function (event) {
+        return event.hasOwnProperty('x') && event.hasOwnProperty('y');
+      };
+      var wrapEvent = function (event) {
+        var target = Element$$1.fromDom(event.target);
+        var stop = function () {
+          event.stopPropagation();
+        };
+        var prevent = function () {
+          event.preventDefault();
+        };
+        var kill = compose(prevent, stop);
+        return {
+          target: constant(target),
+          x: constant(isMouseEvent(event) ? event.x : null),
+          y: constant(isMouseEvent(event) ? event.y : null),
+          stop: stop,
+          prevent: prevent,
+          kill: kill,
+          raw: constant(event)
+        };
+      };
+      var isLeftMouse = function (raw) {
+        return raw.button === 0;
+      };
+      var isLeftButtonPressed = function (raw) {
+        if (raw.buttons === undefined) {
+          return true;
+        }
+        return (raw.buttons & 1) !== 0;
+      };
+      var mouseDown = function (e) {
+        if (isLeftMouse(e) && hasInternalTarget(e)) {
+          mouseHandlers.mousedown(wrapEvent(e));
+        }
+      };
+      var mouseOver = function (e) {
+        if (isLeftButtonPressed(e) && hasInternalTarget(e)) {
+          mouseHandlers.mouseover(wrapEvent(e));
+        }
+      };
+      var mouseUp = function (e) {
+        if (isLeftMouse(e) && hasInternalTarget(e)) {
+          mouseHandlers.mouseup(wrapEvent(e));
+        }
+      };
+      editor.on('mousedown', mouseDown);
+      editor.on('mouseover', mouseOver);
+      editor.on('mouseup', mouseUp);
+      editor.on('keyup', keyup);
+      editor.on('keydown', keydown);
+      editor.on('nodechange', syncSelection);
+      handlers = Option.some(handlerStruct({
+        mousedown: mouseDown,
+        mouseover: mouseOver,
+        mouseup: mouseUp,
+        keyup: keyup,
+        keydown: keydown
+      }));
+    });
+    var destroy = function () {
+      handlers.each(function (handlers) {
+      });
+    };
+    return {
+      clear: annotations.clear,
+      destroy: destroy
+    };
+  }
+
+  var Selections = function (editor) {
+    var get = function () {
+      var body = getBody$1(editor);
+      return $_f28l5pmpjlnuecuo.retrieve(body, $_g4qriwn2jlnued4e.selectedSelector()).fold(function () {
+        if (editor.selection.getStart() === undefined) {
+          return $_a0ivnyn3jlnued4k.none();
+        } else {
+          return $_a0ivnyn3jlnued4k.single(editor.selection);
+        }
+      }, function (cells) {
+        return $_a0ivnyn3jlnued4k.multiple(cells);
+      });
+    };
+    return { get: get };
+  };
+
+  var each$4 = global$1.each;
+  var addButtons = function (editor) {
+    var menuItems = [];
+    each$4('inserttable tableprops deletetable | cell row column'.split(' '), function (name) {
+      if (name === '|') {
+        menuItems.push({ text: '-' });
+      } else {
+        menuItems.push(editor.menuItems[name]);
+      }
+    });
+    editor.addButton('table', {
+      type: 'menubutton',
+      title: 'Table',
+      menu: menuItems
+    });
+    function cmd(command) {
+      return function () {
+        editor.execCommand(command);
+      };
+    }
+    editor.addButton('tableprops', {
+      title: 'Table properties',
+      onclick: cmd('mceTableProps'),
+      icon: 'table'
+    });
+    editor.addButton('tabledelete', {
+      title: 'Delete table',
+      onclick: cmd('mceTableDelete')
+    });
+    editor.addButton('tablecellprops', {
+      title: 'Cell properties',
+      onclick: cmd('mceTableCellProps')
+    });
+    editor.addButton('tablemergecells', {
+      title: 'Merge cells',
+      onclick: cmd('mceTableMergeCells')
+    });
+    editor.addButton('tablesplitcells', {
+      title: 'Split cell',
+      onclick: cmd('mceTableSplitCells')
+    });
+    editor.addButton('tableinsertrowbefore', {
+      title: 'Insert row before',
+      onclick: cmd('mceTableInsertRowBefore')
+    });
+    editor.addButton('tableinsertrowafter', {
+      title: 'Insert row after',
+      onclick: cmd('mceTableInsertRowAfter')
+    });
+    editor.addButton('tabledeleterow', {
+      title: 'Delete row',
+      onclick: cmd('mceTableDeleteRow')
+    });
+    editor.addButton('tablerowprops', {
+      title: 'Row properties',
+      onclick: cmd('mceTableRowProps')
+    });
+    editor.addButton('tablecutrow', {
+      title: 'Cut row',
+      onclick: cmd('mceTableCutRow')
+    });
+    editor.addButton('tablecopyrow', {
+      title: 'Copy row',
+      onclick: cmd('mceTableCopyRow')
+    });
+    editor.addButton('tablepasterowbefore', {
+      title: 'Paste row before',
+      onclick: cmd('mceTablePasteRowBefore')
+    });
+    editor.addButton('tablepasterowafter', {
+      title: 'Paste row after',
+      onclick: cmd('mceTablePasteRowAfter')
+    });
+    editor.addButton('tableinsertcolbefore', {
+      title: 'Insert column before',
+      onclick: cmd('mceTableInsertColBefore')
+    });
+    editor.addButton('tableinsertcolafter', {
+      title: 'Insert column after',
+      onclick: cmd('mceTableInsertColAfter')
+    });
+    editor.addButton('tabledeletecol', {
+      title: 'Delete column',
+      onclick: cmd('mceTableDeleteCol')
+    });
+  };
+  var addToolbars = function (editor) {
+    var isTable = function (table) {
+      var selectorMatched = editor.dom.is(table, 'table') && editor.getBody().contains(table);
+      return selectorMatched;
+    };
+    var toolbar = getToolbar(editor);
+    if (toolbar.length > 0) {
+      editor.addContextToolbar(isTable, toolbar.join(' '));
+    }
+  };
+  var $_8krmjgqzjlnueewb = {
+    addButtons: addButtons,
+    addToolbars: addToolbars
+  };
+
+  var addMenuItems = function (editor, selections) {
+    var targets = Option.none();
+    var tableCtrls = [];
+    var cellCtrls = [];
+    var mergeCtrls = [];
+    var unmergeCtrls = [];
+    var noTargetDisable = function (ctrl) {
+      ctrl.disabled(true);
+    };
+    var ctrlEnable = function (ctrl) {
+      ctrl.disabled(false);
+    };
+    var pushTable = function () {
+      var self = this;
+      tableCtrls.push(self);
+      targets.fold(function () {
+        noTargetDisable(self);
+      }, function (targets) {
+        ctrlEnable(self);
+      });
+    };
+    var pushCell = function () {
+      var self = this;
+      cellCtrls.push(self);
+      targets.fold(function () {
+        noTargetDisable(self);
+      }, function (targets) {
+        ctrlEnable(self);
+      });
+    };
+    var pushMerge = function () {
+      var self = this;
+      mergeCtrls.push(self);
+      targets.fold(function () {
+        noTargetDisable(self);
+      }, function (targets) {
+        self.disabled(targets.mergable().isNone());
+      });
+    };
+    var pushUnmerge = function () {
+      var self = this;
+      unmergeCtrls.push(self);
+      targets.fold(function () {
+        noTargetDisable(self);
+      }, function (targets) {
+        self.disabled(targets.unmergable().isNone());
+      });
+    };
+    var setDisabledCtrls = function () {
+      targets.fold(function () {
+        each(tableCtrls, noTargetDisable);
+        each(cellCtrls, noTargetDisable);
+        each(mergeCtrls, noTargetDisable);
+        each(unmergeCtrls, noTargetDisable);
+      }, function (targets) {
+        each(tableCtrls, ctrlEnable);
+        each(cellCtrls, ctrlEnable);
+        each(mergeCtrls, function (mergeCtrl) {
+          mergeCtrl.disabled(targets.mergable().isNone());
+        });
+        each(unmergeCtrls, function (unmergeCtrl) {
+          unmergeCtrl.disabled(targets.unmergable().isNone());
+        });
+      });
+    };
+    editor.on('init', function () {
+      editor.on('nodechange', function (e) {
+        var cellOpt = Option.from(editor.dom.getParent(editor.selection.getStart(), 'th,td'));
+        targets = cellOpt.bind(function (cellDom) {
+          var cell = Element$$1.fromDom(cellDom);
+          var table = $_enoas1ldjlnuecdr.table(cell);
+          return table.map(function (table) {
+            return $_5l7hzjmnjlnuect0.forMenu(selections, table, cell);
+          });
+        });
+        setDisabledCtrls();
+      });
+    });
+    var generateTableGrid = function () {
+      var html = '';
+      html = '<table role="grid" class="mce-grid mce-grid-border" aria-readonly="true">';
+      for (var y = 0; y < 10; y++) {
+        html += '<tr>';
+        for (var x = 0; x < 10; x++) {
+          html += '<td role="gridcell" tabindex="-1"><a id="mcegrid' + (y * 10 + x) + '" href="#" ' + 'data-mce-x="' + x + '" data-mce-y="' + y + '"></a></td>';
+        }
+        html += '</tr>';
+      }
+      html += '</table>';
+      html += '<div class="mce-text-center" role="presentation">1 x 1</div>';
+      return html;
+    };
+    var selectGrid = function (editor, tx, ty, control) {
+      var table = control.getEl().getElementsByTagName('table')[0];
+      var x, y, focusCell, cell, active;
+      var rtl = control.isRtl() || control.parent().rel === 'tl-tr';
+      table.nextSibling.innerHTML = tx + 1 + ' x ' + (ty + 1);
+      if (rtl) {
+        tx = 9 - tx;
+      }
+      for (y = 0; y < 10; y++) {
+        for (x = 0; x < 10; x++) {
+          cell = table.rows[y].childNodes[x].firstChild;
+          active = (rtl ? x >= tx : x <= tx) && y <= ty;
+          editor.dom.toggleClass(cell, 'mce-active', active);
+          if (active) {
+            focusCell = cell;
+          }
+        }
+      }
+      return focusCell.parentNode;
+    };
+    var insertTable = hasTableGrid(editor) === false ? {
+      text: 'Table',
+      icon: 'table',
+      context: 'table',
+      onclick: cmd('mceInsertTable')
+    } : {
+      text: 'Table',
+      icon: 'table',
+      context: 'table',
+      ariaHideMenu: true,
+      onclick: function (e) {
+        if (e.aria) {
+          this.parent().hideAll();
+          e.stopImmediatePropagation();
+          editor.execCommand('mceInsertTable');
+        }
+      },
+      onshow: function () {
+        selectGrid(editor, 0, 0, this.menu.items()[0]);
+      },
+      onhide: function () {
+        var elements = this.menu.items()[0].getEl().getElementsByTagName('a');
+        editor.dom.removeClass(elements, 'mce-active');
+        editor.dom.addClass(elements[0], 'mce-active');
+      },
+      menu: [{
+          type: 'container',
+          html: generateTableGrid(),
+          onPostRender: function () {
+            this.lastX = this.lastY = 0;
+          },
+          onmousemove: function (e) {
+            var target = e.target;
+            var x, y;
+            if (target.tagName.toUpperCase() === 'A') {
+              x = parseInt(target.getAttribute('data-mce-x'), 10);
+              y = parseInt(target.getAttribute('data-mce-y'), 10);
+              if (this.isRtl() || this.parent().rel === 'tl-tr') {
+                x = 9 - x;
+              }
+              if (x !== this.lastX || y !== this.lastY) {
+                selectGrid(editor, x, y, e.control);
+                this.lastX = x;
+                this.lastY = y;
+              }
+            }
+          },
+          onclick: function (e) {
+            var self = this;
+            if (e.target.tagName.toUpperCase() === 'A') {
+              e.preventDefault();
+              e.stopPropagation();
+              self.parent().cancel();
+              editor.undoManager.transact(function () {
+                $_2amky2oyjlnuedw1.insert(editor, self.lastX + 1, self.lastY + 1);
+              });
+              editor.addVisual();
+            }
+          }
+        }]
+    };
+    function cmd(command) {
+      return function () {
+        editor.execCommand(command);
+      };
+    }
+    var tableProperties = {
+      text: 'Table properties',
+      context: 'table',
+      onPostRender: pushTable,
+      onclick: cmd('mceTableProps')
+    };
+    var deleteTable = {
+      text: 'Delete table',
+      context: 'table',
+      onPostRender: pushTable,
+      cmd: 'mceTableDelete'
+    };
+    var row = {
+      text: 'Row',
+      context: 'table',
+      menu: [
+        {
+          text: 'Insert row before',
+          onclick: cmd('mceTableInsertRowBefore'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Insert row after',
+          onclick: cmd('mceTableInsertRowAfter'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Delete row',
+          onclick: cmd('mceTableDeleteRow'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Row properties',
+          onclick: cmd('mceTableRowProps'),
+          onPostRender: pushCell
+        },
+        { text: '-' },
+        {
+          text: 'Cut row',
+          onclick: cmd('mceTableCutRow'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Copy row',
+          onclick: cmd('mceTableCopyRow'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Paste row before',
+          onclick: cmd('mceTablePasteRowBefore'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Paste row after',
+          onclick: cmd('mceTablePasteRowAfter'),
+          onPostRender: pushCell
+        }
+      ]
+    };
+    var column = {
+      text: 'Column',
+      context: 'table',
+      menu: [
+        {
+          text: 'Insert column before',
+          onclick: cmd('mceTableInsertColBefore'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Insert column after',
+          onclick: cmd('mceTableInsertColAfter'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Delete column',
+          onclick: cmd('mceTableDeleteCol'),
+          onPostRender: pushCell
+        }
+      ]
+    };
+    var cell = {
+      separator: 'before',
+      text: 'Cell',
+      context: 'table',
+      menu: [
+        {
+          text: 'Cell properties',
+          onclick: cmd('mceTableCellProps'),
+          onPostRender: pushCell
+        },
+        {
+          text: 'Merge cells',
+          onclick: cmd('mceTableMergeCells'),
+          onPostRender: pushMerge
+        },
+        {
+          text: 'Split cell',
+          onclick: cmd('mceTableSplitCells'),
+          onPostRender: pushUnmerge
+        }
+      ]
+    };
+    editor.addMenuItem('inserttable', insertTable);
+    editor.addMenuItem('tableprops', tableProperties);
+    editor.addMenuItem('deletetable', deleteTable);
+    editor.addMenuItem('row', row);
+    editor.addMenuItem('column', column);
+    editor.addMenuItem('cell', cell);
+  };
+  var $_9q7jw4r0jlnueewf = { addMenuItems: addMenuItems };
+
+  var getClipboardRows = function (clipboardRows) {
+    return clipboardRows.get().fold(function () {
+      return;
+    }, function (rows) {
+      return map(rows, function (row) {
+        return row.dom();
+      });
+    });
+  };
+  var setClipboardRows = function (rows, clipboardRows) {
+    var sugarRows = map(rows, Element$$1.fromDom);
+    clipboardRows.set(Option.from(sugarRows));
+  };
+  var getApi = function (editor, clipboardRows) {
+    return {
+      insertTable: function (columns, rows) {
+        return $_2amky2oyjlnuedw1.insert(editor, columns, rows);
+      },
+      setClipboardRows: function (rows) {
+        return setClipboardRows(rows, clipboardRows);
+      },
+      getClipboardRows: function () {
+        return getClipboardRows(clipboardRows);
+      }
+    };
+  };
+
+  function Plugin(editor) {
+    var resizeHandler = ResizeHandler(editor);
+    var cellSelection = CellSelection$1(editor, resizeHandler.lazyResize);
+    var actions = TableActions(editor, resizeHandler.lazyWire);
+    var selections = Selections(editor);
+    var clipboardRows = Cell(Option.none());
+    $_6by16opjlnuedt2.registerCommands(editor, actions, cellSelection, selections, clipboardRows);
+    $_6nf7e5l0jlnuec89.registerEvents(editor, selections, actions, cellSelection);
+    $_9q7jw4r0jlnueewf.addMenuItems(editor, selections);
+    $_8krmjgqzjlnueewb.addButtons(editor);
+    $_8krmjgqzjlnueewb.addToolbars(editor);
+    editor.on('PreInit', function () {
+      editor.serializer.addTempAttr($_g4qriwn2jlnued4e.firstSelected());
+      editor.serializer.addTempAttr($_g4qriwn2jlnued4e.lastSelected());
+    });
+    if (hasTabNavigation(editor)) {
+      editor.on('keydown', function (e) {
+        $_7uqmllpojlnuee87.handle(e, editor, actions, resizeHandler.lazyWire);
+      });
+    }
+    editor.on('remove', function () {
+      resizeHandler.destroy();
+      cellSelection.destroy();
+    });
+    return getApi(editor, clipboardRows);
+  }
+  global.add('table', Plugin);
+  function Plugin$1 () {
+  }
+
+  return Plugin$1;
+
+}());
+})();
